@@ -19,39 +19,39 @@ Personalize sua pizza com uma variedade de opções e sabores.
 
 
 ## 📋 Tamanho = Número de andares.
-| Tamanho | Andares | Preço |
-| :--- | :---: | :---: |
-| **Broto** | 1 | R$ 30,00 |
-| **Média** | 2 | R$ 50,00 |
-| **Grande**| 3 | R$ 75,00 |
+| Tamanho | Andares |
+| :--- | :---: | 
+| **Broto** | 1 | 
+| **Média** | 2 |
+| **Grande**| 3 | 
 <br>
 
 ## 📋 Tipo de massa = Cor das basses da estrutura.
-| Tipo de Massa | Cor Visual | Preço |
-| :--- | :---: | :---: |
-| **Massa Fina** | 🔴 | + R$ 10,00 |
-| **Massa Tradicional** | 🔵 | + R$ 15,00 |
-| **Massa Grossa** | ⚫ | + R$ 20,00 |
+| Tipo de Massa | Cor Visual | 
+| :--- | :---: | 
+| **Massa Fina** | 🔴 | 
+| **Massa Tradicional** | 🔵 | 
+| **Massa Grossa** | ⚫ | 
 <br>
 
 ## 📋 Tipo de molho = Cor das plaquinhas.
-| Molho | Cor Visual | Preço |
-| :--- | :---: | :---: |
-| **Molho de Tomate** | 🟥 | + R$ 2,50 |
-| **Molho de Mostarda e Mel** | 🟨 | + R$ 2,50 |
-| **Molho Pesto** | 🟩 | + R$ 2,00 |
-| **Molho Branco** | ⬜ | + R$ 1,50 |
-| **Molho de Tomate Defumado** | ⬛ | + R$ 3,00 |
-| **Molho de Beterraba** | 🟦 | + R$ 2,00 |
+| Molho | Cor Visual | 
+| :--- | :---: | 
+| **Molho de Tomate** | 🟥 | 
+| **Molho de Mostarda e Mel** | 🟨 | 
+| **Molho Pesto** | 🟩 | 
+| **Molho Branco** | ⬜ | 
+| **Molho de Tomate Defumado** | ⬛ | 
+| **Molho de Beterraba** | 🟦 | 
 <br>
 
 ## 📋 Tipo de Complemonto = Tipo de incone da maquina.
-| Complemento | Ícone | Preço |
-| :--- | :---: | :---: |
-| **Queijo Extra** | 🏠 | + R$ 3,00 |
-| **Bacon Crocante** | ⛵ | + R$ 7,00 |
-| **Manjericão Fresco** | ⭐ | + R$ 1,00 |
-| **Nenhum** | | + R$ 0,00 |
+| Complemento | Ícone | 
+| :--- | :---: | 
+| **Queijo Extra** | 🏠 | 
+| **Bacon Crocante** | ⛵ | 
+| **Manjericão Fresco** | ⭐ | 
+| **Nenhum** | | |
 
 
 <br>
