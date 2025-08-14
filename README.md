@@ -4,21 +4,20 @@ Um sistema de e-commerce completo para uma pizzaria, onde o usuário pode montar
 <br>
 
 ## ✨ Funcionalidades Principais
-Montagem de Pizza Personalizada: Escolha cada detalhe da sua pizza.
+Montagem de Pizza Personalizada: Escolha cada detalhe da sua pizza.<br>
+Assistente Virtual com IA: Um assistente que cria nomes, descrições e combinações de sabores únicos para pizzas, baseado em temas, ingredientes ou restrições.<br>
+Cálculo de Preço em Tempo Real: O valor final é atualizado conforme as opções são selecionadas.<br>
 
-Assistente Virtual com IA: Um assistente que cria nomes, descrições e combinações de sabores únicos para pizzas, baseado em temas, ingredientes ou restrições.
+O projeto Panteão utiliza uma bancada automatizada para construir blocos que representam fisicamente a personalizações feitas pelo usuaruio no site. <br><br>
 
-Cálculo de Preço em Tempo Real: O valor final é atualizado conforme as opções são selecionadas.
 
-<br>
-
-## 📋 Opções e Preços
+## 📋 Opções de personalizaçõa.
 Personalize sua pizza com uma variedade de opções e sabores.
 
 
 
 
-## 📋 Tamanho = Número de andares.
+## 📋 Tamanho = Número de blocos que a bancada irá construir.
 | Tamanho | Andares |
 | :--- | :---: | 
 | **Broto** | 1 | 
@@ -34,15 +33,15 @@ Personalize sua pizza com uma variedade de opções e sabores.
 | **Massa Grossa** | ⚫ | 
 <br>
 
-## 📋 Tipo de molho = Cor das plaquinhas.
+## 📋 Tipo de molho = Cor das plaquinhas que iram nos blocos.
 | Molho | Cor Visual | 
 | :--- | :---: | 
 | **Molho de Tomate** | 🟥 | 
 | **Molho de Mostarda e Mel** | 🟨 | 
 | **Molho Pesto** | 🟩 | 
 | **Molho Branco** | ⬜ | 
-| **Molho de Tomate Defumado** | ⬛ | 
-| **Molho de Beterraba** | 🟦 | 
+| **Molho de Tomate Agridoce** | ⬛ | 
+| **Molho de Leite Condensado** | 🟦 | 
 <br>
 
 ## 📋 Tipo de Complemonto = Tipo de incone da maquina.
@@ -50,7 +49,7 @@ Personalize sua pizza com uma variedade de opções e sabores.
 | :--- | :---: | 
 | **Queijo Extra** | 🏠 | 
 | **Bacon Crocante** | ⛵ | 
-| **Manjericão Fresco** | ⭐ | 
+| **M&M** | ⭐ | 
 | **Nenhum** | | |
 
 
