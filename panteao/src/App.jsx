@@ -1,15 +1,16 @@
-import './App.css'
-import { GlobalContextProvider } from '../Context/GlobalContext'
+import './App.css';
+import GlobalContextProvider from './Context/GlobalContext';
+import { RouterProvider } from 'react-router-dom';
+import router from './Router/Router';
 
 function App() {
- 
   return (
     <>
       <GlobalContextProvider>
-        <h1>Router</h1>
+        <RouterProvider router={router} />
       </GlobalContextProvider>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
