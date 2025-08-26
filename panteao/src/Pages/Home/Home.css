@@ -1,3 +1,13 @@
 .div{
 display: flex;
 }
+
+.home-container{
+    background-color: #E7C8A7;
+    height: calc(100vh);
+    padding: 25px;
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    justify-content: center;
+}

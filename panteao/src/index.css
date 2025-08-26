@@ -1,12 +1,9 @@
 :root{
---azulfraco: #ADC8D9;
---branco: #F2F2F0;
---laranja: #F25C05;
---laranjaforte: #F24405 ;
---Preto: #0D0D0D ;
+--vermelho: #BC4749;
+--bege: #E7C8A7;
+--branco: #F2E8CF ; 
+--verde: #6A994E ;
 }
-/*trocar para a nova paleta de cores*/
-
 
 *{
   margin: 0;
