@@ -22,7 +22,7 @@ Personalize sua pizza com uma variedade de opções e sabores.
 
 
 
-## 📋 Tamanho = Número de blocos que a bancada irá construir.
+#### 📋 Tamanho = Número de blocos que a bancada irá construir.
 | Tamanho | Andares |
 | :--- | :---: | 
 | **Broto** | 1 | 
@@ -30,7 +30,7 @@ Personalize sua pizza com uma variedade de opções e sabores.
 | **Grande**| 3 | 
 <br>
 
-## 📋 Tipo de massa = Cor das basses da estrutura.
+### 📋 Tipo de massa = Cor das basses da estrutura.
 | Tipo de Massa | Cor Visual | 
 | :--- | :---: | 
 | **Massa Fina** | 🔴 | 
@@ -38,7 +38,7 @@ Personalize sua pizza com uma variedade de opções e sabores.
 | **Massa Grossa** | ⚫ | 
 <br>
 
-## 📋 Tipo de molho = Cor das plaquinhas que iram nos blocos.
+### 📋 Tipo de molho = Cor das plaquinhas que iram nos blocos.
 | Molho | Cor Visual | 
 | :--- | :---: | 
 | **Molho de Tomate** | 🟥 | 
@@ -49,7 +49,7 @@ Personalize sua pizza com uma variedade de opções e sabores.
 | **Molho de Leite Condensado** | 🟦 | 
 <br>
 
-## 📋 Tipo de Complemonto = Tipo de incone da maquina.
+### 📋 Tipo de Complemonto = Tipo de incone da maquina.
 | Complemento | Ícone | 
 | :--- | :---: | 
 | **Queijo Extra** | 🏠 | 
