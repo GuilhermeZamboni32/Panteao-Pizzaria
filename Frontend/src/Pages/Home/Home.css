@@ -1,13 +1,178 @@
-.div{
-display: flex;
+:root{
+  --vermelho: #BC4749;
+  --bege: #E7C8A7;
+  --branco: #F2E8CF; 
+  --verde: #6A994E;
+  --logo-font: 'Playfair Display', serif;
+  --body-font: 'Montserrat', sans-serif;
 }
 
-.home-container{
-    background-color: #E7C8A7;
-    height: calc(100vh);
-    padding: 25px;
-    display: flex;
-    flex-direction: row; 
-    align-items: center;
-    justify-content: center;
+/* --- Header --- */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 5%; 
+  background-color: var(--branco);
+  width: 100%;      
+  box-sizing: border-box; 
+}
+
+.logo {
+  font-family: var(--logo-font);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.nav-link {
+  margin: 0 20px;
+  text-decoration: none;
+  color: var(--vermelho);
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 5px;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--vermelho);
+}
+
+.cta-button {
+  padding: 12px 24px;
+  background-color: transparent;
+  border: 2px solid var(--vermelho);
+  border-radius: 5px;
+  color: var(--vermelho);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: var(--vermelho);
+  color: var(--branco);
+}
+
+/* --- Hero Section --- */
+.hero-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 500px;
+  background-image: url('https://images.unsplash.com/photo-1594007654729-407eedc4be65?q=80&w=1928&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  text-align: center;
+  color: var(--branco);
+}
+
+.hero-content {
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 40px;
+  border-radius: 10px;
+}
+
+.hero-content h1 {
+  font-family: var(--logo-font);
+  font-size: 4rem;
+  margin-bottom: 20px;
+  line-height: 1.2;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.hero-button {
+  padding: 15px 30px;
+  background-color: var(--verde);
+  color: var(--branco);
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.hero-button:hover {
+  background-color: var(--vermelho);
+}
+
+/* --- Featured Pizzas --- */
+.featured-pizzas {
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 0 5%;
+  text-align: center;
+  background-color: var(--branco);
+}
+
+.featured-pizzas h2 {
+  font-family: var(--logo-font);
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+}
+
+.pizza-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.pizza-card {
+  background-color: var(--bege);
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: center;
+  padding-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.pizza-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.pizza-info {
+  padding: 15px;
+}
+
+.pizza-info h3 {
+  font-family: var(--logo-font);
+  font-size: 1.5rem;
+  margin: 10px 0;
+}
+
+.pizza-info p {
+  font-size: 0.9rem;
+  color: var(--vermelho);
+  margin-bottom: 20px;
+}
+
+.add-button {
+  background-color: var(--verde);
+  color: var(--branco);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-button:hover {
+  background-color: var(--vermelho);
+}
+
+/* --- Responsividade --- */
+@media (max-width: 768px) {
+  .pizza-grid {
+    grid-template-columns: 1fr;
+  }
 }

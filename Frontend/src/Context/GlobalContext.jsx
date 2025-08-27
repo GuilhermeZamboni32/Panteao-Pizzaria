@@ -1,9 +1,13 @@
-import React from 'react'
+import React, { createContext, useState } from "react";
 
-function GlobalContextProvider() {
+export const GlobalContext = createContext();
+
+export const GlobalProvider = ({ children }) => {
+  const [state, setState] = useState("valor inicial");
+
   return (
-    <div>GlobalContext</div>
-  )
-}
-
-export default GlobalContextProvider
+    <GlobalContext.Provider value={{ state, setState }}>
+      {children}
+    </GlobalContext.Provider>
+  );
+};

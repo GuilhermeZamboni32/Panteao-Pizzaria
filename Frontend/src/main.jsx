@@ -5,8 +5,8 @@ import App from './App.jsx'
 import { GlobalProvider } from './Context/GlobalContext'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <GlobalContextProvider>
+    <GlobalProvider>
       <App />
-    </GlobalContextProvider>
+    </GlobalProvider>
   </StrictMode>
 )
