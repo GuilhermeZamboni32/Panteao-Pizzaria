@@ -12,8 +12,3 @@ python -m venv venv
 ```Bash
 pip install  -r requirements.txt
 ```
-
-3.1 - Caso necessario atualizar as dependências
-```Bash
-pip freeze > requirements.txt #(após a atualização)
-```
