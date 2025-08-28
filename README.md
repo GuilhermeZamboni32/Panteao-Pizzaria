@@ -13,7 +13,7 @@ Montagem de Pizza Personalizada: Escolha cada detalhe da sua pizza.<br>
 Assistente Virtual com IA: Um assistente que cria nomes, descrições e combinações de sabores únicos para pizzas, baseado em temas, ingredientes ou restrições.<br>
 Cálculo de Preço em Tempo Real: O valor final é atualizado conforme as opções são selecionadas.<br>
 
-O projeto Panteão utiliza uma bancada automatizada para construir blocos que representam fisicamente a personalizações feitas pelo usuaruio no site. <br><br>
+O projeto Panteão utiliza uma bancada automatizada para construir blocos que representam fisicamente as personalizações feitas pelo usuário no site. <br><br>
 
 
 ## 📋 Opções de personalizaçõa.
@@ -38,7 +38,7 @@ Personalize sua pizza com uma variedade de opções e sabores.
 | **Massa Grossa** | ⚫ | 
 <br>
 
-### 📋 Tipo de molho = Cor das plaquinhas que iram nos blocos.
+### 📋 Tipo de molho = Cor das plaquinhas que irão nos blocos.
 | Molho | Cor Visual | 
 | :--- | :---: | 
 | **Molho de Tomate** | 🟥 | 
@@ -49,7 +49,7 @@ Personalize sua pizza com uma variedade de opções e sabores.
 | **Molho de Leite Condensado** | 🟦 | 
 <br>
 
-### 📋 Tipo de Complemonto = Tipo de incone da maquina.
+### 📋 Tipo de Complemento = Tipo de ícone da máquina.
 | Complemento | Ícone | 
 | :--- | :---: | 
 | **Queijo Extra** | 🏠 | 
@@ -71,7 +71,7 @@ Personalize sua pizza com uma variedade de opções e sabores.
 <br><br>
 
 ## 💽 Instrução de instalação
-### Instalções Frontend
+### Instalações Frontend
 
 ```bash
 npm install
