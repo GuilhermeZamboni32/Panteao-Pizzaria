@@ -1,0 +1,6 @@
+tree ae150542e0b7bb7651a19060bbea50a3598195d7
+parent a3ee36128f2c0fac88a0c6c4fd6dbb9b30afa495
+author CafeinaC4 <vitordanielli3113@gmail.com> 1755806213 -0300
+committer CafeinaC4 <vitordanielli3113@gmail.com> 1755806213 -0300
+
+Alteração do backend para python, TODO: passar a atualização de criação de virtual enviorment para o grupo

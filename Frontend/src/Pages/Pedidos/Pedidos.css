@@ -23,14 +23,15 @@ display: flex;
 }
 .button-div-2{
     display: inline-block;
-    padding: 10px 20px;
-    border-radius: 50px; 
-    border: 2px solid #8B9A6F; 
+    padding: 2vh 5vh;
+    border-radius: 10vh; 
+    border: 0.4vh solid #8B9A6F; 
     background-color: #EFEBD9; 
     text-decoration: none;
     color: #000000;
     font-size: 24px;
     font-family: sans-serif;
+    
 }
 .button-div-3{
     display: inline-block;
