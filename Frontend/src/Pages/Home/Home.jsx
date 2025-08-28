@@ -1,5 +1,6 @@
 import React from 'react';
 import './Home.css';
+import { Link , NavLink} from 'react-router-dom';
 
 /*
 import pizzaCalabresa from './public/copia-pizzaCalabresa.png';
@@ -41,8 +42,7 @@ const Home = () => {
         <div className="logo">PANTEÃO</div>
         <nav>
           <a href="#inicio" className="nav-link active">Início</a>
-          <a href="#cardapio" className="nav-link">Cardápio</a>
-          <a href="#promocoes" className="nav-link">Promoções</a>
+          <Link to="/Pedidos" className="nav-link">Cardápio</Link>
           <a href="#contato" className="nav-link">Contato</a>
         </nav>
         <button className="cta-button">Pedir Agora</button>

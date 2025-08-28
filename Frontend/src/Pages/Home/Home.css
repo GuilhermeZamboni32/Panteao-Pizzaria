@@ -13,7 +13,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 5%; 
-  background-color: var(--branco);
+  background-color: var(--bege);
   width: 100%;      
   box-sizing: border-box; 
 }
@@ -33,7 +33,10 @@
   position: relative;
   padding-bottom: 5px;
 }
-
+.link-cardapio {
+  background-color: #ddd;
+  padding: 10px;
+}
 .nav-link.active::after {
   content: '';
   position: absolute;

@@ -1,3 +1,45 @@
 .div{
 display: flex;
 }
+.nav-link-2.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--vermelho);
+}
+.button-div{
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 50px; 
+    border: 2px solid #8B9A6F; 
+    background-color: #EFEBD9; 
+    text-decoration: none;
+    color: #000000;
+    font-size: 24px;
+    font-family: sans-serif;
+}
+.button-div-2{
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 50px; 
+    border: 2px solid #8B9A6F; 
+    background-color: #EFEBD9; 
+    text-decoration: none;
+    color: #000000;
+    font-size: 24px;
+    font-family: sans-serif;
+}
+.button-div-3{
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 50px; 
+    border: 2px solid #8B9A6F; 
+    background-color: #EFEBD9; 
+    text-decoration: none;
+    color: #000000;
+    font-size: 24px;
+    font-family: sans-serif;
+}
