@@ -1,14 +1,14 @@
 import './App.css';
-import GlobalContextProvider from './Context/GlobalContext';
+import { GlobalProvider } from './Context/GlobalContext';
 import { RouterProvider } from 'react-router-dom';
 import router from './Router/Router';
 
 function App() {
   return (
     <>
-      <GlobalContextProvider>
+      <GlobalProvider>
         <RouterProvider router={router} />
-      </GlobalContextProvider>
+      </GlobalProvider>
     </>
   );
 }
