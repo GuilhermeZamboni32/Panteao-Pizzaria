@@ -6,9 +6,9 @@ import os
 load_dotenv()
 
 uri = os.getenv('MONGODB_URI')
-# Cria uma instância do cliente MongoDB
+
 client = MongoClient(uri, server_api=ServerApi('1'))
-# Verifica a conexão com o banco de dados
+
 try:
     client.admin.command('ping')
     print("Pinged your deployment. You successfully connected to MongoDB!")
