@@ -29,17 +29,17 @@ function Pedidos() {
         <header className="main-header">
         <div className="logo">PANTEÃO</div>
         <nav>
-          <Link to="/" className="nav-link">Home</Link>
-          <a href="#cardapio" className="nav-link-2 active">cardapio</a>
+          <Link to="/" className="nav-link">inicio</Link>
+          <a href="/Pedidos" className="nav-link-3 active">cardapio</a>
           <a href="#contato" className="nav-link">Contato</a>
         </nav>
         <button className="cta-button">Pedir Agora</button>
       </header>
-
+      <div className='bottoes'>
       <button className='button-div'>salgadas</button>
       <button className=" button-div-2">doces</button>
       <button  className='button-div-3'>promoçoes</button>
-
+      </div>
       <main>
         <section className="featured-pizzas">
           <div className="pizza-grid">
