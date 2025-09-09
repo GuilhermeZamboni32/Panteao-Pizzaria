@@ -38,7 +38,7 @@ Personalize sua pizza com uma variedade de opções e sabores.
 | **Massa Grossa** | ⚫ | 
 <br>
 
-### 📋 Tipo de molho = Cor das plaquinhas que irão nos blocos.
+### 📋 Tipo de molho = Cor das plaquinhas que irão nos blocos.(deve ser trocado)
 | Molho | Cor Visual | 
 | :--- | :---: | 
 | **Molho de Tomate** | 🟥 | 
@@ -46,7 +46,7 @@ Personalize sua pizza com uma variedade de opções e sabores.
 | **Molho Pesto** | 🟩 | 
 | **Molho Branco** | ⬜ | 
 | **Molho de Tomate Agridoce** | ⬛ | 
-| **Molho de Leite Condensado** | 🟦 | 
+| **Molho de ** | 🟦 | 
 <br>
 
 ### 📋 Tipo de Complemento = Tipo de ícone da máquina.
