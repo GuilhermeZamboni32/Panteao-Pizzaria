@@ -29,16 +29,16 @@ function Pedidos() {
         <header className="main-header">
         <div className="logo">PANTEÃO</div>
         <nav>
-          <Link to="/" className="nav-link">inicio</Link>
-          <a href="/Pedidos" className="nav-link-3 active">cardapio</a>
+          <Link to="/" className="nav-link">Início</Link>
+          <a href="/Pedidos" className="nav-link-3 active">Cardápio</a>
           <a href="#contato" className="nav-link">Contato</a>
         </nav>
         <button className="cta-button">Pedir Agora</button>
       </header>
       <div className='bottoes'>
-      <button className='button-div'>salgadas</button>
-      <button className=" button-div-2">doces</button>
-      <button  className='button-div-3'>promoçoes</button>
+      <button className='button-div'>Salgadas</button>
+      <button className=" button-div-2">Doces</button>
+      <button  className='button-div-3'>Promoções</button>
       </div>
       <main>
         <section className="featured-pizzas">

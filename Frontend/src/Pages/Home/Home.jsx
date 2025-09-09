@@ -39,7 +39,7 @@ const Home = () => {
     <>
     
       <header className="main-header">
-        <div className="logo">PANTEÃO</div>
+        <div className="logo"><img className='logo-img' src="public/Logo-Preto_1.png" alt="" /></div>
         <nav>
           <a href="#inicio" className="nav-link active">Início</a>
           <Link to="/Pedidos" className="nav-link">Cardápio</Link>
