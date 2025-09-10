@@ -23,15 +23,14 @@ Esta seção define o "corpo" da pizza. A lógica principal é que o **tamanho e
 
 * **Opções de Tamanho :**A escolha do tamanho define quantos ingredientes a pizza ira ter:
     * **Broto:**  pizza pequena, pode ter de 0 a 3 ingredientes.
-    * **Media:** pizza pequena, pode ter de 0 a 6 ingredientes.
-    * **Grande:** pizza pequena, pode ter de 0 a 9 ingredientes.
+    * **Media:** pizza média, pode ter de 0 a 6 ingredientes.
+    * **Grande:** pizza grande, pode ter de 0 a 9 ingredientes.
 
 ### 2. A Escolha dos Ingredientes 
 Após definir a base, o usuário adiciona os complementos (recheios).
 
 * **Categorias de Ingredientes:** Esta coluna funciona como um menu para filtrar os ingredientes por tipo: `Carnes`, `Queijos`, `Frutas`, etc.
 
-* **Opções de Complementos (Sistema de Formas):** A grande inovação do sistema. O usuário não escolhe o ingrediente pelo nome, mas sim por uma **forma geométrica** associada a ele dentro da categoria selecionada.
 
     * **Exemplo Prático:**
         1. O usuário clica na categoria **"Queijos"**.
@@ -40,7 +39,7 @@ Após definir a base, o usuário adiciona os complementos (recheios).
 
 <br>
 
-## 📋 Legenda dos Componentes Visuais
+## 📋 Tabelas dos Componentes Visuais
 Aqui está o dicionário que traduz cada elemento visual do sistema.
 
 ###  Bases da Pizza
@@ -68,22 +67,37 @@ Aqui está o dicionário que traduz cada elemento visual do sistema.
 | | 🏠 | Frango |
 | | ⭐ | Calabresa |
 | | 🚫 | Camarão |
+
+| Categoria | Ícone | Ingrediente |
+| :--- | :---: | :--- |
 | 🧀 **Queijos**| ⛵ | Mussarela |
 | | 🏠 | Cheddar |
 | | ⭐ | Catupiry |
 | | 🚫 | Gorgonzola |
-| 🥗 **Saladas**| ⛵ | Alface |
+
+| Categoria | Ícone | Ingrediente |
+| :--- | :---: | :--- |
+| 🥗 **Saladas**| ⛵ | Rucula |
 | | 🏠 | Brócolis |
 | | ⭐ | Tomate |
-| | 🚫 | Gorgonzola |
+| | 🚫 | Azeitona Preta |
+
+| Categoria | Ícone | Ingrediente |
+| :--- | :---: | :--- |
 | 🍓 **Frutas** | ⛵ | Banana |
 | | 🏠 | Morango |
 | | ⭐ | Uva |
 | | 🚫 | Abacaxi |
-| 🍫 **Chocolates**| ⛵ | Branco |
-| | 🏠 | Preto |
-| | ⭐ | Ao Leite |
-| | 🚫 | Amargo |
+
+| Categoria | Ícone | Ingrediente |
+| :--- | :---: | :--- |
+| 🍫 **Chocolates**| ⛵ | Chocolate Branco |
+| | 🏠 | Chocolate Tradicional |
+| | ⭐ | Chocolate Ao Leite |
+| | 🚫 | Chocolate Meio Amargo |
+
+| Categoria | Ícone | Ingrediente |
+| :--- | :---: | :--- |
 | ✨ **Misturas/Extras**| ⛵ | Amendoim |
 | | 🏠 | M&M |
 | | ⭐ | Coco Ralado |
