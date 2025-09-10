@@ -3,20 +3,17 @@ import "./Header .css";
 
 function Header() {
   return (
-     <div className="container-navbar">
+     <div className="container-header">
       <div className="logo">
-        <Link className="espaco-logo" to="/"><img className="logovf" src="LogoVF.png" alt="" /></Link>
-        <span className="logo-texto">VidaFit</span>
+        <Link className="espaco-logo" to="/"><img className="#####" src="######" alt="" /></Link>
+        <span className="logo-texto">Panteão pizzaria</span>
       </div>
 
-      <div className="nav-links">
-        <Link className="texto" to="/home">Seleção de Profissionais</Link>
-        <Link className="texto" to="/Avaliacao">Avaliação</Link>
-        <Link className="texto" to="/perfil">Perfil</Link>
-        {/** */}
-        <Link className="texto" to="/telaexeredit">Exercicios</Link>
-        <Link className="texto" to="/teladietaedit">Dietas</Link>
-        <Link className="texto" to="/av_notas">Avaliações</Link>
+      <div className="header-links">
+        <Link className="texto" to="/home">Home</Link>
+        <Link className="texto" to="/Cardapio">Cardapio</Link>
+        <Link className="texto" to="/Contato">Contato</Link>
+        <Link className="texto" to="/Login">Login</Link>
       </div>
     </div>
   )
