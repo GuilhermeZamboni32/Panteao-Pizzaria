@@ -39,10 +39,10 @@ const Home = () => {
     <>
     
       <header className="main-header">
-        <div className="logo"><img className='logo-img' src="public/Logo-Preto_1.png" alt="" /></div>
+        <div className="logo"><img className='logo-img' src="/Logo-Preto_1.png" alt="" /></div>
         <nav>
           <a href="#inicio" className="nav-link active">Início</a>
-          <Link to="/Pedidos" className="nav-link">Cardápio</Link>
+          <Link to="/Cardapio" className="nav-link">Cardápio</Link>
           <a href="#contato" className="nav-link">Contato</a>
         </nav>
         <button className="cta-button">Pedir Agora</button>
@@ -53,7 +53,7 @@ const Home = () => {
         <section className="hero-section">
           <div className="hero-content">
             <h1>Sabores Artesanal<br />Pedido Digital</h1>
-            <button className="hero-button">Ver Cardápio</button>
+            <a href="/Cardapio" className="hero-button">Ver Cardápio</a>
           </div>
         </section>
 
