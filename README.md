@@ -130,9 +130,6 @@ npm install express
 npm install bcrypt
 npm install dotenv --save
 npm install @google/generative-ai
-pip install pymongo
-pip install google-generativeai
-pip install python-dotenv
 ````
 
 Este projeto foi desenvolvido pelos seguintes integrantes:
