@@ -1,3 +1,68 @@
-.header{
-display: flex;
-}
+.carrinho-container {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    background: #f4d8b3;
+    border-radius: 12px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+  
+  h2 {
+    margin-bottom: 15px;
+    background: #e3c49d;
+    padding: 8px;
+    border-radius: 8px;
+  }
+  
+  .pizza-item {
+    background: #fff8dc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    text-align: left;
+  }
+  
+  .pizza-item p {
+    margin: 5px 0;
+  }
+  
+  .preco {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .resumo-precos {
+    margin-top: 15px;
+    background: #ffe6c7;
+    padding: 10px;
+    border-radius: 8px;
+  }
+  
+  .linha {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+  }
+  
+  .linha.total {
+    font-weight: bold;
+    font-size: 18px;
+  }
+  
+  .btn-comprar {
+    margin-top: 15px;
+    padding: 12px 25px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #4caf50;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .btn-comprar:hover {
+    background: #2e7d32;
+  }
+  

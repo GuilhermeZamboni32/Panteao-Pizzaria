@@ -1,3 +1,82 @@
-.header{
+.pizza-builder {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background: #fdf5e6;
+    border-radius: 12px;
+    font-family: Arial, sans-serif;
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .section {
+    margin-bottom: 20px;
+  }
+  
+  .section h3 {
+    margin-bottom: 10px;
+  }
+  
+  .options {
     display: flex;
-    }
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background: #f5f5dc;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  button:hover {
+    background: #ddd;
+  }
+  
+  button.active {
+    background: #ffdab9;
+  }
+  
+  button.selected {
+    background: #90ee90;
+  }
+  
+  .sub-options {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .resumo {
+    padding: 15px;
+    background: #fff8dc;
+    border-radius: 8px;
+    margin-top: 20px;
+  }
+  
+  .carrinho {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .btn-carrinho {
+    background: #228b22;
+    color: white;
+    font-size: 18px;
+    padding: 15px 30px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .btn-carrinho:hover {
+    background: #006400;
+  }
+  
