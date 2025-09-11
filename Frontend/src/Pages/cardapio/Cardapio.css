@@ -1,0 +1,67 @@
+:root{
+    --vermelho: #BC4749;
+    --bege: #E7C8A7;
+    --branco: #F2E8CF; 
+    --verde: #6A994E;
+    --logo-font: 'Playfair Display', serif;
+    --body-font: 'Montserrat', sans-serif;
+}
+.div{
+display: flex;
+}
+.nav-link-3 {
+    color: var(--vermelho);
+    position: relative;
+    text-decoration: none;
+}
+.nav-link-3.active:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--vermelho);
+  }
+.button-div{
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 50px; 
+    border: 2px solid #8B9A6F; 
+    background-color: #EFEBD9; 
+    text-decoration: none;
+    color: #000000;
+    font-size: 24px;
+    font-family: sans-serif;
+}
+.button-div-2{
+    display: inline-block;
+    padding: 2vh 5vh;
+    border-radius: 10vh; 
+    border: 0.4vh solid #8B9A6F; 
+    background-color: #EFEBD9; 
+    text-decoration: none;
+    color: #000000;
+    font-size: 24px;
+    font-family: sans-serif;
+    
+}
+.button-div-3{
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 50px; 
+    border: 2px solid #8B9A6F; 
+    background-color: #EFEBD9; 
+    text-decoration: none;
+    color: #000000;
+    font-size: 24px;
+    font-family: sans-serif;
+}
+.bottoes{
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+margin-top: 5vh;
+}
