@@ -1,0 +1,49 @@
+:root{
+--vermelho: #BC4749;
+--bege: #E7C8A7;
+--branco: #F2E8CF ; 
+--verde: #6A994E ;
+--preto: #000000 ;
+}
+
+.container-header {
+  width: 100%;
+  height: 80px;
+  background-color: var(--bege);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  height: 10%;
+}
+.espaco-logo {
+  height: 60px;
+  width: 60px;
+}
+.logo-preto{
+  height: 60px;
+  width: 60px;
+}
+.texto-logo{
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--preto);
+  margin-left: 10px;
+}
+
+.texto-header{
+    font-size: 18px;
+    color: var(--preto);
+    text-decoration: none;
+    margin: 0 15px;
+}
+
+.texto-header:hover{
+    color: var(--vermelho);
+}

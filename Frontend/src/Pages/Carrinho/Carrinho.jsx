@@ -1,5 +1,7 @@
 import React from 'react'
-import Carrinho from "Carrinho"
+import './Carrinho.css';
+
+
 function Carrinho() {
     const [cartItems, setCartItems] = useState([
         {
