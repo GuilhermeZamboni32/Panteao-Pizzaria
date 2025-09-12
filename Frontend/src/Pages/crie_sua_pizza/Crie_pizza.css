@@ -1,82 +1,218 @@
-.pizza-builder {
-    max-width: 800px;
-    margin: auto;
-    padding: 20px;
-    background: #fdf5e6;
-    border-radius: 12px;
-    font-family: Arial, sans-serif;
-  }
-  
-  h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .section {
-    margin-bottom: 20px;
-  }
-  
-  .section h3 {
-    margin-bottom: 10px;
-  }
-  
-  .options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 8px;
-    background: #f5f5dc;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  button:hover {
-    background: #ddd;
-  }
-  
-  button.active {
-    background: #ffdab9;
-  }
-  
-  button.selected {
-    background: #90ee90;
-  }
-  
-  .sub-options {
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .resumo {
-    padding: 15px;
-    background: #fff8dc;
-    border-radius: 8px;
-    margin-top: 20px;
-  }
-  
-  .carrinho {
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  .btn-carrinho {
-    background: #228b22;
+/* Importando uma fonte similar à da imagem */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Estilos Globais */
+body {
+  background-color: #f0ebe5; /* Cor de fundo geral */
+  font-family: 'Poppins', sans-serif;
+  color: #4a4a4a;
+}
+
+/* Container Principal */
+.crie-pizza-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Divide a tela em 2/3 para esquerda e 1/3 para direita */
+  gap: 20px;
+  padding: 20px;
+  max-width: 1400px;
+  margin: auto;
+}
+
+.coluna-esquerda, .coluna-direita {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Estilo Padrão para Seções */
+.secao-container {
+  background-color: #fdf5ec; /* Cor de fundo dos painéis principais */
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.secao-titulo {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.opcoes-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+/* Estilo Padrão para Cartões de Opção */
+.card-opcao {
+  background-color: #fff;
+  border: 2px solid #e0d9d1;
+  border-radius: 10px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+}
+
+.card-opcao:hover {
+  border-color: #c7b299;
+  transform: translateY(-2px);
+}
+
+.card-opcao.selecionado {
+  border-color: #b98b4e; /* Cor da borda quando selecionado */
+  box-shadow: 0 0 10px rgba(185, 139, 78, 0.3);
+  font-weight: 500;
+}
+
+/* Tamanho da Pizza */
+.card-opcao.tamanho {
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-opcao.tamanho p {
+  margin: 0;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.card-opcao.tamanho span {
+  font-size: 0.8em;
+  color: #777;
+}
+
+.circulo-tamanho {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid #e0d9d1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4em;
+  font-weight: 600;
+  background-color: #f7f1e9;
+  margin: 10px 0;
+}
+
+.card-opcao.tamanho.selecionado .circulo-tamanho {
+  border-color: #b98b4e;
+}
+
+/* Tipo de Molho */
+.opcoes-container.molhos {
+  flex-direction: column;
+}
+.card-opcao.molho p {
+  margin: 0;
+  font-weight: 600;
+}
+.card-opcao.molho span {
+  font-size: 0.9em;
+  color: #666;
+}
+
+/* Ingredientes */
+.card-opcao.categoria {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background-color: #f5f5f5;
+}
+.card-opcao.categoria.selecionado {
+    background-color: #e86a6a; /* Cor de fundo para categoria de carne selecionada */
     color: white;
-    font-size: 18px;
-    padding: 15px 30px;
-    border-radius: 12px;
-    cursor: pointer;
-    border: none;
-  }
-  
-  .btn-carrinho:hover {
-    background: #006400;
-  }
-  
+    border-color: #d9534f;
+}
+
+.opcoes-container.ingredientes {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 15px;
+}
+.card-opcao.ingrediente {
+  background-color: #fff;
+}
+.card-opcao.ingrediente.selecionado {
+  background-color: #f0eada;
+  border-color: #b98b4e;
+}
+
+/* Resumo e Pagamento */
+.resumo-e-pagamento-container {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 15px;
+    align-items: stretch;
+}
+
+.resumo-container {
+    background-color: #fbeedb; /* Cor de fundo do resumo */
+    border-radius: 15px;
+    padding: 20px;
+    grid-column: 1 / -1; /* Ocupa as duas colunas inicialmente */
+}
+
+/* Quando dentro do container maior, ajusta para a primeira coluna */
+.resumo-e-pagamento-container > .resumo-container {
+    grid-column: 1 / 2;
+}
+
+.resumo-detalhes p {
+  margin: 5px 0;
+}
+.resumo-detalhes ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 10px 0 0 0;
+}
+.resumo-detalhes li {
+  padding-left: 15px;
+  position: relative;
+}
+
+/* Adicionando um "bullet" customizado para a lista de ingredientes */
+.resumo-detalhes li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #b98b4e;
+}
+
+
+.pagamento-container {
+  background-color: #5cb85c; /* Cor verde do botão de pagamento */
+  color: white;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+.pagamento-container:hover {
+    background-color: #4cae4c;
+}
+
+.pagamento-container p {
+  margin: 0 0 15px 0;
+  font-weight: 600;
+  font-size: 1.1em;
+}
+
+.pagamento-icone {
+  font-size: 3.5em;
+}

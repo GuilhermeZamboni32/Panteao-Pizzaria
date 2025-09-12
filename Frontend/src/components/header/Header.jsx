@@ -7,7 +7,7 @@ function Header (){
      <div className="container-header">
       <div className="logo">
         <Link className="espaco-logo" to="/">
-        <img className="Logo-preto" src="Logo-preto.png" alt="" />
+       {/**  <img className="Logo-preto" src="Logo-preto.png" alt="" />*/}
         </Link>
         <span className="texto-logo">Panteão pizzaria</span>
       </div>
@@ -17,6 +17,7 @@ function Header (){
         <Link className="texto-header" to="/Cardapio">Cardapio</Link>
         <Link className="texto-header" to="/Contato">Contato</Link>
         <Link className="texto-header" to="/Login">Login</Link>
+        <Link className="texto-header" to="/Crie_Pizza">Crie a sua pizza</Link>
       </div>
     </div>
   )

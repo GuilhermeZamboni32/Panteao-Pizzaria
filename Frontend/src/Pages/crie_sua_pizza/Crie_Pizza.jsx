@@ -1,8 +1,23 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
-import './Crie_Pizza.css'
+import { useNavigate } from "react-router-dom";
+import './Crie_Pizza.css';
 
-// ingredientes organizados por categoria
+// Importando ícones para as categorias
+import { 
+  FaBacon, FaCheese, FaLeaf, FaAppleAlt, FaCookieBite, FaPlusSquare, FaShoppingCart 
+} from "react-icons/fa";
+
+// Mapeamento de categorias para ícones
+const iconesCategoria = {
+  Carnes: <FaBacon />,
+  Queijos: <FaCheese />,
+  Saladas: <FaLeaf />,
+  Frutas: <FaAppleAlt />,
+  Chocolates: <FaCookieBite />,
+  Complementos: <FaPlusSquare />,
+};
+
+// Ingredientes organizados por categoria
 const ingredientesPorCategoria = {
   Carnes: ["Bacon", "Frango", "Calabresa", "Camarão"],
   Queijos: ["Mussarela", "Cheddar", "Parmesão", "Gorgonzola"],
@@ -12,110 +27,153 @@ const ingredientesPorCategoria = {
   Complementos: ["Milho", "Azeitona", "Orégano", "Catupiry"]
 };
 
-function Crie_Pizza () {
+function Crie_Pizza() {
   const navigate = useNavigate();
 
-  const [tamanho, setTamanho] = useState(null);
-  const [limite, setLimite] = useState(0);
-  const [molho, setMolho] = useState(null);
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
-  const [ingredientes, setIngredientes] = useState([]);
+  const [tamanho, setTamanho] = useState("Média"); // Estado inicial como na imagem
+  const [limite, setLimite] = useState(3); // Limite inicial para Média
+  const [molho, setMolho] = useState("Molho de Tomate"); // Estado inicial como na imagem
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState("Carnes"); // Estado inicial como na imagem
+  const [ingredientes, setIngredientes] = useState([
+    "Cheddar", "Calabresa", "Tomate", "Brócolis", "Bacon"
+  ]); // Ingredientes de exemplo da imagem
 
-  const irParaCarrinho = () => {
-    navigate("/carrinho", { state: { carrinho: [{ tamanho, molho, ingredientes }] } });
+  const irParaPagamento = () => {
+    // A lógica original enviava para /carrinho, pode ser ajustada conforme necessário
+    navigate("/pagamento", { state: { pizza: { tamanho, molho, ingredientes } } });
   };
-  
+
   const selecionarTamanho = (nome, limiteIngredientes) => {
     setTamanho(nome);
     setLimite(limiteIngredientes);
-    setIngredientes([]); // resetar ingredientes ao mudar tamanho
-  };
-
-  const selecionarMolho = (tipo) => {
-    setMolho(tipo);
+    setIngredientes([]); // Resetar ingredientes ao mudar tamanho
   };
 
   const adicionarIngrediente = (ing) => {
     if (ingredientes.includes(ing)) {
       setIngredientes(ingredientes.filter((i) => i !== ing));
     } else {
+      // A imagem indica um limite de 3 para todos, mas o código base tinha limites diferentes.
+      // Vou manter a lógica do código base (limite dinâmico).
       if (ingredientes.length < limite) {
         setIngredientes([...ingredientes, ing]);
       } else {
-        alert(`Limite de ${limite} ingredientes para pizza ${tamanho}`);
+        alert(`Limite de ${limite} ingredientes atingido para a pizza ${tamanho}.`);
       }
     }
   };
 
   return (
-    <div className="pizza-builder">
-      <h2>Crie sua pizza</h2>
-
-      {/* Tamanho */}
-      <div className="section">
-        <h3>Tamanho da Pizza</h3>
-        <div className="options">
-          <button onClick={() => selecionarTamanho("Broto", 3)}>Broto (20cm)</button>
-          <button onClick={() => selecionarTamanho("Média", 6)}>Média (30cm)</button>
-          <button onClick={() => selecionarTamanho("Grande", 9)}>Grande (45cm)</button>
-        </div>
-      </div>
-
-      {/* Molho */}
-      <div className="section">
-        <h3>Tipo de Molho</h3>
-        <div className="options">
-          <button onClick={() => selecionarMolho("Molho de Tomate")}>Molho de Tomate</button>
-          <button onClick={() => selecionarMolho("Molho Doce")}>Molho Doce</button>
-        </div>
-      </div>
-
-      {/* Ingredientes */}
-      <div className="section">
-        <h3>Ingredientes</h3>
-        <div className="options">
-          {Object.keys(ingredientesPorCategoria).map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setCategoriaSelecionada(cat)}
-              className={categoriaSelecionada === cat ? "active" : ""}
+    <div className="crie-pizza-container">
+      <div className="coluna-esquerda">
+        {/* Seção Tamanho da Pizza */}
+        <div className="secao-container">
+          <h3 className="secao-titulo">Tamanho da Pizza</h3>
+          <div className="opcoes-container">
+            <div
+              className={`card-opcao tamanho ${tamanho === 'Broto' ? 'selecionado' : ''}`}
+              onClick={() => selecionarTamanho("Broto", 3)}
             >
-              {cat}
-            </button>
-          ))}
+              <p>Broto</p>
+              <div className="circulo-tamanho">20cm</div>
+              <span>Você pode escolher de 0 a 3 ingredientes</span>
+            </div>
+            <div
+              className={`card-opcao tamanho ${tamanho === 'Média' ? 'selecionado' : ''}`}
+              onClick={() => selecionarTamanho("Média", 6)}
+            >
+              <p>Média</p>
+              <div className="circulo-tamanho">30cm</div>
+              <span>Você pode escolher de 0 a 6 ingredientes</span>
+            </div>
+            <div
+              className={`card-opcao tamanho ${tamanho === 'Grande' ? 'selecionado' : ''}`}
+              onClick={() => selecionarTamanho("Grande", 9)}
+            >
+              <p>Grande</p>
+              <div className="circulo-tamanho">45cm</div>
+              <span>Você pode escolher de 0 a 9 ingredientes</span>
+            </div>
+          </div>
         </div>
 
-        {categoriaSelecionada && (
-          <div className="sub-options">
-            {ingredientesPorCategoria[categoriaSelecionada].map((ing) => (
-              <button
-                key={ing}
-                className={ingredientes.includes(ing) ? "selected" : ""}
-                onClick={() => adicionarIngrediente(ing)}
+        {/* Seção Ingredientes */}
+        <div className="secao-container">
+          <h3 className="secao-titulo">Ingredientes</h3>
+          <div className="opcoes-container categorias">
+            {Object.keys(ingredientesPorCategoria).map((cat) => (
+              <div
+                key={cat}
+                className={`card-opcao categoria ${categoriaSelecionada === cat ? 'selecionado' : ''}`}
+                onClick={() => setCategoriaSelecionada(cat)}
               >
-                {ing}
-              </button>
+                {iconesCategoria[cat]}
+                <span>{cat}</span>
+              </div>
             ))}
           </div>
-        )}
+          
+          {categoriaSelecionada && (
+            <div className="opcoes-container ingredientes">
+              {ingredientesPorCategoria[categoriaSelecionada].map((ing) => (
+                <div
+                  key={ing}
+                  className={`card-opcao ingrediente ${ingredientes.includes(ing) ? 'selecionado' : ''}`}
+                  onClick={() => adicionarIngrediente(ing)}
+                >
+                  {ing}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Resumo */}
-      <div className="resumo">
-        <h3>Sua Pizza</h3>
-        <p><strong>Tamanho:</strong> {tamanho || "Não selecionado"}</p>
-        <p><strong>Molho:</strong> {molho || "Não selecionado"}</p>
-        <p><strong>Ingredientes:</strong> {ingredientes.length > 0 ? ingredientes.join(", ") : "Nenhum"}</p>
-      </div>
+      <div className="coluna-direita">
+        {/* Seção Tipo de Molho */}
+        <div className="secao-container">
+          <h3 className="secao-titulo">Tipo de molho</h3>
+          <div className="opcoes-container molhos">
+             <div
+              className={`card-opcao molho ${molho === 'Molho de Tomate' ? 'selecionado' : ''}`}
+              onClick={() => setMolho("Molho de Tomate")}
+            >
+              <p>Molho De Tomate</p>
+              <span>(Para pizzas salgadas)</span>
+            </div>
+            <div
+              className={`card-opcao molho ${molho === 'Molho Doce' ? 'selecionado' : ''}`}
+              onClick={() => setMolho("Molho Doce")}
+            >
+              <p>Molho Doce</p>
+              <span>(Para pizzas doces)</span>
+            </div>
+          </div>
+        </div>
 
-      {/* Botão para carrinho */}
-      <div className="carrinho">
-        <button className="btn-carrinho" onClick={irParaCarrinho}>
-          Ir para a área de pagamento 🛒
-        </button>
+        {/* Seção Resumo e Pagamento */}
+        <div className="resumo-e-pagamento-container">
+            <div className="resumo-container">
+                <h3 className="secao-titulo">Sua Pizza</h3>
+                <div className="resumo-detalhes">
+                    <p><strong>Tamanho:</strong> {tamanho}</p>
+                    <p><strong>Tipo de Molho:</strong> {molho}</p>
+                    <p><strong>Ingredientes:</strong></p>
+                    <ul>
+                        {/* A imagem mostra uma lista de ingredientes que não condiz com as seleções, 
+                        então o código vai listar os ingredientes atualmente selecionados. */}
+                        {ingredientes.map(ing => <li key={ing}>{ing}</li>)}
+                    </ul>
+                </div>
+            </div>
+            <div className="pagamento-container" onClick={irParaPagamento}>
+                <p>Ir para a área de pagamento</p>
+                <FaShoppingCart className="pagamento-icone" />
+            </div>
+        </div>
       </div>
     </div>
   );
-};
+}
 
 export default Crie_Pizza;
