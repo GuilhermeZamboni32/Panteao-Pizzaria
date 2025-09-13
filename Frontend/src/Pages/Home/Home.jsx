@@ -14,11 +14,11 @@ function Home() {
            {/**<img src="imagem-fundo-home.png" alt="" />*/}
         </div>
 
-        {/**APENAS PARA FACILITAR NA SPRINT01 */}
+        {/**APENAS PARA FACILITAR NA SPRINT01 
         <div className='divide-telas'></div>
         <Crie_Pizza />
         <div className='divide-telas'></div>
-        <Carrinho />
+        <Carrinho />*/}
         
       </div>
     </div>

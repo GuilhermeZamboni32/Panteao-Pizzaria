@@ -1,7 +1,7 @@
 import './App.css';
-import { GlobalProvider } from './Context/GlobalContext';
+import { GlobalProvider } from './context/GlobalContext';
 import { RouterProvider } from 'react-router-dom';
-import router from './Router/Router';
+import router from './router/Router';
 
 function App() {
   return (

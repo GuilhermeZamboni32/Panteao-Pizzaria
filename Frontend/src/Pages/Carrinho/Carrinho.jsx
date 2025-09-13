@@ -1,7 +1,8 @@
 // Carrinho.jsx
 import { useLocation } from "react-router-dom";
+import Header from '../../components/header/Header';
 
-const Carrinho = () => {
+function Carrinho (){
   const location = useLocation();
   const carrinho = location.state?.carrinho || []; // garante array
 
@@ -23,6 +24,7 @@ const Carrinho = () => {
 
   return (
     <div className="carrinho-container">
+      <Header />
       <h2>Resumo da Compra</h2>
 
       {carrinho.length === 0 ? (
