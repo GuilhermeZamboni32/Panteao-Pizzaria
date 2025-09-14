@@ -1,6 +1,6 @@
 import React from 'react'
 import { Player } from '@lottiefiles/react-lottie-player'
-import AnimacaoModal from '../assets/AnimacaoModal.json' // ajuste o caminho se necessário
+//import AnimacaoModalVerde from '../assets/AnimacaoModalVerde.json'
 import './ModalCompartilhado.css'
 
 function ModalVerde({ mensagem, onClose }) {
@@ -10,7 +10,7 @@ function ModalVerde({ mensagem, onClose }) {
         <Player
           autoplay
           keepLastFrame
-          src={AnimacaoModal}
+          src={AnimacaoModalVerde}
           style={{ height: '200px', width: '200px' }}
         />
         <p className="modal-verde-texto">{mensagem}</p>
