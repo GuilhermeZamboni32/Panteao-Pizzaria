@@ -1,0 +1,91 @@
+.pagina-login{
+  background-color: var(--branco);
+  min-height: 100vh;
+}
+
+    .container-login {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #c81dd8;
+    }
+
+    .coluna-login-esquerda{
+        background-color: #a03030;
+        height: 100%;
+        width: 50%;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+    }
+        .IMAGEM-TESTE{
+            width: 100%;
+            height: auto;
+        }
+
+    .coluna-login-direita{
+        background-color: #13c72b;
+        height: 100%;
+        width: 50%;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .container-info-login{
+            width: 80%;
+            height: 80%;
+            background-color: #0a5e15;
+            display: flex;
+            flex-direction: column;
+            align-items: column;
+        }
+            .container-titulo-login{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 20px;
+                background-color: #5c1663;
+                height: 10%;
+                width: 100%;
+            }
+                .titulo-login{
+                    font-size: 2rem;
+                    color: var(--branco);
+                    margin-top: 10px;
+                }
+
+        .container-label-login{
+            display: flex;
+            flex-direction: column;
+            margin-top: 10px;
+            background-color: #6baf12;
+            height: 50%;
+            width: 100%;
+        }
+
+            .label-login{
+                font-size: 1.2rem;
+                color: var(--branco);
+                margin-bottom: 5px;
+            }
+        .container-botton-login{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            background-color: aqua;
+            height: 40%;
+            width: 100%;
+        }
+            .botton-login{
+                width: 100%;
+                height: 40px;
+                background-color: #5e0a2a;
+                color: var(--branco);
+                font-size: 1.2rem;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }

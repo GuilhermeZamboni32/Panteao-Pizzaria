@@ -20,21 +20,22 @@
 .logo {
   display: flex;
   align-items: center;
-  height: 10%;
+ 
 }
 .espaco-logo {
   height: 60px;
   width: 60px;
 }
-.logo-preto{
+.Logo-Preto-P{
   height: 60px;
-  width: 60px;
+  width: 70px;
+ 
 }
 .texto-logo{
   font-size: 24px;
   font-weight: bold;
   color: var(--preto);
-  margin-left: 10px;
+  margin-left: 20px;
 }
 
 .texto-header{

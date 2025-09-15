@@ -97,7 +97,7 @@ function Cardapio({ adicionarAoCarrinho }) {
 
         {/* Botão de "Crie sua pizza" com mais destaque */}
         <div className="cta-crie-pizza">
-            <button onClick={() => navigate("/crie-pizza")}>
+            <button onClick={() => navigate("/crie_pizza")}>
                 Não encontrou o que queria? <strong>Crie sua própria pizza!</strong>
             </button>
         </div>
