@@ -15,12 +15,12 @@ const iconesCategoria = {
 };
 
 const ingredientesPorCategoria = {
-    Carnes: ["Bacon", "Frango", "Calabresa", "Camarão"],
-    Queijos: ["Mussarela", "Cheddar", "Parmesão", "Gorgonzola"],
-    Saladas: ["Tomate", "Brócolis", "Rúcula", "Cebola"],
-    Frutas: ["Abacaxi", "Morango", "Banana", "Maçã"],
-    Chocolates: ["Chocolate Preto", "Chocolate Branco", "Nutella", "Ovomaltine"],
-    Complementos: ["Milho", "Orégano","M&M", "Coco ralado"]
+    Carnes: ["SN=Bacon", "CA=Frango", "BA=Calabresa", "ES=Camarão"],
+    Queijos: ["SN=Mussarela", "CA=Cheddar", "BA=Parmesão", "ES=Gorgonzola"],
+    Saladas: ["SN=Tomate", "CA=Brócolis", "BA=Rúcula", "ES=Cebola"],
+    Frutas: ["SN=Abacaxi", "CA=Morango", "BA=Banana", "ES=Maçã"],
+    Chocolates: ["SN=Chocolate Preto", "CA=Chocolate Branco", "BA=Nutella", "ES=Ovomaltine"],
+    Complementos: ["SN=Milho", "CA=Orégano","BA=M&M", "ES=Coco ralado"]
 };
 
 
