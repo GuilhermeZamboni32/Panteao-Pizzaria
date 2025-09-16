@@ -1,91 +1,130 @@
-.pagina-login{
-  background-color: var(--branco);
-  min-height: 100vh;
+/* Definindo as variáveis de cor no root */
+:root {
+  --vermelho: #BC4749;
+  --bege: #E7C8A7;
+  --branco: #F2E8CF;
+  --verde: #6A994E;
+  --preto: #000000;
 }
 
-    .container-login {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background-color: #c81dd8;
-    }
 
-    .coluna-login-esquerda{
-        background-color: #a03030;
-        height: 100%;
-        width: 50%;
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-    }
-        .IMAGEM-TESTE{
-            width: 100%;
-            height: auto;
-        }
+.pagina-login {
+  background-color: var(--branco);
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-    .coluna-login-direita{
-        background-color: #13c72b;
-        height: 100%;
-        width: 50%;
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-    }
 
-        .container-info-login{
-            width: 80%;
-            height: 80%;
-            background-color: #0a5e15;
-            display: flex;
-            flex-direction: column;
-            align-items: column;
-        }
-            .container-titulo-login{
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                margin-bottom: 20px;
-                background-color: #5c1663;
-                height: 10%;
-                width: 100%;
-            }
-                .titulo-login{
-                    font-size: 2rem;
-                    color: var(--branco);
-                    margin-top: 10px;
-                }
+.container-login {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 5rem;
+}
 
-        .container-label-login{
-            display: flex;
-            flex-direction: column;
-            margin-top: 10px;
-            background-color: #6baf12;
-            height: 50%;
-            width: 100%;
-        }
 
-            .label-login{
-                font-size: 1.2rem;
-                color: var(--branco);
-                margin-bottom: 5px;
-            }
-        .container-botton-login{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-            background-color: aqua;
-            height: 40%;
-            width: 100%;
-        }
-            .botton-login{
-                width: 100%;
-                height: 40px;
-                background-color: #5e0a2a;
-                color: var(--branco);
-                font-size: 1.2rem;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
+.coluna-imagem-login {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.imagem-login {
+  max-width: 1000px;
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+}
+
+
+.coluna-formulario-login {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+}
+
+
+.container-info-form-login {
+  background-color: var(--bege);
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.titulo-form-login {
+  color: var(--preto);
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-login {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group-login {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.form-group-login label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.form-group-login input {
+  background-color: var(--branco);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 1rem;
+  color: var(--vermelho);
+  transition: border-color 0.3s ease;
+}
+
+.form-group-login input:focus {
+  outline: none;
+  border-color: var(--verde);
+}
+
+.form-group-login input::placeholder {
+  color: var(--verde);
+  opacity: 0.8;
+  font-weight: bold;
+}
+
+/* Botão de Logar */
+.botao-form-login {
+  background-color: var(--verde);
+  color: var(--branco);
+  border: none;
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: filter 0.3s ease;
+  margin-top: 1rem;
+}
+
+.botao-form-login:hover {
+  filter: brightness(0.9);
+}

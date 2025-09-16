@@ -1,37 +1,42 @@
-import React from 'react'
-import './Login.css'
-import Header from '../../components/header/Header';
+import React from 'react';
+import './login.css'; // Importa o novo CSS
+import Header from '../../components/pastaheader/Header';
 
 function Login() {
   return (
-     <div className='pagina-login'>
+    <div className='pagina-login'>
       <Header />
-      <div className='container-login'>
-          <div className='coluna-login-esquerda'>
-           {/* <img className='IMAGEM_TESTE' src="imagens-de-fundo/IMAGEM-TESTE.png" alt="" />*/}
-          aaaaaaaaaaaaaaa
-          
+      <main className='container-login'>
+        <div className='coluna-imagem-login'>
+          <img
+            className='imagem-login'
+            src="/imagens-de-fundo/pizza-doce-sem-fundo.png" 
+            alt="Pizza de chocolate com morangos"
+          />
+        </div>
+
+        <div className='coluna-formulario-login'>
+          <div className='container-info-form-login'>
+            <h1 className='titulo-form-login'>Login</h1>
+
+            <form className='form-login'>
+              <div className='form-group-login'>
+                <label htmlFor="nome">Nome:</label>
+                <input type="text" id="nome" placeholder="Nome:" />
+              </div>
+
+              <div className='form-group-login'>
+                <label htmlFor="senha">Senha:</label>
+                <input type="password" id="senha" placeholder="Senha:" />
+              </div>
+
+              <button className='botao-form-login' type="submit">Logar</button>
+            </form>
           </div>
-
-          <div className='coluna-login-direita'>
-            <div className='container-info-login'>
-              <div className='container-titulo-login'>
-                <h1 className='titulo-login'>Login</h1>
-              </div>
-
-              <div className='container-label-login'>
-              <label className='label-login' htmlFor="">Nome:</label>
-              <label className='label-login' htmlFor="">senha:</label>
-              </div>
-
-              <div className='container-botton-login'>
-              <button className='botton-login'>Logar</button>
-              </div>
-            </div>
-          </div>
-      </div>
+        </div>
+      </main>
     </div>
-  )
+  );
 }
 
-export default Login
+export default Login;
