@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Cardapio.css';
-import Header from '../../components/header/Header';
+import Header from '../../components/pastaheader/Header';
  // 1. Importando os dados do arquivo separado
 
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import './Home.css';
 import { Link , NavLink} from 'react-router-dom';
-import Header from '../../components/header/Header';
+import Header from '../../components/pastaheader/Header';
 import Crie_Pizza from '../crie_sua_pizza/Crie_Pizza';
 import Carrinho from '../carrinho/Carrinho';
 
