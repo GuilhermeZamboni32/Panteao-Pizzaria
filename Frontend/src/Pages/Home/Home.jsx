@@ -12,10 +12,13 @@ function Home() {
       <Header />
       <div className='container-home'>
         <div className='imagem-fundo-home'>
-           {/**<img src="imagem-fundo-home.png" alt="" />*/}
+           {/**<img src="imagem-fundo-home.png" alt="" />
+            * 
+            * 
+        <Teste />
+           */}
         </div>
 
-        <Teste />
         
       </div>
     </div>
