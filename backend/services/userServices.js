@@ -1,88 +1,151 @@
-const { ObjectId } = require('mongodb');
-const bcrypt = require('bcrypt');
-const db = require('../config/db'); // Assuming db is exported from a config file
+import pool from '../config/db.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
-const userCollection = db.collection('usuarios');
+dotenv.config();
 
-// Serialize user data for public response
-const userPublicSerializer = (user) => ({
-  id: user._id.toString(),
-  nome: user.nome,
-  email: user.email,
-  endereco: user.endereco,
-  numero_cartao: user.numero_cartao,
-  validade_cartao: user.validade_cartao,
-  cvv: user.cvv,
-});
+// Function to register a new user
+export const registerUser = async (nome, email, senha, telefone, numero_cartao, validade_cartao, cvv) => {
+  const client = await pool.connect();
+  try {
+    // Check if user already exists
+    const userCheck = await client.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (userCheck.rows.length > 0) {
+      throw new Error('User already exists');
+    }
 
-// Get user document by ID
-const getUserDocById = async (userId) => {
-  return await userCollection.findOne({ _id: new ObjectId(userId) });
-};
+    // Hash important information
+    const hashedPassword = await bcrypt.hash(senha, 10);
+    const hashedNumeroCartao = await bcrypt.hash(numero_cartao, 10);
+    const hashedCvv = await bcrypt.hash(cvv, 10);
 
-// Get user document by email
-const getUserDocByEmail = async (email) => {
-  return await userCollection.findOne({ email });
-};
+    // Insert new user into the database
+    const result = await client.query(
+      'INSERT INTO users (nome, email, senha, telefone, numero_cartao, validade_cartao, cvv) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, username, email',
+      [nome, email, hashedPassword, telefone, hashedNumeroCartao, validade_cartao, hashedCvv]
+    );
 
-// Get all users
-const getAllUsers = async () => {
-  const users = await userCollection.find().toArray();
-  return users.map(userPublicSerializer);
-};
-
-// Get user by ID
-const getUserById = async (userId) => {
-  const user = await getUserDocById(userId);
-  return user ? userPublicSerializer(user) : null;
-};
-
-// Create a new user
-const createUser = async (user) => {
-  const hashedPassword = await bcrypt.hash(user.senha, 10);
-  const newUser = { ...user, senha: hashedPassword };
-  const result = await userCollection.insertOne(newUser);
-  return result.insertedId;
-};
-
-// Update user
-const updateUser = async (userId, user) => {
-  const updateData = Object.fromEntries(
-    Object.entries(user).filter(([_, v]) => v != null)
-  );
-
-  if (updateData.senha) {
-    updateData.senha = await bcrypt.hash(updateData.senha, 10);
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
   }
+};
 
-  if (Object.keys(updateData).length === 0) {
-    return null;
+// Function to authenticate a user and generate a JWT token
+export const authenticateUser = async (email, senha) => {
+  const client = await pool.connect();
+  try {
+    // Find user by email
+    const result = await client.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (result.rows.length === 0) {
+      throw new Error('Invalid email or password');
+    }
+
+    const user = result.rows[0];
+
+    // Compare the provided password with the stored hashed password
+    const isMatch = await bcrypt.compare(senha, user.senha);
+    if (!isMatch) {
+      throw new Error('Invalid email or password');
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    return { token, user: { id: user.id, nome: user.nome, email: user.email } };
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
   }
-
-  await userCollection.updateOne(
-    { _id: new ObjectId(userId) },
-    { $set: updateData }
-  );
-
-  return await getUserById(userId);
 };
 
-// Delete user
-const deleteUser = async (userId) => {
-  await userCollection.deleteOne({ _id: new ObjectId(userId) });
+// Function to get user details by ID
+export const getUserById = async (id) => {
+  const client = await pool.connect();
+  try {
+    const result = await client.query('SELECT id, nome, email, telefone FROM users WHERE id = $1', [id]);
+    if (result.rows.length === 0) {
+      throw new Error('User not found');
+    }
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
-// Verify password
-const verifyPassword = async (plain, hashed) => {
-  return await bcrypt.compare(plain, hashed);
+// Function to update user details
+export const updateUser = async (id, nome, email, telefone) => {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      'UPDATE users SET nome = $1, email = $2, telefone = $3 WHERE id = $4 RETURNING id, nome, email, telefone',
+      [nome, email, telefone, id]
+    );
+    if (result.rows.length === 0) {
+      throw new Error('User not found or no changes made');
+    }
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
-module.exports = {
-  getAllUsers,
-  getUserById,
-  getUserDocByEmail,
-  createUser,
-  updateUser,
-  deleteUser,
-  verifyPassword,
+// Function to delete a user
+export const deleteUser = async (id) => {
+  const client = await pool.connect();
+  try {
+    const result = await client.query('DELETE FROM users WHERE id = $1 RETURNING id', [id]);
+    if (result.rows.length === 0) {
+      throw new Error('User not found');
+    }
+    return { message: 'User deleted successfully' };
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+// Function to change user password
+export const changeUserPassword = async (id, oldSenha, newSenha) => {
+  const client = await pool.connect();
+  try {
+    // Find user by ID
+    const result = await client.query('SELECT * FROM users WHERE id = $1', [id]);
+    if (result.rows.length === 0) {
+      throw new Error('User not found');
+    }
+
+    const user = result.rows[0];
+
+    // Compare the provided old password with the stored hashed password
+    const isMatch = await bcrypt.compare(oldSenha, user.senha);
+    if (!isMatch) {
+      throw new Error('Old password is incorrect');
+    }
+
+    // Hash the new password
+    const hashedNewPassword = await bcrypt.hash(newSenha, 10);
+
+    // Update the user's password in the database
+    await client.query('UPDATE users SET senha = $1 WHERE id = $2', [hashedNewPassword, id]);
+
+    return { message: 'Password changed successfully' };
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
 };

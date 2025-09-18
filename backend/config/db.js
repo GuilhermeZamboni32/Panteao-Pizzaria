@@ -1,22 +1,20 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
+import pkg from 'pg';
+const { Pool } = pkg;
 
 dotenv.config();
 
-const uri = process.env.MONGODB_URI;
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+});
 
-const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle client', err);
+  process.exit(-1);
+});
 
-async function connectToDatabase() {
-  try {
-    await client.connect();
-    await client.db('admin').command({ ping: 1 });
-    console.log('Pinged your deployment. You successfully connected to MongoDB!');
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-connectToDatabase();
-
-module.exports = client;
+export default pool;
