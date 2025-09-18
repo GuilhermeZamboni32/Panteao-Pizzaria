@@ -110,8 +110,7 @@ Aqui está o dicionário que traduz cada elemento visual do sistema.
 ![css](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
 ![react](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
-![mongodb](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
+
 
 <br>
 
@@ -125,9 +124,13 @@ npm install react-router-dom
 npm install react-icons
 npm install @lottiefiles/react-lottie-player
 ````
+### Instalações Backend
 ````bash
+npm install zod
 npm install express
 npm install bcrypt
+npm install nodemon
+npm install jsonwebtoken
 npm install dotenv --save
 npm install @google/generative-ai
 ````

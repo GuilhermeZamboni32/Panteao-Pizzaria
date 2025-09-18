@@ -103,6 +103,12 @@ function Carrinho() {
                                             <p className="nome-produto">
                                                 Pizza {pizza.tamanho} {pizza.molho.includes('Doce') ? 'Doce' : 'Salgada'}
                                             </p>
+                                            {/* Exibindo os ingredientes */}
+                                            <ul className="ingredientes-lista">
+                                                {Object.values(pizza.ingredientes).map((ingrediente, i) => (
+                                                    <li key={i}>{ingrediente}</li>
+                                                ))}
+                                            </ul>
                                         </div>
                                         <div className="controle-produto">
                                             <div className="seletor-quantidade">

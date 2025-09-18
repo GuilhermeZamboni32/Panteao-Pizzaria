@@ -200,3 +200,14 @@
   border-style: solid; /* Borda fica sólida */
   transform: scale(1.1); /* Aumenta um pouco de tamanho */
 }
+
+.ingredientes-lista {
+    margin-top: 5px;
+    padding-left: 20px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.ingredientes-lista li {
+    list-style-type: disc;
+}
