@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import './Crie_Pizza.css';
-import Header from '../../components/header/Header';
+import Header from '../../components/pastaheader/Header';
 
 // O resto das suas constantes (iconesCategoria, ingredientesPorCategoria) continua igual...
 const iconesCategoria = {

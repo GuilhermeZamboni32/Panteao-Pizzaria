@@ -1,9 +1,10 @@
 import React from 'react';
 import './Home.css';
 import { Link , NavLink} from 'react-router-dom';
-import Header from '../../components/header/Header';
+import Header from '../../components/pastaheader/Header';
 import Crie_Pizza from '../crie_sua_pizza/Crie_Pizza';
-import Carrinho from '../carrinho/Carrinho';
+import Teste from '../testeapi/Teste';
+
 
 function Home() {
   return (
@@ -14,11 +15,7 @@ function Home() {
            {/**<img src="imagem-fundo-home.png" alt="" />*/}
         </div>
 
-        {/**APENAS PARA FACILITAR NA SPRINT01 
-        <div className='divide-telas'></div>
-        <Crie_Pizza />
-        <div className='divide-telas'></div>
-        <Carrinho />*/}
+        <Teste />
         
       </div>
     </div>
