@@ -141,14 +141,21 @@ function Crie_Pizza() {
                     <div className="secao-ingredientes-especificos">
                         <h3>Ingredientes</h3>
                         <div className="opcoes-ingredientes">
-                            {ingredientesPorCategoria[categoriaSelecionada].map((ingrediente) => (
-                                <button key={ingrediente} className={`card-ingrediente ${ingredientes[ingrediente] > 0 ? 'selecionado' : ''}`} onClick={() => adicionarIngrediente(ingrediente)}>
-                                    {ingrediente.split('=')[1]}
-                                    {ingredientes[ingrediente] > 0 && (
-                                        <span className="contador-ingrediente">{ingredientes[ingrediente]}</span>
-                                    )}
-                                </button>
-                            ))}
+                            {ingredientesPorCategoria[categoriaSelecionada].map((ingrediente, index) => {
+    const nomeIngrediente = ingrediente.split('=')[1];
+    return (
+        <button 
+            key={`${categoriaSelecionada}-${nomeIngrediente}-${index}`} 
+            className={`card-ingrediente ${ingredientes[ingrediente] > 0 ? 'selecionado' : ''}`} 
+            onClick={() => adicionarIngrediente(ingrediente)}
+        >
+            {nomeIngrediente}
+            {ingredientes[ingrediente] > 0 && (
+                <span className="contador-ingrediente">{ingredientes[ingrediente]}</span>
+            )}
+        </button>
+    )
+})}
                         </div>
                     </div>
                 </div>
@@ -163,9 +170,12 @@ function Crie_Pizza() {
                         <div className="lista-ingredientes">
                             <ul>
                                 {Object.keys(ingredientes).map((ing, index) => {
+                                    
+                                    
                                     const contagem = ingredientes[ing];
                                     const categoriaDoIngrediente = ingredienteParaCategoriaMap[ing];
                                     const nomeDoIngrediente = ing.split('=')[1];
+                                    console.log(categoriaDoIngrediente,ing);
                                     return (
                                         <li key={index} className="item-ingrediente-resumo">
                                             <span>

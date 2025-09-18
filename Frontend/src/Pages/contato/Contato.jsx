@@ -5,7 +5,7 @@ function Contato() {
   return (
     <div>
         <h1>
-            Tela De Contato !!!
+            Sobre Nós
         </h1>
     </div>
   )
