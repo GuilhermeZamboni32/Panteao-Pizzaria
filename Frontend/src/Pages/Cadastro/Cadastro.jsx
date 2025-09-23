@@ -1,5 +1,5 @@
 import React from 'react'
-import './Cadastro.css' // Importando o CSS reutilizável
+import './Cadastro.css' 
 import Header from '../../components/pastaheader/Header';
 
 function Cadastro() {
