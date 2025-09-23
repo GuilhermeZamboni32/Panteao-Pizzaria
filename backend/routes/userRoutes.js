@@ -1,6 +1,6 @@
 const express = require('express');
-const { getAllUsers, getUserById, createUser } = require('./services/userServices');
-const { getCurrentUser } = require('./services/authServices');
+const { getAllUsers, getUserById, createUser } = require('../services/userServices');
+const { getCurrentUser } = require('../services/authServices');
 
 const router = express.Router();
 

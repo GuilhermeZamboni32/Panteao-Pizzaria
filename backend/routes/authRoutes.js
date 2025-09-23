@@ -1,6 +1,6 @@
 const express = require('express');
-const { getUserDocByEmail, verifyPassword } = require('./services/userServices');
-const { createAccessToken } = require('./services/authServices');
+const { getUserDocByEmail, verifyPassword } = require('../services/userServices');
+const { createAccessToken } = require('../services/authServices');
 
 const router = express.Router();
 

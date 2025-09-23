@@ -1,7 +1,7 @@
-import pool from '../config/db.js';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+const pool = require('../config/db.js');
+const bcrypt = 'bcryptjs';
+const jwt = 'jsonwebtoken';
+const dotenv = 'dotenv';
 
 dotenv.config();
 

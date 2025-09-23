@@ -1,9 +1,6 @@
-CREATE DATABASE IF NOT EXIST Panteao-Pizzaria
-
-CREATE EXTENTION IF NOS EXIST "uuid-ossp"
-
 
 -- Conecte-se ao seu banco de dados "Panteao_Pizzaria" antes de executar.
+CREATE DATABASE IF NOT EXIST Panteao_Pizzaria
 
 -- Cria a extensão UUID se ela ainda não existir.
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
