@@ -1,6 +1,7 @@
-const jwt = require('jsonwebtoken');
-const { getUserDocById } = require('./userServices'); // Assuming userServices.js is in the same directory
-const { JWT_SECRET, JWT_ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES } = require('../config/auth'); // Config file for constants
+
+import jwt from 'jsonwebtoken';
+import getUserDocById from './userServices.js';
+import { JWT_SECRET, JWT_ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES } from '../config/auth.js';
 
 // Create an access token
 const createAccessToken = (sub, email) => {

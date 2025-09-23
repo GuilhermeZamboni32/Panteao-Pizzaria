@@ -1,6 +1,7 @@
-const express = require('express');
-const { getUserDocByEmail, verifyPassword } = require('./services/userServices');
-const { createAccessToken } = require('./services/authServices');
+
+import express from 'express';
+import { getUserDocByEmail, verifyPassword } from '../services/userServices.js';
+import { createAccessToken } from '../services/authServices.js';
 
 const router = express.Router();
 

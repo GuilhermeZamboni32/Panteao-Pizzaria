@@ -1,8 +1,10 @@
-const express require('express');
-const { getAllPizzas, getPizzaById, createPizza } = require('./services/pizzaServices');
-const { getCurrentUser } = require('./services/authServices');
-const { PizzaBaseSchema } = require('../schemas/pizzaSchemas');
-const Joi = require('joi');
+
+import express from 'express'
+import { getAllPizzas, getPizzaById, createPizza } from './services/pizzaServices';;
+import getCurrentUser from './services/authServices';
+import { PizzaBaseSchema } from '../schemas/pizzaSchemas';
+import Joi from 'joi';
+
 
 const router = express.Router();
 

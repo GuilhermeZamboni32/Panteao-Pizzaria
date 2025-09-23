@@ -1,5 +1,4 @@
-const Joi = require('joi');
-
+import Joi from 'joi';
 // Schema for LoginInput
 const LoginInputSchema = Joi.object({
   email: Joi.string().email().required(),

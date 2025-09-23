@@ -1,6 +1,6 @@
-const express = require('express');
-const { getAllUsers, getUserById, createUser } = require('./services/userServices');
-const { getCurrentUser } = require('./services/authServices');
+import express from 'express';
+import { getAllUsers, getUserById, createUser } from '../services/userServices';
+import { getCurrentUser } from '../services/authServices';
 
 const router = express.Router();
 

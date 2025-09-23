@@ -1,12 +1,12 @@
+
 import pool from '../config/db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 // Function to register a new user
-export const registerUser = async (nome, email, senha, telefone, numero_cartao, validade_cartao, cvv) => {
+ export const createUser = async (nome, email, senha, telefone, numero_cartao, validade_cartao, cvv) => {
   const client = await pool.connect();
   try {
     // Check if user already exists
@@ -35,7 +35,7 @@ export const registerUser = async (nome, email, senha, telefone, numero_cartao, 
 };
 
 // Function to authenticate a user and generate a JWT token
-export const authenticateUser = async (email, senha) => {
+ const authenticateUser = async (email, senha) => {
   const client = await pool.connect();
   try {
     // Find user by email
@@ -69,6 +69,7 @@ export const authenticateUser = async (email, senha) => {
 
 // Function to get user details by ID
 export const getUserById = async (id) => {
+
   const client = await pool.connect();
   try {
     const result = await client.query('SELECT id, nome, email, telefone FROM users WHERE id = $1', [id]);
@@ -84,7 +85,7 @@ export const getUserById = async (id) => {
 };
 
 // Function to update user details
-export const updateUser = async (id, nome, email, telefone) => {
+ const updateUser = async (id, nome, email, telefone) => {
   const client = await pool.connect();
   try {
     const result = await client.query(
@@ -103,7 +104,7 @@ export const updateUser = async (id, nome, email, telefone) => {
 };
 
 // Function to delete a user
-export const deleteUser = async (id) => {
+ const deleteUser = async (id) => {
   const client = await pool.connect();
   try {
     const result = await client.query('DELETE FROM users WHERE id = $1 RETURNING id', [id]);
@@ -119,7 +120,7 @@ export const deleteUser = async (id) => {
 };
 
 // Function to change user password
-export const changeUserPassword = async (id, oldSenha, newSenha) => {
+ const changeUserPassword = async (id, oldSenha, newSenha) => {
   const client = await pool.connect();
   try {
     // Find user by ID
@@ -149,3 +150,17 @@ export const changeUserPassword = async (id, oldSenha, newSenha) => {
     client.release();
   }
 };
+
+export const getAllUsers = async () => {
+  const client = await pool.connect();
+  try {
+    const result = await client.query('SELECT id, nome, email, telefone FROM users');
+    return result.rows;
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+//export { authenticateUser, updateUser, deleteUser, changeUserPassword };

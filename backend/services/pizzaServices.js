@@ -1,5 +1,5 @@
-const {pool} = require('../config/db');
-const format = require('pg-format');
+import pool from '../config/db';
+import format from 'pg-format';
 
 // Function to get all pizzas
 exports.getAllPizzas = async () => {

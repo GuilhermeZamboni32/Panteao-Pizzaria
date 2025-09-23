@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
 // Schema for PizzaBase
 const PizzaBaseSchema = Joi.object({

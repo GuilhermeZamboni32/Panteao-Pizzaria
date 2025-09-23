@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
 // Base schema for user creation
 const UserBaseSchema = Joi.object({
