@@ -1,0 +1,172 @@
+
+
+.crie-pizza-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f5f1e1;
+  color: #222;
+}
+
+.coluna-esquerda, 
+.coluna-direita {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.secao-container {
+  background: #e8cdb5;
+  padding: 15px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.secao-titulo {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.opcoes-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.card-opcao {
+  background: #f6f1e3;
+  border: 1px solid #d4c5b3;
+  border-radius: 6px;
+  padding: 10px 14px;
+  text-align: center;
+  flex: 1;
+  min-width: 90px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.card-opcao:hover {
+  background: #efe6d9;
+}
+
+.card-opcao.selecionado {
+  background: #f7bfb3;
+  border: 2px solid #b44434;
+}
+
+.categorias .card-opcao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.icone-categoria {
+  width: 22px;
+  height: 22px;
+}
+
+.ingredientes .card-opcao {
+  flex: 1 1 40%;
+  font-weight: 500;
+}
+
+.resumo-e-pagamento-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.resumo-container {
+  background: #f7efe1;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.lista-ingredientes {
+  background-color: var(--branco);
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 8px;
+  border-radius: 5px;
+}
+
+.resumo-detalhes ul {
+  list-style: none;
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+}
+
+.resumo-detalhes li {
+  background: #e8cdb5;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.pagamento-container {
+  background: #4caf50;
+  color: white;
+  padding: 15px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.pagamento-container:hover {
+  background: #43a047;
+}
+
+.pagamento-icone {
+  width: 28px;
+  height: 28px;
+}
+
+.item-ingrediente-resumo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 5px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 15px;
+}
+
+.item-ingrediente-resumo:last-child {
+  border-bottom: none;
+}
+
+.botao-remover-ingrediente {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #ffe3e3;
+  color: #c0392b;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.botao-remover-ingrediente:hover {
+  background-color: #f8caca;
+  color: #a12b1e;
+}
+
+.botao-remover-ingrediente:active {
+  transform: scale(0.92);
+}

@@ -1,0 +1,213 @@
+/* Importando as variáveis de cores (ajuste o caminho se necessário) */
+
+
+/* ======================================= */
+/* CONFIGURAÇÕES GERAIS           */
+/* ======================================= */
+.pagina-carrinho {
+    background-color: var(--branco);
+    min-height: 100vh;
+}
+
+.container-carrinho {
+    display: flex;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    gap: 40px; /* Espaço entre as colunas */
+    align-items: flex-start; /* Alinha as colunas no topo */
+}
+
+/* ======================================= */
+/* COLUNA ESQUERDA                */
+/* ======================================= */
+.coluna-esquerda {
+    flex: 2; /* Ocupa 2/3 do espaço */
+}
+
+.titulo-resumo {
+    background-color: var(--bege);
+    border: 1px solid var(--bege);
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    font-size: 1.2rem;
+    display: inline-block; /* Para o background não ocupar a largura toda */
+    margin-bottom: 20px;
+}
+
+.box-detalhes {
+    background-color: var(--bege);
+    border-radius: 12px;
+    padding: 30px;
+    position: relative;
+    overflow: hidden; /* Garante que o logo não vaze */
+}
+
+.produto-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #d4b695;
+}
+
+.nome-produto {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.controle-produto {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.seletor-quantidade {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ad957a;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.seletor-quantidade button {
+    background: var(--branco);
+    border: none;
+    padding: 5px 12px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.seletor-quantidade span {
+    padding: 5px 15px;
+    font-size: 1rem;
+    background: #fff;
+    border-left: 1px solid #ad957a;
+    border-right: 1px solid #ad957a;
+}
+
+.preco-produto {
+    font-weight: bold;
+    font-size: 1.1rem;
+    min-width: 80px;
+    text-align: right;
+}
+
+.info-entrega {
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+.linha-entrega {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+.info-usuario p {
+    margin-bottom: 10px;
+}
+
+.logo-meio {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.15;
+    z-index: 1;
+}
+
+.logo-meio img {
+    height: 150px;
+}
+
+/* ======================================= */
+/* COLUNA DIREITA                 */
+/* ======================================= */
+.coluna-direita {
+    flex: 1; /* Ocupa 1/3 do espaço */
+    position: sticky; /* Fica fixo ao rolar a página */
+    top: 20px;
+}
+
+.box-pagamento {
+    background-color: var(--bege);
+    border-radius: 12px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.linha-pagamento, .linha-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1rem;
+}
+
+.linha-total {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 10px;
+    padding-top: 20px;
+    border-top: 1px solid #d4b695;
+}
+
+.btn-comprar {
+    background-color: var(--verde);
+    color: var(--branco);
+    border: none;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+}
+
+.btn-comprar:hover {
+    background-color: #588340;
+}
+
+/* ======================================= */
+/* ESTILO DO BOTÃO DE ADICIONAR MAIS       */
+/* ======================================= */
+
+.btn-adicionar-mais {
+  display: block; /* Para que o 'margin: auto' funcione */
+  width: 50px;
+  height: 50px;
+  /* Espaçamento: 20px em cima, automático nas laterais (centraliza), 30px em baixo */
+  margin: 20px auto 30px auto;
+  border-radius: 50%; /* Deixa o botão redondo */
+  border: 2px dashed var(--verde); /* Borda tracejada com a cor verde */
+  background-color: transparent;
+  color: var(--verde);
+  font-size: 2.5rem; /* Tamanho do "+" */
+  line-height: 45px; /* Alinha o "+" verticalmente */
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease; /* Efeito suave de transição */
+}
+
+.btn-adicionar-mais:hover {
+  background-color: var(--verde); /* Fundo verde ao passar o mouse */
+  color: var(--branco); /* Texto branco ao passar o mouse */
+  border-style: solid; /* Borda fica sólida */
+  transform: scale(1.1); /* Aumenta um pouco de tamanho */
+}
+
+.ingredientes-lista {
+    margin-top: 5px;
+    padding-left: 20px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.ingredientes-lista li {
+    list-style-type: disc;
+}

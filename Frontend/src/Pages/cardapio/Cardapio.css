@@ -1,0 +1,186 @@
+/* ======================================= */
+/* CONFIGURAÇÕES GERAIS           */
+/* ======================================= */
+.pagina-cardapio {
+  background-color: var(--branco);
+  min-height: 100vh;
+}
+
+.container-cardapio {
+  max-width: 100%;
+  margin: 0 auto;
+ 
+}
+
+/* ======================================= */
+/* CABEÇALHO E FILTROS            */
+/* ======================================= */
+.cardapio-header {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.cardapio-header h1 {
+  font-size: 2.5rem;
+  color: var(--vermelho);
+  margin-bottom: 10px;
+}
+
+.filtros {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.filtros button {
+  background-color: #fff;
+  border: 1px solid var(--bege);
+  border-radius: 20px;
+  padding: 10px 25px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filtros button:hover {
+  background-color: var(--bege);
+  border-color: var(--vermelho);
+}
+
+/* Estilo do botão de filtro ativo */
+.filtros button.ativo {
+  background-color: var(--vermelho);
+  color: var(--branco);
+  border-color: var(--vermelho);
+}
+
+.cta-crie-pizza {
+    text-align: center;
+    margin: 20px 0 40px;
+}
+
+.cta-crie-pizza button {
+    background-color: var(--verde);
+    color: var(--branco);
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cta-crie-pizza button:hover {
+    background-color: #588340; /* Verde mais escuro */
+}
+
+
+/* ======================================= */
+/* LISTA E CARDS DE PIZZA         */
+/* ======================================= */
+.lista-pizzas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.card-pizza {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative; /* Para a tag de promoção */
+}
+
+.card-pizza:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.tag-promocao {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background-color: var(--vermelho);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    z-index: 2;
+}
+
+.pizza-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-pizza-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Faz o corpo do card crescer para empurrar o botão para baixo */
+}
+
+.card-pizza-body h3 {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.card-pizza-body .descricao {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 15px;
+    flex-grow: 1; /* Ocupa o espaço disponível, alinhando os botões na base */
+}
+
+.preco {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--preto);
+  margin-bottom: 20px;
+}
+
+.preco-antigo {
+  text-decoration: line-through;
+  color: #999;
+  font-size: 1rem;
+  margin-right: 10px;
+}
+
+.preco-novo {
+  color: var(--verde);
+  font-size: 1.4rem;
+}
+
+.btn-adicionar {
+  width: 100%;
+  background-color: var(--vermelho);
+  color: var(--branco);
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-adicionar:hover {
+  background-color: #a13c3e; /* Vermelho mais escuro */
+}
+
+/* Estilo do botão após adicionar */
+.btn-adicionar.adicionado {
+    background-color: var(--verde);
+    cursor: not-allowed;
+}

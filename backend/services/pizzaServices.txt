@@ -1,0 +1,347 @@
+###########################################################################################
+#                                                                                         #
+#                                 ORIGINAL                                                #
+#                                                                                         #
+###########################################################################################
+
+
+
+================    ip:rota   ======================================= ================ ================ ================
+10.28.196.250:8000/api/requisicoes
+
+
+================    body    ================ ================ ================ ================ ================
+{
+  "codigoProduto": 1,
+  "bloco1": {
+    "cor": 1,
+    "lamina1": 1,
+    "lamina2": 1,
+    "lamina3": 1,
+    "padrao1": "1",
+    "padrao2": "1",
+    "padrao3": "1"
+  },
+  "bloco2": {
+    "cor": 1,
+    "lamina1": 1,
+    "lamina2": 1,
+    "lamina3": 1,
+    "padrao1": "1",
+    "padrao2": "1",
+    "padrao3": "1"
+  },
+  "bloco3": {
+    "cor": 1,
+    "lamina1": 1,
+    "lamina2": 1,
+    "lamina3": 1,
+    "padrao1": "1",
+    "padrao2": "1",
+    "padrao3": "1"
+  }
+}
+
+
+
+
+
+================    Cores e números    ================ ================ ================ ================ ================
+//LÂMINAS
+CorBloco1Lamina1=0; //sem lâmina;
+CorBloco1Lamina1=1; //Vermelho;
+CorBloco1Lamina1=2; //Azul;
+CorBloco1Lamina1=3; //Amarelo;
+CorBloco1Lamina1=4; //Verde;
+CorBloco1Lamina1=5; //Preto;
+CorBloco1Lamina1=6; //Branco;
+
+//BLOCOS
+CorBloco1=1; // pt
+CorBloco1=2; // vm
+CorBloco1=3; // az
+
+//PADRÕES:
+padrao1="0" // sem desenho
+padrao1="1" // casa
+padrao1="2" // barco
+padrao1="3" // estrela
+
+//ANDARES
+codigoProduto=1 // caixa de um andar
+codigoProduto=2 // caixa de dois andares
+codigoProduto=3 // caixa de três andares
+
+
+
+
+================    Payload do pedido completo para o alexpress    ================ ================ ================ ================
+{
+            "payload": {
+                "orderId": "ABC-123",
+                "caixa": {
+                    "codigoProduto": 1,
+                    "bloco1": {
+                   "cor": 1,
+                        "lamina1": 1,
+                        "lamina2": 1,
+                        "lamina3": 1,
+                        "padrao1": "1",
+                        "padrao2": "1",
+                        "padrao3": "1"
+                    },
+                    "bloco2": {
+                   "cor": 1,
+                        "lamina1": 1,
+                        "lamina2": 1,
+                        "lamina3": 1,
+                        "padrao1": "1",
+                        "padrao2": "1",
+                        "padrao3": "1"
+                    },
+                    "bloco3": {
+                   "cor": 1,
+                        "lamina1": 1,
+                        "lamina2": 1,
+                        "lamina3": 1,
+                        "padrao1": "1",
+                        "padrao2": "1",
+                        "padrao3": "1"
+                    }
+                },
+                "sku": "KIT-01"
+            },
+            "callbackUrl": "http://localhost:3333/callback"
+        }
+
+
+
+###########################################################################################
+#                                                                                         #
+#                                 ADAPTADO PARA O NOSSO PROJETO                           #
+#                                                                                         #
+###########################################################################################
+
+
+================    Cores e números    ================ ================ ================ ================ ================
+
+//LÂMINAS
+CorBloco1Lamina1=0; //sem lâmina;  // sem ingrediente
+CorBloco1Lamina1=1; //Vermelho;    // categoria de carnes
+CorBloco1Lamina1=2; //Azul;        // categoria de frutas
+CorBloco1Lamina1=3; //Amarelo;     // categoria de queijos
+CorBloco1Lamina1=4; //Verde;       // categoria de seladas
+CorBloco1Lamina1=5; //Preto;       // categoria de complemetos
+CorBloco1Lamina1=6; //Branco;      // categoria de chocolates
+
+//BLOCOS
+CorBloco1=1; // pt  // complemeto de tamanho
+CorBloco1=2; // vm  // molho de tomate
+CorBloco1=3; // az  // molho doce
+
+//PADRÕES:
+Categoria de carnes
+padrao1="0" // sem desenho   //Bacon
+padrao1="1" // casa          //Frango
+padrao1="2" // barco         //Calabresa
+padrao1="3" // estrela       //Camarao
+
+categoria de frutas
+padrao1="0" // sem desenho   //Abacaxi
+padrao1="1" // casa          //Morago
+padrao1="2" // barco         //Banana
+padrao1="3" // estrela       //Maca
+
+categoria de queijos
+padrao1="0" // sem desenho   //Mussarela
+padrao1="1" // casa          //Cheddar
+padrao1="2" // barco         //Parmesao
+padrao1="3" // estrela       //Gorgonsola
+
+categoria de seladas
+padrao1="0" // sem desenho   //Tomate
+padrao1="1" // casa          //Brocolis
+padrao1="2" // barco         //Rucula
+padrao1="3" // estrela       //Cebola
+
+categoria de complemetos
+padrao1="0" // sem desenho   //milho
+padrao1="1" // casa          //Oregano
+padrao1="2" // barco         //M&M
+padrao1="3" // estrela       //CocoRalado
+
+categoria de chocolates
+padrao1="0" // sem desenho   //ChocolatePreto
+padrao1="1" // casa          //ChocolateBranco
+padrao1="2" // barco         //Nutella
+padrao1="3" // estrela       //Ovomaltine
+
+//ANDARES
+codigoProduto=1 // caixa de um andar       //Broto
+codigoProduto=2 // caixa de dois andares   //Media
+codigoProduto=3 // caixa de três andares   //grande
+
+
+
+
+================    Payload do pedido completo para o alexpress    ================ ================ ================ ================
+
+Pedido de uma pizza broto doce:     
+    Tamanho:
+        Broto.
+
+    Tipo de molho:
+        MolhoDoce.
+
+    Ingredientes:
+        ChocolateBranco.
+        Morango.
+        CocoRalado   
+
+        
+{
+  "payload": {
+    "orderId": "ABC-123",
+    "caixa": {
+      "codigoProduto": 1,
+      "bloco1": {
+        "cor": 3,
+        "lamina1": 6,
+        "padrao1": "1",
+        "lamina2": 2,
+        "padrao2": "1",
+        "lamina3": 5,
+        "padrao3": "3"
+      },
+      "bloco2": {
+        "cor": 0,
+        "lamina1": 0,
+        "padrao1": "0",
+        "lamina2": 0,
+        "padrao2": "0",
+        "lamina3": 0,
+        "padrao3": "0"
+      },
+      "bloco3": {
+        "cor": 0,
+        "lamina1": 0,
+        "padrao1": "0",
+        "lamina2": 0,
+        "padrao2": "0",
+        "lamina3": 0,
+        "padrao3": "0"
+      }
+    },
+    "sku": "KIT-PIZZA-BROTO-DOCE"
+  },
+  "callbackUrl": "http://localhost:3333/callback"
+}
+
+
+Pedido de uma pizza media salgada: 
+    Tamanho:
+        medio.
+
+    Tipo de molho:
+        MolhoDetomate.
+
+    Ingredientes:
+        Mussarela.
+        Cheddar.
+        Tomate.
+        Cebola.
+        Milho.
+        Oregano   
+{
+  "payload": {
+    "orderId": "DEF-456",
+    "caixa": {
+      "codigoProduto": 2,
+      "bloco1": {
+        "cor": 2,
+        "lamina1": 3,
+        "padrao1": "0",
+        "lamina2": 3,
+        "padrao2": "1",
+        "lamina3": 4,
+        "padrao3": "0"
+      },
+      "bloco2": {
+        "cor": 1,
+        "lamina1": 4,
+        "padrao1": "3",
+        "lamina2": 5,
+        "padrao2": "0",
+        "lamina3": 5,
+        "padrao3": "1"
+      },
+      "bloco3": {
+        "cor": 0,
+        "lamina1": 0,
+        "padrao1": "0",
+        "lamina2": 0,
+        "padrao2": "0",
+        "lamina3": 0,
+        "padrao3": "0"
+      }
+    },
+    "sku": "KIT-PIZZA-MEDIA-SALGADA"
+  },
+  "callbackUrl": "http://localhost:3333/callback"
+}
+
+
+Pedido de uma pizza grande salgada:  
+    Tamanho:
+        grande.
+
+    Tipo de molho:
+        MolhoDetomate.
+
+    Ingredientes:
+        Cheddar.
+        Mussarela.
+        Parmesao.
+        Bacon.
+        Calabresa.
+        Tomate.
+        Cebola.
+        Milho.
+        Oregano 
+{
+  "payload": {
+    "orderId": "GHI-789",
+    "caixa": {
+      "codigoProduto": 3,
+      "bloco1": {
+        "cor": 2,
+        "lamina1": 3,
+        "padrao1": "1",
+        "lamina2": 3,
+        "padrao2": "0",
+        "lamina3": 3,
+        "padrao3": "2"
+      },
+      "bloco2": {
+        "cor": 1,
+        "lamina1": 1,
+        "padrao1": "0",
+        "lamina2": 1,
+        "padrao2": "2",
+        "lamina3": 4,
+        "padrao3": "0"
+      },
+      "bloco3": {
+        "cor": 1,
+        "lamina1": 4,
+        "padrao1": "3",
+        "lamina2": 5,
+        "padrao2": "0",
+        "lamina3": 5,
+        "padrao3": "1"
+      }
+    },
+    "sku": "KIT-PIZZA-MEDIA-SALGADA"
+  },
+  "callbackUrl": "http://localhost:3333/callback"
+}

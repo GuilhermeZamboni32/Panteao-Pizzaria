@@ -1,0 +1,80 @@
+.pagina-contato {
+    background-color: var(--branco);
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .titulo-contato {
+    color: var(--preto);
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .carrossel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+  }
+  
+  .seta {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--preto);
+    transition: transform 0.2s;
+  }
+  .seta:hover {
+    transform: scale(1.2);
+  }
+  
+  .membro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .foto-membro {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 3px solid var(--preto);
+  }
+  
+  .membro h2 {
+    margin-top: 0.5rem;
+    color: var(--preto);
+    font-size: 1.2rem;
+  }
+  
+  .redes-sociais {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  .redes-sociais img {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .redes-sociais img:hover {
+    transform: scale(1.1);
+  }
+  
+  .foto-lateral {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    opacity: 0.6;
+  }
+  

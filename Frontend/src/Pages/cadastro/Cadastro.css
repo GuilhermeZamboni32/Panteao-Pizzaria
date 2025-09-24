@@ -1,0 +1,130 @@
+/* Definindo as variáveis de cor no root */
+:root {
+  --vermelho: #BC4749;
+  --bege: #E7C8A7;
+  --branco: #F2E8CF;
+  --verde: #6A994E;
+  --preto: #000000;
+}
+
+
+.pagina-cadastro {
+  background-color: var(--branco);
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.container-cadastro {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 5rem;
+}
+
+
+.coluna-imagem-cadastro {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.imagem-cadastro {
+  max-width: 1000px;
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+}
+
+
+.coluna-formulario-cadastro {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+}
+
+
+.container-info-form-cadastro {
+  background-color: var(--bege);
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.titulo-form-cadastro {
+  color: var(--preto);
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-cadastro {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group-cadastro {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.form-group-cadastro label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.form-group-cadastro input {
+  background-color: var(--branco);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 1rem;
+  color: var(--vermelho);
+  transition: border-color 0.3s ease;
+}
+
+.form-group-cadastro input:focus {
+  outline: none;
+  border-color: var(--verde);
+}
+
+.form-group-cadastro input::placeholder {
+  color: var(--verde);
+  opacity: 0.8;
+  font-weight: bold;
+}
+
+
+.botao-form-cadastro {
+  background-color: var(--verde);
+  color: var(--branco);
+  border: none;
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: filter 0.3s ease;
+  margin-top: 1rem;
+}
+
+.botao-form-cadastro:hover {
+  filter: brightness(0.9);
+}
