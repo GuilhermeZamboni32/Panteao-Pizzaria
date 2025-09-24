@@ -93,7 +93,7 @@ function Carrinho() {
 
         try {
             // A rota agora é '/pedidos' para refletir melhor o que estamos criando.
-            const response = await fetch('http://localhost:3000/pedidos', {
+           const response = await fetch('http://localhost:3000/api/pedidos', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(pedido) // Enviamos o objeto completo do pedido
