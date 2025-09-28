@@ -74,45 +74,51 @@ function Carrinho() {
         navigate('/crie_pizza', { state: { carrinho: itensCarrinho } });
     };
 
-    const handleConcluirCompra = async () => {
-        if (itensCarrinho.length === 0) {
-            alert('Seu carrinho está vazio!');
-            return;
-        }
+   const handleConcluirCompra = async () => {
+    if (itensCarrinho.length === 0) {
+        alert('Seu carrinho está vazio!');
+        return;
+    }
 
-        // --- MUDANÇA PRINCIPAL AQUI ---
-        // Montamos um objeto de "pedido" completo para enviar ao backend.
-        const pedido = {
-            usuario, // Dados do cliente
-            itens: itensCarrinho, // O array de pizzas estruturadas
-            subtotal,
-            frete,
-            total,
-            data: new Date().toISOString() // Adiciona a data do pedido
-        };
-
-        try {
-            // A rota agora é '/pedidos' para refletir melhor o que estamos criando.
-           const response = await fetch('http://localhost:3000/api/pedidos', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(pedido) // Enviamos o objeto completo do pedido
-            });
-
-            const resultado = await response.json();
-
-            if (response.ok) {
-                alert(`Pedido #${resultado.id} concluído com sucesso!`);
-                setItensCarrinho([]);
-                navigate('/'); // Redireciona para a home após o sucesso
-            } else {
-                alert(`Erro ao salvar pedido: ${resultado.error}`);
-            }
-        } catch (err) {
-            console.error("Erro de conexão:", err);
-            alert('Erro de conexão com o servidor! Verifique o console.');
-        }
+    // Pedido que o front envia para o backend
+    const pedido = {
+        usuario,
+        itens: itensCarrinho,
+        subtotal,
+        frete,
+        total,
+        data: new Date().toISOString()
     };
+
+    try {
+        const response = await fetch('http://localhost:3000/api/pedidos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(pedido)
+        });
+
+        const resultado = await response.json();
+
+        if (response.ok) {
+            const ids = resultado.ids || [];
+
+            // Salva no localStorage para a tela PedidosEmAndamento
+            localStorage.setItem("pedidosEmAndamento", JSON.stringify(ids));
+
+            alert(`Pedido concluído com sucesso! IDs enviados: ${ids.join(", ")}`);
+
+            setItensCarrinho([]);
+            navigate('/cardapio');
+
+        } else {
+            alert(`Erro ao salvar pedido: ${resultado.error}`);
+        }
+    } catch (err) {
+        console.error("Erro de conexão:", err);
+        alert('Erro de conexão com o servidor! Verifique o console.');
+    }
+};
+
     
     return (
         <div className="pagina-carrinho">

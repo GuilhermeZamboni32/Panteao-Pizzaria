@@ -28,3 +28,17 @@ CREATE TABLE IF NOT EXISTS Pizzas (
         FOREIGN KEY(cliente_id) 
         REFERENCES clientes(cliente_id)
 );
+
+
+INSERT INTO clientes (cliente_id, nome, email, senha) 
+VALUES ('00000000-0000-0000-0000-000000000000', 'Cliente Teste', 'teste@email.com', '123456');
+
+
+
+
+
+
+
+backend
+npm install node-fetch
+npm install node-fetch@3

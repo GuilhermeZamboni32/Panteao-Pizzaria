@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "main": "serverUser.js",
   "type": "module",
-"scripts": {
-  "start": "node serverUser.js",
-  "dev": "nodemon --exec \"node serverUser.js\"",
-  "start:pizza": "node serverPizza.js",
-  "dev:pizza": "nodemon --exec \"node serverPizza.js\""
-},
+  "scripts": {
+    "start": "node serverUser.js",
+    "dev": "nodemon --exec \"node serverUser.js\"",
+    "start:pizza": "node serverPizza.js",
+    "dev:pizza": "nodemon --exec \"node serverPizza.js\""
+  },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@lottiefiles/react-lottie-player": "^3.6.0",
@@ -20,6 +20,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "node": "^24.8.0",
+    "node-fetch": "^3.3.2",
     "nodemon": "^3.1.10",
     "pg": "^8.16.3",
     "zod": "^4.1.11"
