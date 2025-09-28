@@ -3,26 +3,26 @@ import cors from 'cors';
 import pool from './db.js';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = 3001;
 
-app.use(cors());
+
+app.use(cors({ origin: 'http://localhost:5173' })); 
 app.use(express.json());
-/** cliente_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    senha VARCHAR(255) NOT NULL,
-    telefone VARCHAR(20),
-	  endereco VARCHAR(255),
-    numero_cartao VARCHAR(20),   
-    validade_cartao VARCHAR(7),  
-    cvv VARCHAR(4) 
 
-
-POST /api/users → criar usuário
-GET /api/users → listar todos os usuários
-GET /api/users/:id → buscar usuário por ID
-PUT /api/users/:id → atualizar usuário
-DELETE /api/users/:id → deletar usuário*/
+// Rotas de usuário
+app.post('/api/users', async (req, res) => {
+  const { nome, email, senha, telefone, endereco, numero_cartao, validade_cartao, cvv } = req.body;
+  try {
+    const newUser = await pool.query(
+      'INSERT INTO clientes (nome, email, senha, telefone, endereco, numero_cartao, validade_cartao, cvv) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',
+      [nome, email, senha, telefone, endereco, numero_cartao, validade_cartao, cvv]
+    );
+    res.status(201).json(newUser.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: 'Erro ao criar usuário' });
+  }
+});
 
 // Rota para criar um novo usuário
 app.post('/api/users', async (req, res) => {
@@ -37,6 +37,13 @@ app.post('/api/users', async (req, res) => {
     console.error(err.message);
     res.status(500).json({ error: 'Erro ao criar usuário' });
   }
+});
+
+app.post('/api/pedidos', (req, res) => {
+  const pedido = req.body;
+  console.log('Pedido recebido:', pedido);
+  // Aqui você pode salvar no banco, se quiser
+  res.json({ id: Date.now(), mensagem: 'Pedido concluído com sucesso!' });
 });
 
 
@@ -99,6 +106,22 @@ app.delete('/api/users/:id', async (req, res) => {
 });
 
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+
+app.listen(PORT, () => console.log(`Servidor de usuários rodando na porta ${PORT}`));
+
+  /** cliente_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      nome VARCHAR(255) NOT NULL,
+      email VARCHAR(255) NOT NULL UNIQUE,
+      senha VARCHAR(255) NOT NULL,
+      telefone VARCHAR(20),
+      endereco VARCHAR(255),
+      numero_cartao VARCHAR(20),   
+      validade_cartao VARCHAR(7),  
+      cvv VARCHAR(4) 
+  
+  
+  POST /api/users → criar usuário
+  GET /api/users → listar todos os usuários
+  GET /api/users/:id → buscar usuário por ID
+  PUT /api/users/:id → atualizar usuário
+  DELETE /api/users/:id → deletar usuário*/

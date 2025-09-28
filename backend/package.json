@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "main": "serverUser.js",
   "type": "module",
-  "scripts": {
-    "start": "node serverUser.js",
-    "dev": "nodemon --exec \"node serverUser.js\""
-  },
+"scripts": {
+  "start": "node serverUser.js",
+  "dev": "nodemon --exec \"node serverUser.js\"",
+  "start:pizza": "node serverPizza.js",
+  "dev:pizza": "nodemon --exec \"node serverPizza.js\""
+},
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@lottiefiles/react-lottie-player": "^3.6.0",
