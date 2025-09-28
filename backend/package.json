@@ -1,11 +1,11 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "serverUser.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon --exec \"node server.js\""
+    "start": "node serverUser.js",
+    "dev": "nodemon --exec \"node serverUser.js\""
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
