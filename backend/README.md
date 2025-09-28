@@ -1,3 +1,8 @@
+# Criação das tabelas no Banco de Dados
+
+<br/>
+
+````
 -- Cria a extensão UUID se ela ainda não existir.
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -19,8 +24,6 @@ CREATE TABLE IF NOT EXISTS Pizzas (
     id_pizza UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     ingredientes TEXT,
-    preco DECIMAL(10, 2) NOT NULL,
-    imagem_url VARCHAR(255),
     data_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     cliente_id UUID NOT NULL,
@@ -33,12 +36,15 @@ CREATE TABLE IF NOT EXISTS Pizzas (
 INSERT INTO clientes (cliente_id, nome, email, senha) 
 VALUES ('00000000-0000-0000-0000-000000000000', 'Cliente Teste', 'teste@email.com', '123456');
 
+````
+<br/>
+<br/>
 
 
 
 
-
-
-backend
+## backend
+```
 npm install node-fetch
 npm install node-fetch@3
+```
