@@ -1,10 +1,13 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "main.js",
+  "main": "serverUser.js",
+  "type": "module",
   "scripts": {
-    "start": "node main.js",
-    "dev": "nodemon --exec \"node main.js\""
+    "start": "node serverUser.js",
+    "dev": "nodemon --exec \"node serverUser.js\"",
+    "start:pizza": "node serverPizza.js",
+    "dev:pizza": "nodemon --exec \"node serverPizza.js\""
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -12,10 +15,12 @@
     "axios": "^1.11.0",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "node": "^24.8.0",
+    "node-fetch": "^3.3.2",
     "nodemon": "^3.1.10",
     "pg": "^8.16.3",
     "zod": "^4.1.11"

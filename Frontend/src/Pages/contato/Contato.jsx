@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+/*import React, { useState } from 'react'
 import './Contato.css'
 import Header from '../../components/pastaheader/Header'
 
@@ -50,4 +50,4 @@ function Contato() {
   )
 }
 
-export default Contato
+export default Contato*/
