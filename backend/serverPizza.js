@@ -38,6 +38,11 @@ app.post('/api/pedidos', async (req, res) => {
     console.log(`[Servidor Pizza] Pedido salvo com sucesso! ID no BD: ${pedidoSalvoId}`);
     
     console.log("[Servidor Pizza] Passo 2: Convertendo produtos para o formato 'caixa'...");
+    
+    // --- MUDANÇA PARA DEPURAÇÃO ---
+    // Adicionamos um log para ver exatamente o que está sendo enviado para a função de tradução.
+    console.log('[Servidor Pizza] Itens a serem traduzidos:', JSON.stringify(pedido.itens, null, 2));
+
     const caixas = pedido.itens.map(pizza => traduzirPizzaParaCaixinha(pizza));
     
     console.log("[Servidor Pizza] Passo 3: Enviando 'caixas' para a máquina virtual...");
@@ -72,7 +77,10 @@ app.post('/api/pedidos', async (req, res) => {
     });
 
   } catch (err) {
-    console.error("[Servidor Pizza] ERRO GERAL:", err);
+    // --- MUDANÇA PARA DEPURAÇÃO ---
+    // Melhoramos o log de erro para mostrar o objeto de pedido que causou a falha.
+    console.error("[Servidor Pizza] ERRO GERAL AO PROCESSAR PEDIDO:", err);
+    console.error("[Servidor Pizza] O ERRO OCORREU COM ESTE PEDIDO:", JSON.stringify(req.body, null, 2));
     res.status(500).json({ error: "Erro ao processar o pedido", details: err.message });
   }
 });
@@ -80,4 +88,3 @@ app.post('/api/pedidos', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🍕 Servidor de Pizzas rodando na porta ${PORT}`);
 });
-

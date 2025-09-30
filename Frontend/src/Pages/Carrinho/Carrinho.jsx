@@ -158,7 +158,7 @@ function Carrinho() {
                         )}
 
                         <button className="btn-adicionar-mais" onClick={handleAdicionarMais}>
-                            + Adicionar outra pizza
+                                Adicionar outra pizza
                         </button>
 
                         <div className="info-entrega">

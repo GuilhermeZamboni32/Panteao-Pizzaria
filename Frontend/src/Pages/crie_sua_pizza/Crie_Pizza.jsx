@@ -141,7 +141,7 @@ function Crie_Pizza() {
 
                 <div className="container-cria-pizza-meio">
                     <div className="secao-categorias">
-                        <h3>Categorias De Ingredientes</h3>
+                        <h3>Categorias de Ingredientes</h3>
                         <div className="opcoes-categorias">
                             {Object.keys(ingredientesPorCategoria).map((categoria) => (
                                 <button key={categoria} className={`card-categoria ${categoriaSelecionada === categoria ? 'selecionado' : ''}`} onClick={() => setCategoriaSelecionada(categoria)}>
@@ -155,20 +155,18 @@ function Crie_Pizza() {
                         <h3>Ingredientes</h3>
                         <div className="opcoes-ingredientes">
                             {ingredientesPorCategoria[categoriaSelecionada].map((ingrediente, index) => {
-                                    const nomeIngrediente = ingrediente.split('=')[1];
-                                    return (
-                                        <button 
-                                            key={`${categoriaSelecionada}-${nomeIngrediente}-${index}`} 
-                                            className={`card-ingrediente ${ingredientes[ingrediente] > 0 ? 'selecionado' : ''}`} 
-                                            onClick={() => adicionarIngrediente(ingrediente)}
-                                        >
-                                            {nomeIngrediente}
-                                            {ingredientes[ingrediente] > 0 && (
-                                                <span className="contador-ingrediente">{ingredientes[ingrediente]}</span>
-                                            )}
-                                        </button>
-                                    )
-                                })}
+    const nomeIngrediente = ingrediente.split('=')[1];
+    const quantidade = ingredientes[ingrediente] || 0;
+    return (
+        <button 
+            key={`${categoriaSelecionada}-${nomeIngrediente}-${index}`} 
+            className={`card-ingrediente ${quantidade > 0 ? 'selecionado' : ''}`} 
+            onClick={() => adicionarIngrediente(ingrediente)}
+        >
+            {nomeIngrediente} {quantidade > 0 && `(x${quantidade})`}
+        </button>
+    )
+})}
                         </div>
                     </div>
                 </div>

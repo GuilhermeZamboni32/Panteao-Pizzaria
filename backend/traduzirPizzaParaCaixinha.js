@@ -1,26 +1,22 @@
-//traduzirPizzaParaCaixinha.js
-
 /**
  * Recebe uma pizza estruturada do frontend e retorna o objeto "caixinha"
- * no formato esperado pelo Alexpress.
- * @param {Object} pizza - pizza do carrinho
- * @returns {Object} - objeto traduzido para "caixinha"
+ * no formato esperado, preenchendo os blocos de forma sequencial.
+ * @param {Object} pizza - A pizza do carrinho.
+ * @returns {Object} - O objeto traduzido para o formato "caixinha".
  */
 function traduzirPizzaParaCaixinha(pizza) {
-    // Traduz tamanho
+    // --- MAPAS DE TRADUÇÃO (Dicionários) ---
     const tamanhoMap = {
         Broto: 1,
         Média: 2,
         Grande: 3
     };
     
-    // Traduz tipo de molho
     const corBlocoMap = {
         "Molho de Tomate": 2,
         "Molho Doce": 3
     };
     
-    // Traduz categoria e ingredientes para lâminas/padrões
     const categoriaMap = {
         Carnes: 1,
         Frutas: 2,
@@ -39,36 +35,61 @@ function traduzirPizzaParaCaixinha(pizza) {
         Chocolates: { "Chocolate Preto": "0", "Chocolate Branco": "1", "Nutella": "2", "Ovomaltine": "3" }
     };
 
-    let blocos = [
-        { cor: 0, lamina1: 0, lamina2: 0, lamina3: 0, padrao1: "0", padrao2: "0", padrao3: "0" },
-        { cor: 0, lamina1: 0, lamina2: 0, lamina3: 0, padrao1: "0", padrao2: "0", padrao3: "0" },
-        { cor: 0, lamina1: 0, lamina2: 0, lamina3: 0, padrao1: "0", padrao2: "0", padrao3: "0" },
-    ];
+    // --- INICIALIZAÇÃO DA CAIXA ---
+    // Começa com todos os blocos vazios (padrão 0).
+    let blocos = {
+        bloco1: { cor: 0, lamina1: 0, lamina2: 0, lamina3: 0, padrao1: "0", padrao2: "0", padrao3: "0" },
+        bloco2: { cor: 0, lamina1: 0, lamina2: 0, lamina3: 0, padrao1: "0", padrao2: "0", padrao3: "0" },
+        bloco3: { cor: 0, lamina1: 0, lamina2: 0, lamina3: 0, padrao1: "0", padrao2: "0", padrao3: "0" },
+    };
 
+    // --- LÓGICA DE PREENCHIMENTO SEQUENCIAL ---
+
+    // 1. Define a cor dos blocos com base na quantidade de ingredientes.
+    blocos.bloco1.cor = corBlocoMap[pizza.molho] || 0;
+    if (pizza.ingredientes.length > 3) {
+        blocos.bloco2.cor = 1; // Cor padrão para blocos subsequentes
+    }
+    if (pizza.ingredientes.length > 6) {
+        blocos.bloco3.cor = 1; // Cor padrão para blocos subsequentes
+    }
+
+    // 2. Itera sobre os ingredientes e os distribui nos blocos.
     pizza.ingredientes.forEach((ing, idx) => {
-        const bloco = blocos[0];
-        bloco.cor = corBlocoMap[pizza.molho] || 0;
-
-        if (idx === 0) {
-            bloco.lamina1 = categoriaMap[ing.categoria] || 0;
-            bloco.padrao1 = padraoMap[ing.categoria][ing.nome] || "0";
-        } else if (idx === 1) {
-            bloco.lamina2 = categoriaMap[ing.categoria] || 0;
-            bloco.padrao2 = padraoMap[ing.categoria][ing.nome] || "0";
-        } else if (idx === 2) {
-            bloco.lamina3 = categoriaMap[ing.categoria] || 0;
-            bloco.padrao3 = padraoMap[ing.categoria][ing.nome] || "0";
+        // Limita a 9 ingredientes, pois só existem 9 "slots" (3 por bloco).
+        if (idx >= 9) {
+            return;
         }
+
+        // Determina em qual bloco e "slot" o ingrediente atual se encaixa.
+        const blocoNum = Math.floor(idx / 3) + 1; // Bloco 1, 2 ou 3
+        const slotNum = (idx % 3) + 1;          // Slot 1, 2 ou 3
+
+        const blocoAtual = blocos[`bloco${blocoNum}`];
+
+        // Busca os códigos da categoria e do padrão de forma segura.
+        const categoriaId = categoriaMap[ing.categoria] || 0;
+        const padroesDaCategoria = padraoMap[ing.categoria];
+        let padraoId = "0";
+
+        if (padroesDaCategoria && ing.nome) {
+            padraoId = padroesDaCategoria[ing.nome] || "0";
+        }
+
+        // Atribui os valores ao slot correto dentro do bloco correto.
+        blocoAtual[`lamina${slotNum}`] = categoriaId;
+        blocoAtual[`padrao${slotNum}`] = padraoId;
     });
 
+    // --- RETORNO DO OBJETO FINAL ---
     return {
         payload: {
-            orderId: `ORDER-${Date.now()}`,
+            orderId: `ORDER-${Date.now()}`, // Usando um ID dinâmico
             caixa: {
                 codigoProduto: tamanhoMap[pizza.tamanho] || 1,
-                bloco1: blocos[0],
-                bloco2: blocos[1],
-                bloco3: blocos[2]
+                bloco1: blocos.bloco1,
+                bloco2: blocos.bloco2,
+                bloco3: blocos.bloco3
             },
             sku: `KIT-PIZZA-${pizza.tamanho.toUpperCase()}-${pizza.molho.includes('Doce') ? 'DOCE' : 'SALGADA'}`
         },
@@ -76,5 +97,5 @@ function traduzirPizzaParaCaixinha(pizza) {
     };
 }
 
-// Aqui é a mudança principal para a opção 1
 export default traduzirPizzaParaCaixinha;
+
