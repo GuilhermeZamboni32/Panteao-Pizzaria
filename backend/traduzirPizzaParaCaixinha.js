@@ -28,7 +28,7 @@ function traduzirPizzaParaCaixinha(pizza) {
     
     const padraoMap = {
         Carnes: { "Bacon": "0", "Frango": "1", "Calabresa": "2", "Camarão": "3" },
-        Frutas: { "Abacaxi": "0", "Morango": "1", "Banana": "2", "Maçã": "3" },
+        Frutas: { "Uva": "0", "Morango": "1", "Banana": "2", "Cereja": "3" },
         Queijos: { "Mussarela": "0", "Cheddar": "1", "Parmesão": "2", "Gorgonzola": "3" },
         Saladas: { "Tomate": "0", "Brócolis": "1", "Rúcula": "2", "Cebola": "3" },
         Complementos: { "Milho": "0", "Orégano": "1", "M&M": "2", "CocoRalado": "3" },
