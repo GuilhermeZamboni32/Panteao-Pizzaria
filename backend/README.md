@@ -7,7 +7,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Tabela de clientes
-CREATE TABLE IF NOT EXISTS clientes (
+CREATE TABLE clientes (
     cliente_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -18,21 +18,18 @@ CREATE TABLE IF NOT EXISTS clientes (
     validade_cartao VARCHAR(7),  
     cvv VARCHAR(4)             
 );
-
--- Tabela de pizzas (pedidos)
-CREATE TABLE IF NOT EXISTS Pizzas (
-    id_pizza UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    ingredientes TEXT,
-    data_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
-    cliente_id UUID NOT NULL,
-    CONSTRAINT fk_clientes
-        FOREIGN KEY(cliente_id) 
-        REFERENCES clientes(cliente_id)
+-- Tabela de pedidos (usando JSONB para manter a estrutura dos itens)
+CREATE TABLE pedidos (
+    pedido_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    cliente_id UUID REFERENCES clientes(cliente_id), 
+    data_pedido TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    valor_total NUMERIC(10, 2) NOT NULL, 
+    status VARCHAR(50) DEFAULT 'Recebido',
+    itens JSONB NOT NULL -- guarda o array de pizzas como vem do frontend
 );
 
 
+-- Usuario para testes
 INSERT INTO clientes (cliente_id, nome, email, senha) 
 VALUES ('00000000-0000-0000-0000-000000000000', 'Cliente Teste', 'teste@email.com', '123456');
 
@@ -41,11 +38,3 @@ VALUES ('00000000-0000-0000-0000-000000000000', 'Cliente Teste', 'teste@email.co
 <br/>
 
 
-
-
-## backend
-```
-npm install node-fetch
-npm install node-fetch@3
-
-```

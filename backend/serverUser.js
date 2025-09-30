@@ -11,20 +11,7 @@ const PORT = 3001;
 app.use(cors({ origin: 'http://localhost:5173' })); 
 app.use(express.json());
 
-// Rotas de usuário
-app.post('/api/users', async (req, res) => {
-  const { nome, email, senha, telefone, endereco, numero_cartao, validade_cartao, cvv } = req.body;
-  try {
-    const newUser = await pool.query(
-      'INSERT INTO clientes (nome, email, senha, telefone, endereco, numero_cartao, validade_cartao, cvv) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',
-      [nome, email, senha, telefone, endereco, numero_cartao, validade_cartao, cvv]
-    );
-    res.status(201).json(newUser.rows[0]);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: 'Erro ao criar usuário' });
-  }
-});
+
 
 // Rota para criar um novo usuário
 app.post('/api/users', async (req, res) => {

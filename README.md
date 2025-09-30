@@ -133,6 +133,8 @@ npm install nodemon
 npm install jsonwebtoken
 npm install dotenv --save
 npm install @google/generative-ai
+npm install node-fetch
+npm install node-fetch@3
 ````
 
 Este projeto foi desenvolvido pelos seguintes integrantes:
