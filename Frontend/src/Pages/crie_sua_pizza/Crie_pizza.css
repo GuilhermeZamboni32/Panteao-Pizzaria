@@ -170,3 +170,16 @@
 .botao-remover-ingrediente:active {
   transform: scale(0.92);
 }
+
+.icone-ingrediente {
+  width: 22px;
+  height: 22px;
+  margin-right: 6px;
+}
+
+.icone-ingrediente-resumo {
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
