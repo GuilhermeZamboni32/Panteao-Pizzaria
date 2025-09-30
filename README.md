@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="400" height="400" src="https://github.com/GuilhermeZamboni32/Panteao-Pizzaria/blob/main/Logo_Branco_1.png?raw=true" alt="Logo da Panteão Pizzaria">
+  <img width="400" height="400" src="https://github.com/user-attachments/assets/fcf5832e-749e-4ee6-ae4e-c94720cad1ae" alt="Logo da Panteão Pizzaria">
 </p>
 
 # 🍕 Panteão Pizzaria
@@ -98,10 +98,10 @@ Aqui está o dicionário que traduz cada elemento visual do sistema.
 
 | Categoria | Ícone | Ingrediente |
 | :--- | :---: | :--- |
-| ✨ **Misturas/Extras**| ⛵ | Amendoim |
-| | 🏠 | M&M |
-| | ⭐ | Coco Ralado |
-| | 🚫 | KitKat |
+| ✨ **Misturas/Extras**| ⛵ | Milho |
+| | 🏠 | Orégano |
+| | ⭐ | KitKa |
+| | 🚫 | Coco Ralado |
 
 <br>
 
