@@ -184,3 +184,24 @@
     background-color: var(--verde);
     cursor: not-allowed;
 }
+
+.cta-historico {
+  text-align: center;
+  margin: 10px 0 30px;
+}
+
+.cta-historico button {
+  background-color: var(--vermelho);
+  color: var(--branco);
+  border: none;
+  padding: 12px 28px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.cta-historico button:hover {
+  background-color: #a13c3e; /* vermelho mais escuro */
+}

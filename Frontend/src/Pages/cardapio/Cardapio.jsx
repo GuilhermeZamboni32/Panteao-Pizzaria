@@ -82,62 +82,66 @@ function Cardapio({ adicionarAoCarrinho }) {
   };
 
   return (
-    <div className="pagina-cardapio">
-      <Header />
-      <main className="container-cardapio">
+  <div className="pagina-cardapio">
+    <Header />
+    <main className="container-cardapio">
        
+      {/* Botões de filtro com estilo de "ativo" */}
+      <div className="filtros">
+        <button className={filtro === 'todas' ? 'ativo' : ''} onClick={() => setFiltro("todas")}>Todas</button>
+        <button className={filtro === 'salgada' ? 'ativo' : ''} onClick={() => setFiltro("salgada")}>Salgadas</button>
+        <button className={filtro === 'doce' ? 'ativo' : ''} onClick={() => setFiltro("doce")}>Doces</button>
+        <button className={filtro === 'promocao' ? 'ativo' : ''} onClick={() => setFiltro("promocao")}>Promoções</button>
+      </div>
 
-        {/* Botões de filtro com estilo de "ativo" */}
-        <div className="filtros">
-          <button className={filtro === 'todas' ? 'ativo' : ''} onClick={() => setFiltro("todas")}>Todas</button>
-          <button className={filtro === 'salgada' ? 'ativo' : ''} onClick={() => setFiltro("salgada")}>Salgadas</button>
-          <button className={filtro === 'doce' ? 'ativo' : ''} onClick={() => setFiltro("doce")}>Doces</button>
-          <button className={filtro === 'promocao' ? 'ativo' : ''} onClick={() => setFiltro("promocao")}>Promoções</button>
-        </div>
+      {/* Botão de "Crie sua pizza" com mais destaque */}
+      <div className="cta-crie-pizza">
+          <button onClick={() => navigate("/crie_pizza")}>
+              Não encontrou o que queria? <strong>Crie sua própria pizza!</strong>
+          </button>
+      </div>
 
-        {/* Botão de "Crie sua pizza" com mais destaque */}
-        <div className="cta-crie-pizza">
-            <button onClick={() => navigate("/crie_pizza")}>
-                Não encontrou o que queria? <strong>Crie sua própria pizza!</strong>
-            </button>
-        </div>
+      {/* Botão de "Histórico de Pedidos" */}
+      <div className="cta-historico">
+        <button onClick={() => navigate("/historico_pedidos")}>
+          📜 Ver histórico de pedidos
+        </button>
+      </div>
 
-        {/* Lista de pizzas */}
-        <div className="lista-pizzas">
-          {pizzasFiltradas.map((pizza) => {
-            // Verifica se a pizza atual foi adicionada recentemente
-            const foiAdicionada = pizzasAdicionadas.includes(pizza.id);
-
-            return (
-              <div key={pizza.id} className="card-pizza">
-                {pizza.promocao && <div className="tag-promocao">PROMO</div>}
-                <img src={pizza.imagem} alt={pizza.nome} className="pizza-img" />
-                <div className="card-pizza-body">
-                    <h3>{pizza.nome}</h3>
-                    <p className="descricao">{pizza.descricao}</p>
-                    {pizza.promocao ? (
-                      <p className="preco">
-                        <span className="preco-antigo">R$ {pizza.preco.toFixed(2)}</span>
-                        <span className="preco-novo">R$ {pizza.precoPromo.toFixed(2)}</span>
-                      </p>
-                    ) : (
-                      <p className="preco">R$ {pizza.preco.toFixed(2)}</p>
-                    )}
-                    <button 
-                      className={`btn-adicionar ${foiAdicionada ? 'adicionado' : ''}`}
-                      onClick={() => handleAdicionarAoCarrinho(pizza)}
-                      disabled={foiAdicionada}
-                    >
-                      {foiAdicionada ? 'Adicionado ✓' : 'Adicionar'}
-                    </button>
-                </div>
+      {/* Lista de pizzas */}
+      <div className="lista-pizzas">
+        {pizzasFiltradas.map((pizza) => {
+          const foiAdicionada = pizzasAdicionadas.includes(pizza.id);
+          return (
+            <div key={pizza.id} className="card-pizza">
+              {pizza.promocao && <div className="tag-promocao">PROMO</div>}
+              <img src={pizza.imagem} alt={pizza.nome} className="pizza-img" />
+              <div className="card-pizza-body">
+                  <h3>{pizza.nome}</h3>
+                  <p className="descricao">{pizza.descricao}</p>
+                  {pizza.promocao ? (
+                    <p className="preco">
+                      <span className="preco-antigo">R$ {pizza.preco.toFixed(2)}</span>
+                      <span className="preco-novo">R$ {pizza.precoPromo.toFixed(2)}</span>
+                    </p>
+                  ) : (
+                    <p className="preco">R$ {pizza.preco.toFixed(2)}</p>
+                  )}
+                  <button 
+                    className={`btn-adicionar ${foiAdicionada ? 'adicionado' : ''}`}
+                    onClick={() => handleAdicionarAoCarrinho(pizza)}
+                    disabled={foiAdicionada}
+                  >
+                    {foiAdicionada ? 'Adicionado ✓' : 'Adicionar'}
+                  </button>
               </div>
-            );
-          })}
-        </div>
-      </main>
-    </div>
-  );
+            </div>
+          );
+        })}
+      </div>
+    </main>
+  </div>
+);
 }
 
 export default Cardapio;

@@ -1,5 +1,5 @@
 
-// severUser.js////////////////////////////////////////
+// serverUser.js////////////////////////////////////////
 import express from 'express';
 import cors from 'cors';
 import pool from './db.js';
