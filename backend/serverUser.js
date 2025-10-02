@@ -3,6 +3,7 @@
 import express from 'express';
 import cors from 'cors';
 import pool from './db.js';
+import bcrypt from 'bcryptjs';
 
 const app = express();
 const PORT = 3001;
@@ -17,17 +18,21 @@ app.use(express.json());
 app.post('/api/users', async (req, res) => {
   const { nome, email, senha, telefone, endereco, numero_cartao, validade_cartao, cvv } = req.body;
   try {
+    const hashedPassword = await bcrypt.hash(senha, 10);
+    const hashedCVV = await bcrypt.hash(cvv, 12);
+    const hashedNumeroCartao = await bcrypt.hash(numero_cartao, 12);
     const newUser = await pool.query(
       'INSERT INTO clientes (nome, email, senha, telefone, endereco, numero_cartao, validade_cartao, cvv) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-      [nome, email, senha, telefone, endereco, numero_cartao, validade_cartao, cvv]
+      [nome, email, hashedPassword, telefone, endereco, hashedNumeroCartao, validade_cartao, hashedCVV]
     );
     res.status(201).json(newUser.rows[0]);
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ error: 'Erro ao criar usuário' });
+    res.status(500).json({ error: err.message });
   }
 });
 
+// Rota de teste para pedidos (sem integração real)
 app.post('/api/pedidos', (req, res) => {
   const pedido = req.body;
   console.log('Pedido recebido:', pedido);
@@ -35,7 +40,7 @@ app.post('/api/pedidos', (req, res) => {
   res.json({ id: Date.now(), mensagem: 'Pedido concluído com sucesso!' });
 });
 
-
+// Rota para buscar um usuário por ID
 app.get('/api/users/:id', async (req, res) => { 
   const { id } = req.params;
   try {
@@ -50,6 +55,7 @@ app.get('/api/users/:id', async (req, res) => {
   }
 });
 
+// Rota para listar todos os usuários
 app.get('/api/users', async (req, res) => { 
   try {
     const users = await pool.query('SELECT * FROM clientes');
@@ -60,14 +66,17 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
-
+// Rota para atualizar um usuário por ID
 app.put('/api/users/:id', async (req, res) => { 
   const { id } = req.params;
   const { nome, email, senha, telefone, endereco, numero_cartao, validade_cartao, cvv } = req.body;
   try {
+    const hashedPassword = await bcrypt.hash(senha, 10);
+    const hashedCVV = await bcrypt.hash(cvv, 12);
+    const hashedNumeroCartao = await bcrypt.hash(numero_cartao, 12);
     const updatedUser = await pool.query(
       'UPDATE clientes SET nome = $1, email = $2, senha = $3, telefone = $4, endereco = $5, numero_cartao = $6, validade_cartao = $7, cvv = $8 WHERE cliente_id = $9 RETURNING *',
-      [nome, email, senha, telefone, endereco, numero_cartao, validade_cartao, cvv, id]
+      [nome, email, hashedPassword, telefone, endereco, hashedNumeroCartao, validade_cartao, hashedCVV, id]
     );
     if (updatedUser.rows.length === 0) {
       return res.status(404).json({ error: 'Usuário não encontrado' });
@@ -79,7 +88,7 @@ app.put('/api/users/:id', async (req, res) => {
   } 
 });
 
-
+// Rota para deletar um usuário por ID
 app.delete('/api/users/:id', async (req, res) => {
   const { id } = req.params;
   try {

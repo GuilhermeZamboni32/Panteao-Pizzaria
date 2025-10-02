@@ -26,6 +26,15 @@ app.post('/queue/items', (req, res) => {
   console.log('Payload:', JSON.stringify(pedidoRecebido, null, 2));
   console.log('--------------------------------------------------');
 
+  app.get('/queue/items/:id', (req, res) => {
+  const pedido = pedidoRecebido[req.params.id];
+  if (pedido) {
+    res.json({ status: pedido.status });
+  } else {
+    res.status(404).json({ status: 'Pedido não encontrado' });
+  }
+});
+
   // Envia uma resposta de sucesso, imitando a máquina real.
   // O frontend espera uma resposta com uma propriedade "id".
   res.status(200).json({

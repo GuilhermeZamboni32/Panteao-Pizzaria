@@ -24,6 +24,30 @@ function Cadastro() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensagem('');
+
+    
+    // Validação dos campos
+    if (!emailRegex.test(form.email)) {
+      setMensagem('Email inválido.');
+      return;
+    }
+    if (!senhaRegex.test(form.senha)) {
+      setMensagem('A senha deve ter pelo menos 8 caracteres, incluindo letras e números.');
+      return;
+    }
+    if (!numeroCartaoRegex.test(form.numero_cartao)) {
+      setMensagem('O número do cartão deve ter 16 dígitos.');
+      return;
+    }
+    if (!telefoneRegex.test(form.telefone)) {
+      setMensagem('O telefone deve ter 10 ou 11 dígitos.');
+      return;
+    }
+    if (!enderecoRegex.test(form.endereco)) {
+      setMensagem('O endereço deve ter pelo menos 5 caracteres.');
+      return;
+    }
+
     try {
       const response = await fetch('http://localhost:3001/api/users', {
         method: 'POST',
@@ -46,7 +70,6 @@ function Cadastro() {
           cvv: ''
         });
       } else if (data.errors) {
-        // Caso seja erro de validação do Zod
         const mensagens = data.errors.map(e => e.message).join(', ');
         setMensagem(mensagens);
       } else {
@@ -56,6 +79,13 @@ function Cadastro() {
       setMensagem('Erro ao conectar com o servidor.');
     }
   };
+
+  //regex para validar email, senha e numero do cartao
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const senhaRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+  const numeroCartaoRegex = /^\d{16}$/;
+  const telefoneRegex = /^\d{10,11}$/; // Aceita 10 ou 11 dígitos
+  const enderecoRegex = /^.{5,}$/; // Aceita endereços com pelo menos 5 caracteres
 
   return (
     <div className='pagina-cadastro'>
