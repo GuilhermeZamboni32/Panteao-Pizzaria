@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import './Crie_Pizza.css';
 import Header from '../../components/pastaheader/Header';
 
-// --- ESTRUTURAS DE DADOS ---
+
 const iconesCategoria = {
     Carnes: <img src="/icons/carne-preto.png" alt="Carnes" className="icone-categoria" />,
     Queijos: <img src="/icons/queijo-preto.png" alt="Queijos" className="icone-categoria" />,
@@ -30,39 +30,34 @@ const ingredienteParaCategoriaMap = Object.entries(ingredientesPorCategoria)
         return acc;
     }, {});
 
-// --- ÍCONES DE INGREDIENTES ---
+
 const iconesIngrediente = {
-    // Carnes
+
     "Bacon": "/icons/bacon-preto.png",
     "Frango": "/icons/frango-preto.png",
     "Calabresa": "/icons/calabresa-preto.png",
     "Camarão": "/icons/camarao-preto.png",
 
-    // Queijos
     "Mussarela": "/icons/mussarela-preto.png",
     "Cheddar": "/icons/cheddar-preto.png",
     "Parmesão": "/icons/parmesao-preto.png",
     "Gorgonzola": "/icons/gorgonzola-preto.png",
 
-    // Saladas
     "Tomate": "/icons/tomate-preto.png",
     "Brócolis": "/icons/brocolis-preto.png",
     "Rúcula": "/icons/rucula-preto.png",
     "Cebola": "/icons/cebola-preto.png",
 
-    // Frutas
     "Uva": "/icons/uva-preto.png",
     "Morango": "/icons/morango-preto.png",
     "Banana": "/icons/banana-preto.png",
     "Cereja": "/icons/cereja-preto.png",
 
-    // Chocolates
     "Chocolate Preto": "/icons/chocolate-preto.png",
     "Chocolate Branco": "/icons/chocolate-branco-preto.png",
     "Nutella": "/icons/nutella-preto.png",
     "Ovomaltine": "/icons/ovomaltine-preto.png",
 
-    // Complementos
     "Milho": "/icons/milho-preto.png",
     "Orégano": "/icons/oregano-preto.png",
     "M&M": "/icons/mm-preto.png",
