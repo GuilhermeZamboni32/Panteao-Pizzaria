@@ -57,58 +57,54 @@ function Carrinho() {
     };
 
     const handleConcluirCompra = async () => {
-        // --- PONTO CRÍTICO DA CORREÇÃO ---
-        // 1. Validação: Verifica se há um usuário logado com ID
-        if (!usuarioLogado || !usuarioLogado.cliente_id) {
-            alert("Você precisa estar logado para finalizar o pedido!");
-            navigate('/login'); // Redireciona para a página de login
-            return;
-        }
+    // 1. Verifica login
+    if (!usuarioLogado || !usuarioLogado.cliente_id) {
+        alert("Você precisa estar logado para finalizar o pedido!");
+        navigate('/login');
+        return;
+    }
 
-        if (itensCarrinho.length === 0) {
-            alert('Seu carrinho está vazio!');
-            return;
-        }
+    // 2. Verifica carrinho vazio
+    if (itensCarrinho.length === 0) {
+        alert('Seu carrinho está vazio!');
+        return;
+    }
 
-        // 2. Monta o payload do pedido, agora INCLUINDO o ID do usuário
-        const pedido = {
-            usuario: {
-                id: usuarioLogado.cliente_id, // <-- A PROPRIEDADE QUE FALTAVA
-                nome: usuarioLogado.nome,
-            },
-            itens: itensCarrinho,
-            subtotal,
-            frete,
-            total,
-            data: new Date().toISOString()
-        };
-
-        try {
-            const response = await fetch('http://localhost:3002/api/pedidos', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(pedido)
-            });
-
-            const resultado = await response.json();
-
-            if (response.ok) {
-                // A resposta do backend inclui 'idsDaMaquina'
-                const ids = resultado.idsDaMaquina || [];
-
-                localStorage.setItem("pedidosEmAndamento", JSON.stringify(ids));
-                alert(`Pedido concluído com sucesso!`);
-                setItensCarrinho([]);
-                navigate('/pedidosEmAndamento'); 
-
-            } else {
-                alert(`Erro ao salvar pedido: ${resultado.error}`);
-            }
-        } catch (err) {
-            console.error("Erro de conexão:", err);
-            alert('Erro de conexão com o servidor!');
-        }
+    // 3. Monta o payload do pedido
+    const pedidoPayload = {
+        usuario: {
+            id: usuarioLogado.cliente_id, // ID do banco
+            nome: usuarioLogado.nome,
+            email: usuarioLogado.email
+        },
+        itens: itensCarrinho,
+        total: total
     };
+
+    try {
+        const response = await fetch('http://localhost:3002/api/pedidos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(pedidoPayload)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert('🍕 Pedido realizado com sucesso!');
+            console.log("📦 Retorno do servidor:", data);
+
+            // Limpa o carrinho e redireciona para histórico ou página inicial
+            setItensCarrinho([]);
+            navigate('/historico_pedidos', { state: { pedidos: data.pedido } });
+        } else {
+            alert(data.error || 'Erro ao concluir o pedido.');
+        }
+    } catch (err) {
+        console.error("❌ Erro ao enviar pedido:", err);
+        alert("Erro ao conectar com o servidor de pedidos.");
+    }
+};
 
     return (
         <div className="pagina-carrinho">

@@ -1,4 +1,4 @@
-////////////db.js///////
+/////////////  db.js  //////////////
 import pg from 'pg';
 import 'dotenv/config';
 
@@ -21,4 +21,3 @@ pool.on('connect', () => {
 
 // Exporta o pool para que outros arquivos (como o server.js) possam usá-lo
 export default pool;
-

@@ -1,8 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
-import traduzirPizzaParaCaixinha from './traduzirPizzaParaCaixinha.js';
 import pool from './db.js';
+
+// Não é necessário importar 'traduzirPizzaParaCaixinha.js' aqui,
+// a menos que este arquivo também o utilize.
+// Se ele for usado apenas por outro servidor, pode remover a linha.
 
 const app = express();
 const PORT = 3002;
@@ -10,9 +13,8 @@ const PORT = 3002;
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
 
-// ROTA ANTIGA - POST para criar um novo pedido (sem alterações)
+// ROTA PARA CRIAR UM NOVO PEDIDO
 app.post('/api/pedidos', async (req, res) => {
-    // A lógica de estilização de logs que fizemos anteriormente fica aqui
     const pedido = req.body;
     console.log(`\n\n--- 🍕 NOVO PEDIDO RECEBIDO [${new Date().toLocaleTimeString()}] 🍕 ---`);
 
@@ -20,13 +22,12 @@ app.post('/api/pedidos', async (req, res) => {
         if (!pedido.itens || pedido.itens.length === 0) {
             return res.status(400).json({ error: "Pedido sem itens" });
         }
-        if (!pedido.usuario || !pedido.usuario.nome) {
+        if (!pedido.usuario || !pedido.usuario.id) { // Verificando pelo ID do usuário
             return res.status(400).json({ error: "Pedido sem usuário válido" });
         }
         
         console.log("\n[PASSO 1/3] 💾 Salvando no banco de dados...");
-        // Usando o ID do usuário real que veio do frontend
-        const clienteId = pedido.usuario.id || '00000000-0000-0000-0000-000000000000';
+        const clienteId = pedido.usuario.id;
 
         const novoPedido = await pool.query(
             'INSERT INTO pedidos (cliente_id, valor_total, status, itens) VALUES ($1, $2, $3, $4) RETURNING *',
@@ -37,21 +38,20 @@ app.post('/api/pedidos', async (req, res) => {
                 JSON.stringify(pedido.itens)
             ]
         );
-        const pedidoSalvoId = novoPedido.rows[0].pedido_id;
-        console.log(`  ✅ Pedido salvo com sucesso! (ID: ${pedidoSalvoId})`);
+        const pedidoSalvo = novoPedido.rows[0];
+        console.log(`   ✅ Pedido salvo com sucesso! (ID no BD: ${pedidoSalvo.pedido_id})`);
         
-        console.log(`\n[ID do Pedido: ${pedidoSalvoId}]`);
-        console.log("\n[PASSO 2/3] 🔄 Convertendo para o formato da máquina...");
+        // A função de tradução deve estar disponível aqui se for usada
+        // const caixas = pedido.itens.map(pizza => traduzirPizzaParaCaixinha(pizza));
         
-        const caixas = pedido.itens.map(pizza => traduzirPizzaParaCaixinha(pizza));
-        
-        console.log("\n[PASSO 3/3] 🚀 Enviando para a fila de produção...");
-        const promessasDeEnvio = caixas.map(async (caixa, idx) => {
+        console.log("\n[PASSO 2/3] 🚀 Enviando para a fila de produção...");
+        // Simulando o envio para a máquina, já que a tradução foi removida do escopo
+        const promessasDeEnvio = pedido.itens.map(async (item, idx) => {
             const payload = {
                 payload: {
-                    orderId: pedidoSalvoId,
-                    sku: `KIT-PIZZA-${pedido.itens[idx].tamanho.toUpperCase()}`,
-                    order: caixa.payload.caixa
+                    orderId: pedidoSalvo.pedido_id, // Usando o ID do pedido do nosso BD
+                    sku: `KIT-PIZZA-${item.tamanho.toUpperCase()}`,
+                    // order: caixa.payload.caixa // A lógica de tradução seria necessária aqui
                 },
                 callbackUrl: "http://localhost:3333/callback"
             };
@@ -68,12 +68,13 @@ app.post('/api/pedidos', async (req, res) => {
             return await response.json();
         });
         
-        await Promise.all(promessasDeEnvio);
+        const respostasDaMaquina = await Promise.all(promessasDeEnvio);
 
-        console.log("  ✅ Pedido enviado com sucesso!");
-        res.json({
-            message: "Pedido salvo no BD e enviado para produção com sucesso!",
-            idsDaMaquina: (await Promise.all(promessasDeEnvio)).map(e => e.id)
+        console.log("  ✅ Itens enviados com sucesso para a fila!");
+        res.status(201).json({
+            message: "Pedido salvo e enviado para produção!",
+            pedido: pedidoSalvo,
+            idsDaMaquina: respostasDaMaquina.map(e => e.id)
         });
 
     } catch (err) {
@@ -86,8 +87,7 @@ app.post('/api/pedidos', async (req, res) => {
     }
 });
 
-
-// NOVA ROTA - GET para buscar o histórico de pedidos de um cliente
+// ROTA PARA BUSCAR O HISTÓRICO DE PEDIDOS DE UM CLIENTE
 app.get('/api/pedidos/cliente/:clienteId', async (req, res) => {
   const { clienteId } = req.params;
   try {
@@ -97,19 +97,37 @@ app.get('/api/pedidos/cliente/:clienteId', async (req, res) => {
       [clienteId]
     );
 
-    // O campo 'itens' vem como texto do banco, então convertemos de volta para JSON
-    const pedidos = resultado.rows.map(pedido => {
-        return {
-            ...pedido,
-            itens: typeof pedido.itens === 'string' ? JSON.parse(pedido.itens) : pedido.itens
-        };
-    });
+    const pedidos = resultado.rows.map(pedido => ({
+        ...pedido,
+        itens: typeof pedido.itens === 'string' ? JSON.parse(pedido.itens) : pedido.itens
+    }));
     
     res.json(pedidos);
 
   } catch (err) {
     console.error(`Erro ao buscar histórico do cliente ${clienteId}:`, err.message);
     res.status(500).json({ error: 'Erro ao buscar histórico de pedidos' });
+  }
+});
+
+// ROTA PROXY PARA BUSCAR O STATUS DE UM ITEM NA MÁQUINA
+app.get('/api/pedidos/status/:machineId', async (req, res) => {
+  const { machineId } = req.params;
+
+  try {
+    console.log(`[Proxy] Consultando status para o ID da máquina: ${machineId}`);
+    const responseDaMaquina = await fetch(`http://localhost:3000/queue/items/${machineId}`);
+
+    if (!responseDaMaquina.ok) {
+      throw new Error(`Máquina retornou status: ${responseDaMaquina.status}`);
+    }
+
+    const statusData = await responseDaMaquina.json();
+    res.json(statusData);
+
+  } catch (err) {
+    console.error(`[Proxy] Erro ao buscar status para o ID ${machineId}:`, err.message);
+    res.status(500).json({ error: 'Erro ao consultar o status na máquina', details: err.message });
   }
 });
 

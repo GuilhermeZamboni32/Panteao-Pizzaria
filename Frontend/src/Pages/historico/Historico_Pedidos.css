@@ -88,7 +88,7 @@
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: bold;
-  color: var(--branco);
+  color: var(--preto);
 }
 
 .status-entregue { background-color: var(--verde); }
@@ -206,4 +206,37 @@
   font-size: 1rem;
   white-space: nowrap;
   margin-left: 1rem;
+}
+
+
+/* Adicione este estilo ao final do seu arquivo Historico_Pedidos.css */
+
+.btn-voltar-cardapio {
+  display: inline-block;
+  margin-bottom: 20px; /* Adiciona um espaço abaixo do botão */
+  padding: 10px 20px;
+  background-color: #f0ad4e; /* Uma cor de destaque, como laranja */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+.btn-voltar-cardapio:hover {
+  background-color: #ec971f; /* Cor um pouco mais escura ao passar o mouse */
+}
+
+
+.carrinho-historico{
+  width: 30px;
+  height: 30px;
+}
+
+.info-historico{
+  width: 30px;
+  height: 30px;
 }

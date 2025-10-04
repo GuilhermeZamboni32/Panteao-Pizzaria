@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import './Cadastro.css';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../components/pastaheader/Header';
+import './Cadastro.css';
 
 function Cadastro() {
   const [form, setForm] = useState({
@@ -14,8 +15,10 @@ function Cadastro() {
     cvv: ''
   });
 
-
   const [mensagem, setMensagem] = useState('');
+
+ 
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.id]: e.target.value });
@@ -24,7 +27,6 @@ function Cadastro() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensagem('');
-
     
     // Validação dos campos
     if (!emailRegex.test(form.email)) {
@@ -58,17 +60,13 @@ function Cadastro() {
       const data = await response.json();
 
       if (response.ok) {
-        setMensagem('Usuário cadastrado com sucesso!');
-        setForm({
-          nome: '',
-          email: '',
-          senha: '',
-          telefone: '',
-          endereco: '',
-          numero_cartao: '',
-          validade_cartao: '',
-          cvv: ''
-        });
+        setMensagem('Usuário cadastrado com sucesso! Redirecionando...');
+        
+       
+        setTimeout(() => {
+            navigate('/login');
+        }, 1500); // 1.5 segundos
+        
       } else if (data.errors) {
         const mensagens = data.errors.map(e => e.message).join(', ');
         setMensagem(mensagens);
@@ -84,8 +82,8 @@ function Cadastro() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const senhaRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
   const numeroCartaoRegex = /^\d{16}$/;
-  const telefoneRegex = /^\d{10,11}$/; // Aceita 10 ou 11 dígitos
-  const enderecoRegex = /^.{5,}$/; // Aceita endereços com pelo menos 5 caracteres
+  const telefoneRegex = /^\d{10,11}$/;
+  const enderecoRegex = /^.{5,}$/;
 
   return (
     <div className='pagina-cadastro'>
@@ -104,6 +102,7 @@ function Cadastro() {
             <h1 className='titulo-form-cadastro'>Cadastro</h1>
 
             <form className='form-cadastro' onSubmit={handleSubmit}>
+              {/* Seus inputs aqui... */}
               <div className='form-group-cadastro'>
                 <label htmlFor="nome">Nome:</label>
                 <input
@@ -199,8 +198,7 @@ function Cadastro() {
                   required
                 />
               </div>
-
-              <button className='botao-form-cadastro' type="submit">Cadastrar</button>
+              <button className='botao-form-cadastro' type="submit" >Cadastrar</button>
             </form>
 
             {mensagem && (
