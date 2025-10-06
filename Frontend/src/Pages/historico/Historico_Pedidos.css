@@ -227,21 +227,53 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 10px var(--cinza);
   transition: all 0.3s ease;
 }
 
 .btn-voltar-cardapio:hover {
-  background-color: #5b8743; /* tom mais escuro do verde */
+  background-color: green;
   transform: translateY(-3px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 14px var(--cinza);
 }
 
 .btn-voltar-cardapio:active {
   transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 6px var(--cinza);
 }
 
+.btn-pedidos-andamento {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 20px;
+  padding: 0.8rem 1.8rem;
+  background-color: var(--cinza);
+  color: var(--branco);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px var(--cinza);
+  transition: all 0.3s ease;
+  margin-left: 20px;
+}
+
+.btn-pedidos-andamento:hover {
+  background-color: var(--preto); 
+  color: var(--branco);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px var(--cinza);
+}
+
+.btn-pedidos-andamento:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px var(--cinza);
+}
 
 .carrinho-historico{
   width: 30px;

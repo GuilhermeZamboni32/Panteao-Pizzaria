@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./PedidosEmAndamento.css";
 import Header from "../../components/pastaheader/Header";
+import { useNavigate } from 'react-router-dom';
 
 function PedidosEmAndamento() {
     const [pedidos, setPedidos] = useState([]);
     const intervalRef = useRef(null);
+    const navigate = useNavigate();
 
     // Mapeamento de status para classes de CSS para cores e ícones
     const getStatusInfo = (status) => {
@@ -68,6 +70,9 @@ function PedidosEmAndamento() {
             <Header />
             <main className="container-pedidos">
                 <div className="box-pedidos">
+                     <button className="btn-voltar-cardapio" onClick={() => navigate('/historico_pedidos')}>
+                        Voltar ao Histórico de Pedidos
+                    </button>
                     <h1 className="titulo-pedidos">Acompanhe seus Pedidos</h1>
                     {pedidos.length === 0 ? (
                         <p className="sem-pedidos">Nenhum pedido em andamento no momento.</p>

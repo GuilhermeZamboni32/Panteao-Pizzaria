@@ -61,9 +61,14 @@ function HistoricoPedidos() {
         <h1>Histórico de Pedidos</h1>
         
         <button className="btn-voltar-cardapio" onClick={() => navigate('/cardapio')}>
-          
           Voltar ao Cardápio
         </button>
+
+         <button className="btn-pedidos-andamento" onClick={() => navigate('/pedidosemandamento')}>
+          Pedidos em Andamento
+        </button>
+
+       
 
         {carregando && <p className="mensagem-info">Carregando...</p>}
         {erro && <p className="mensagem-erro">{erro}</p>}
