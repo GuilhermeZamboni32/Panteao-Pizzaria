@@ -71,7 +71,7 @@ function PedidosEmAndamento() {
             <main className="container-pedidos">
                 <div className="box-pedidos">
                      <button className="btn-voltar-cardapio" onClick={() => navigate('/historico_pedidos')}>
-                        Voltar ao Histórico de Pedidos
+                        Voltar ao Histrico de Pedidos
                     </button>
                     <h1 className="titulo-pedidos">Acompanhe seus Pedidos</h1>
                     {pedidos.length === 0 ? (
