@@ -60,11 +60,8 @@ function HistoricoPedidos() {
       <div className="container-historico-pedidos">
         <h1>Histórico de Pedidos</h1>
         
-        {/* NOVO BOTÃO AQUI */}
-        <button 
-          className="btn-voltar-cardapio" 
-          onClick={() => navigate('/cardapio')}
-        >
+        <button className="btn-voltar-cardapio" onClick={() => navigate('/cardapio')}>
+          
           Voltar ao Cardápio
         </button>
 

@@ -212,22 +212,34 @@
 /* Adicione este estilo ao final do seu arquivo Historico_Pedidos.css */
 
 .btn-voltar-cardapio {
-  display: inline-block;
-  margin-bottom: 20px; /* Adiciona um espaço abaixo do botão */
-  padding: 10px 20px;
-  background-color: #f0ad4e; /* Uma cor de destaque, como laranja */
-  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 20px;
+  padding: 0.8rem 1.8rem;
+  background-color: var(--verde);
+  color: var(--branco);
   border: none;
-  border-radius: 5px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 1rem;
-  font-weight: bold;
-  text-align: center;
-  transition: background-color 0.2s;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
 }
 
 .btn-voltar-cardapio:hover {
-  background-color: #ec971f; /* Cor um pouco mais escura ao passar o mouse */
+  background-color: #5b8743; /* tom mais escuro do verde */
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+
+.btn-voltar-cardapio:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 

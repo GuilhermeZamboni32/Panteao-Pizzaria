@@ -7,49 +7,90 @@ import Header from '../../components/pastaheader/Header';
 
 // A lista de pizzas agora vive em seu próprio arquivo.
 export const pizzasData = [
-    { id: 1, nome: "Pizza de Calabresa", 
-      descricao: "Molho de tomate, mussarela, calabresa fatiada e cebola.",
-      preco: 38.00, 
-      imagem: "/imagens-pizza/Pizza-Calabresa.png",
-      tipo: "salgada" },
-
-      { id: 2, nome: "Pizza de Azeitona Preta",
-        descricao: "Molho de tomate, mussarela e azeitonas pretas selecionadas.", 
-        preco: 35.00, 
-        imagem: "/imagens-pizza/Pizza-Azeitona-Preta.png", 
-        tipo: "salgada" },
-
-        { id: 3, nome: "Pizza Marguerita", 
-          descricao: "Molho de tomate, mussarela, tomate fresco e manjericão.", 
-          preco: 35.00, 
-          imagem: "/imagens-pizza/Pizza-Marguerita.png", 
-          tipo: "salgada" },
-
-          { id: 4, nome: "Chocolate com Morango", 
-            descricao: "Delicioso chocolate derretido com morangos frescos.", 
-            preco: 42.00, 
-            imagem: "/imagens-pizza/Pizza-Chocolate-Morango.jpeg", 
-            tipo: "doce" },
-
-            { id: 5, nome: "Chocolate", 
-              descricao: "Aveludado chocolate ao leite coberto por granulado.",
-              preco: 40.00, 
-              imagem: "/imagens-pizza/Pizza-Chocolate.jpeg", 
-              tipo: "doce" },
-
-              { id: 6, nome: "Promoção da Casa", 
-                descricao: "Calabresa especial com borda de catupiry.", 
-                preco: 45.00, precoPromo: 39.90, 
-                imagem: "/imagens-pizza/Pizza-Calabresa.png", 
-                tipo: "salgada",
-                promocao: true },
-
-                { id: 7, nome: "Promoção de Azeitona", 
-                  descricao: "Mussarela premium com azeitonas graúdas.", 
-                  preco: 45.00, precoPromo: 39.90, 
-                  imagem: "/imagens-pizza/Pizza-Azeitona-Preta.png", 
-                  tipo: "salgada", 
-                  promocao: true }
+  {
+    id: 1,
+    nome: "Pizza de Queijo com Calabresa",
+    descricao: "Molho de tomate fresco, mussarela derretida e calabresa fatiada.",
+    preco: 42.00,
+    imagem: "/imagens-pizza/Pizza-Queijo-Calabresa.png",
+    tipo: "salgada"
+  },
+  {
+    id: 2,
+    nome: "Pizza de Queijo com Frango",
+    descricao: "Deliciosa combinação de frango desfiado temperado com queijo cremoso.",
+    preco: 40.00,
+    imagem: "/imagens-pizza/Pizza-Queijo-Frango.png",
+    tipo: "salgada"
+  },
+  {
+    id: 3,
+    nome: "Pizza de Queijo com Camarão",
+    descricao: "Camarões selecionados salteados no alho e óleo com queijo mussarela.",
+    preco: 55.00,
+    imagem: "/imagens-pizza/Pizza-Queijo-Camarao.png",
+    tipo: "salgada"
+  },
+  {
+    id: 4,
+    nome: "Pizza de Queijo com Tomate",
+    descricao: "A clássica mussarela com rodelas de tomate fresco e um toque de orégano.",
+    preco: 38.00,
+    imagem: "/imagens-pizza/Pizza-Queijo-Tomate.png",
+    tipo: "salgada"
+  },
+  {
+    id: 5,
+    nome: "Pizza de Cuscuz Paulista",
+    descricao: "O sabor e a essemcia inigualável do cuscuz paulista em uma base de pizza crocante.",
+    preco: 48.00,
+    imagem: "/imagens-pizza/Pizza-Cuscus-Paulista.png",
+    tipo: "salgada"
+  },
+  {
+    id: 6,
+    nome: "Pizza de Chocolate Branco com Morango",
+    descricao: "Cobertura de chocolate branco cremoso com morangos frescos e suculentos.",
+    preco: 45.00,
+    imagem: "/imagens-pizza/Pizza-ChocolateBranco-Morango.png",
+    tipo: "doce"
+  },
+  {
+    id: 7,
+    nome: "Pizza de Chocolate Preto com Morango e Banana",
+    descricao: "A combinação perfeita de chocolate preto, morangos e bananas fatiadas.",
+    preco: 47.00,
+    imagem: "/imagens-pizza/Pizza-ChocolatePreto-Morango-banana.png",
+    tipo: "doce"
+  },
+  {
+    id: 8,
+    nome: "Pizza de Queijo com Morango",
+    descricao: "Uma sobremesa surpreendente com queijo doce e morangos frescos.",
+    preco: 43.00,
+    imagem: "/imagens-pizza/Pizza-Queijo-Morango.png",
+    tipo: "doce"
+  },
+  {
+    id: 9,
+    nome: "Promoção de Frango",
+    descricao: "A queridinha de frango com queijo por um preço especial.",
+    preco: 40.00,
+    precoPromo: 35.90,
+    imagem: "/imagens-pizza/Pizza-Queijo-Frango.png",
+    tipo: "salgada",
+    promocao: true
+  },
+  {
+    id: 10,
+    nome: "Promoção de Calabresa",
+    descricao: "Aproveite a nossa pizza de queijo com calabresa com um super desconto.",
+    preco: 42.00,
+    precoPromo: 37.90,
+    imagem: "/imagens-pizza/Pizza-Queijo-Calabresa.png",
+    tipo: "salgada",
+    promocao: true
+  }
 ];
 
 function Cardapio({ adicionarAoCarrinho }) {
