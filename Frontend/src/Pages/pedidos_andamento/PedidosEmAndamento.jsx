@@ -8,20 +8,22 @@ function PedidosEmAndamento() {
     const intervalRef = useRef(null);
     const navigate = useNavigate();
 
-    // Mapeamento de status para classes de CSS para cores e ícones
+   
     const getStatusInfo = (status) => {
         const lowerStatus = status.toLowerCase();
+        // Pedido Deu ERRO
         if (lowerStatus.includes("erro") || lowerStatus.includes("falha")) {
             return { className: "status-erro", icon: "❌" };
         }
+        // Pedido Está Carregando/Esperando a Vez
         if (lowerStatus.includes("carregando")) {
             return { className: "status-carregando", icon: "⏳" };
         }
-        // Adicione outros status conforme necessário
+        // Pedido Concludo com Sucesso
         if (lowerStatus.includes("pronto") || lowerStatus.includes("entregue")) {
             return { className: "status-sucesso", icon: "✅" };
         }
-        // Status padrão para 'Em produção', 'Recebido', etc.
+        // Pedido em Produção
         return { className: "status-ok", icon: "⚙️" };
     };
 
@@ -58,7 +60,7 @@ function PedidosEmAndamento() {
         };
 
         if (pedidos.length > 0) {
-            atualizarStatusDeTodos(); // Busca inicial
+            atualizarStatusDeTodos(); 
             intervalRef.current = setInterval(atualizarStatusDeTodos, 10000); // Atualiza a cada 10s
         }
 

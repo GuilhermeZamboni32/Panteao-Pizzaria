@@ -57,54 +57,61 @@ function Carrinho() {
     };
 
     const handleConcluirCompra = async () => {
-    // 1. Verifica login
-    if (!usuarioLogado || !usuarioLogado.cliente_id) {
-        alert("Você precisa estar logado para finalizar o pedido!");
-        navigate('/login');
-        return;
-    }
-
-    // 2. Verifica carrinho vazio
-    if (itensCarrinho.length === 0) {
-        alert('Seu carrinho está vazio!');
-        return;
-    }
-
-    // 3. Monta o payload do pedido
-    const pedidoPayload = {
-        usuario: {
-            id: usuarioLogado.cliente_id, // ID do banco
-            nome: usuarioLogado.nome,
-            email: usuarioLogado.email
-        },
-        itens: itensCarrinho,
-        total: total
-    };
-
-    try {
-        const response = await fetch('http://localhost:3002/api/pedidos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(pedidoPayload)
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            alert('🍕 Pedido realizado com sucesso!');
-            console.log("📦 Retorno do servidor:", data);
-
-            // Limpa o carrinho e redireciona para histórico ou página inicial
-            setItensCarrinho([]);
-            navigate('/historico_pedidos', { state: { pedidos: data.pedido } });
-        } else {
-            alert(data.error || 'Erro ao concluir o pedido.');
+        if (!usuarioLogado || !usuarioLogado.cliente_id) {
+            alert("Você precisa estar logado para finalizar o pedido!");
+            navigate('/login');
+            return;
         }
-    } catch (err) {
-        console.error("❌ Erro ao enviar pedido:", err);
-        alert("Erro ao conectar com o servidor de pedidos.");
-    }
-};
+        if (itensCarrinho.length === 0) {
+            alert('Seu carrinho está vazio!');
+            return;
+        }
+        const pedidoPayload = {
+            usuario: {
+                id: usuarioLogado.cliente_id,
+                nome: usuarioLogado.nome,
+                email: usuarioLogado.email
+            },
+            itens: itensCarrinho,
+            total: total
+        };
+    
+        try {
+            const response = await fetch('http://localhost:3002/api/pedidos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(pedidoPayload)
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                alert('🍕 Pedido realizado com sucesso! Acompanhe na tela de "Pedidos em Andamento".');
+                console.log("📦 Retorno do servidor:", data);
+    
+                // CORREÇÃO: Pegar os IDs da MÁQUINA, não do seu banco de dados
+                const idsDaMaquina = data.idsDaMaquina;
+    
+                // Salva os IDs corretos no localStorage
+                try {
+                    const idsEmAndamento = JSON.parse(localStorage.getItem("pedidosEmAndamento")) || [];
+                    // Adiciona todos os novos IDs da máquina à lista
+                    const idsAtualizados = [...idsEmAndamento, ...idsDaMaquina];
+                    localStorage.setItem("pedidosEmAndamento", JSON.stringify(idsAtualizados));
+                } catch (error) {
+                    console.error("Falha ao salvar o ID do pedido no localStorage:", error);
+                }
+                
+                setItensCarrinho([]);
+                navigate('/pedidosemandamento');
+            } else {
+                alert(data.error || 'Erro ao concluir o pedido.');
+            }
+        } catch (err) {
+            console.error("❌ Erro ao enviar pedido:", err);
+            alert("Erro ao conectar com o servidor de pedidos.");
+        }
+    };
 
     return (
         <div className="pagina-carrinho">
