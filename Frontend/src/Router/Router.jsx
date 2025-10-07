@@ -7,7 +7,7 @@ import Cardapio from "../pages/cardapio/Cardapio";
 import Crie from "../Pages/crie_sua_pizza/Crie_Pizza";
 import Carrinho from "../pages/carrinho/Carrinho";
 import PedidosEmAndamento from "../Pages/pedidos_andamento/PedidosEmAndamento";
-//import Contato from "../pages/contato/Contato";
+import Contato from "../Pages/contato/Contato";
 
 const router = createBrowserRouter([
     { path: "/", element: <Home/> },
@@ -18,7 +18,7 @@ const router = createBrowserRouter([
     { path: "/Crie_pizza", element: <Crie/> },
     { path: "/Carrinho", element: <Carrinho/> },
     { path: "/PedidosEmAndamento", element: <PedidosEmAndamento/> },
-    {/* path: "/Contato", element: <Contato/>*/ }
+    {path: "/Contato", element: <Contato/> },
 ]);
 
 export default router;

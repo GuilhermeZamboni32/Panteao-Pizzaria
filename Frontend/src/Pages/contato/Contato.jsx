@@ -1,13 +1,13 @@
-/*import React, { useState } from 'react'
+import React, { useState } from 'react'
 import './Contato.css'
 import Header from '../../components/pastaheader/Header'
 
 const membros = [
-  { nome: "Guilherme Zamboni", foto: "public/carrossel/gui.jpg" },
-  { nome: "Jonathan Stülp", foto: "public/carrossel/jojo.jpg" },
-  { nome: "Théo Pereira", foto: "public/carrossel/theo.jpg" },
-  { nome: "Thiago Quadra", foto: "public/carrossel/th.png" },
-  { nome: "Vitor Danielli", foto: "public/carrossel/cafe.jpg" }
+  { nome: "Guilherme Zamboni", foto: "public/carrossel/gui.png", github: "https://github.com/GuilhermeZamboni32" },
+  { nome: "Jonathan Stülp", foto: "public/carrossel/jojo.png", github: "https://github.com/Jow-Sky" },
+  { nome: "Théo Pereira", foto: "public/carrossel/theo.png", github: "https://github.com/theojouki" },
+  { nome: "Thiago Quadra", foto: "public/carrossel/th.png", github: "https://github.com/thpixel-dev" },
+  { nome: "Vitor Danielli", foto: "public/carrossel/cafe.png", github: "https://github.com/CafeinaC4" }
 ]
 
 function Contato() {
@@ -36,9 +36,14 @@ function Contato() {
           <h2>{membroAtual.nome}</h2>
 
           <div className="redes-sociais">
-            <img src="public/icons/github.png" alt="GitHub" />
-            <img src="public/icons/linkedin.png" alt="LinkedIn" />
-            <img src="public/icons/insta.png" alt="Instagram" />
+            <img
+              src="carrossel/github.png"
+              alt="GitHub"
+              style={{ cursor: 'pointer' }}
+              onClick={() => window.open(membroAtual.github, '_blank')}
+            />
+            <img src="carrossel/linkedin.png" alt="LinkedIn" />
+            <img src="carrossel/instagram.png" alt="Instagram" />
           </div>
         </div>
 
@@ -50,4 +55,4 @@ function Contato() {
   )
 }
 
-export default Contato*/
+export default Contato

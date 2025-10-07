@@ -15,7 +15,7 @@ function Header (){
       <div className="header-links">
         <Link className="texto-header" to="/">Home</Link>
         <Link className="texto-header" to="/Cardapio">Cardapio</Link>
-       {/* <Link className="texto-header" to="/contato">Contato</Link>*/}
+       <Link className="texto-header" to="/contato">Contato</Link>
         <Link className="texto-header" to="/Login">Login</Link>
         <Link className="texto-header" to="/cadastro">Cadastro</Link>
         <Link className="texto-header" to="/Crie_Pizza">Crie a sua pizza</Link>
