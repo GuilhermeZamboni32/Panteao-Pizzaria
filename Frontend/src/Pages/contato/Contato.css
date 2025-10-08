@@ -1,80 +1,267 @@
+
+:root {
+  --vermelho: #BC4749;
+  --bege: #E7C8A7;
+  --branco: #F2E8CF;
+  --verde: #6A994E;
+  --preto: #000000;
+  --sombra-suave: rgba(0, 0, 0, 0.1);
+}
+
+
 .pagina-contato {
-    background-color: var(--branco);
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-  }
+  background-color: var(--branco); 
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   
-  .titulo-contato {
-    color: var(--preto);
-    text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-  }
-  
-  .carrossel {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-  }
-  
-  .seta {
-    background: none;
-    border: none;
-    font-size: 2rem;
-    cursor: pointer;
-    color: var(--preto);
-    transition: transform 0.2s;
-  }
-  .seta:hover {
-    transform: scale(1.2);
-  }
-  
-  .membro {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .foto-membro {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 1rem;
-    border: 3px solid var(--preto);
-  }
-  
-  .membro h2 {
-    margin-top: 0.5rem;
-    color: var(--preto);
-    font-size: 1.2rem;
-  }
-  
-  .redes-sociais {
-    display: flex;
-    gap: 1.5rem;
-    margin-top: 1rem;
-  }
-  .redes-sociais img {
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  .redes-sociais img:hover {
-    transform: scale(1.1);
-  }
-  
-  .foto-lateral {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    opacity: 0.6;
-  }
-  
+  font-family: 'Helvetica', 'Arial', sans-serif;
+}
+
+.titulo-secao {
+  color: var(--preto); 
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 2.5rem;
+  font-weight: bold;
+}
+
+/* --- SEÇÃO DA EQUIPE E CARROSSEL --- */
+.secao-equipe {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 4rem;
+}
+
+.carrossel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  gap: 1rem;
+}
+
+.carrossel-cards {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-grow: 1;
+}
+
+.seta {
+  background: none;
+  border: 2px solid var(--verde);
+  color: var(--preto);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.seta:hover {
+  background-color: var(--verde);
+  color: var(--branco);
+  transform: scale(1.1);
+}
+
+/* --- ESTILO DOS CARDS DOS MEMBROS --- */
+.card-membro {
+  background-color: var(--bege); /* Fundo do card */
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px var(--sombra-suave);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  width: 280px;
+}
+
+.foto-membro {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  border: 3px solid var(--verde);
+}
+
+.nome-membro {
+  font-size: 1.5rem;
+  color: var(--preto);
+  margin: 0.5rem 0;
+}
+
+.cargo-membro {
+  font-size: 1rem;
+  color: var(--verde); /* Cor secundária para o cargo */
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.bio-membro {
+  font-size: 0.9rem;
+  color: var(--preto);
+  opacity: 0.8;
+  line-height: 1.4;
+  height: 80px;
+  overflow: hidden;
+}
+
+.redes-sociais {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.redes-sociais img {
+  width: 35px;
+  height: 35px;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.redes-sociais a:hover img {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* --- ESTADOS DO CARROSSEL (ANTERIOR, ATUAL, PRÓXIMO) --- */
+.card-membro.atual {
+  transform: scale(1.1);
+  z-index: 10;
+  opacity: 1;
+}
+
+.card-membro.anterior,
+.card-membro.proximo {
+  transform: scale(0.85);
+  opacity: 0.6;
+  z-index: 5;
+}
+
+/* --- SEÇÃO SOBRE O PROJETO --- */
+.secao-projeto {
+  width: 100%;
+  max-width: 900px;
+  padding: 2rem;
+  background-color: var(--bege); /* Fundo da seção */
+  border-radius: 15px;
+  box-shadow: 0 4px 15px var(--sombra-suave);
+}
+
+.conteudo-projeto {
+  color: var(--preto);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.conteudo-projeto h3 {
+  color: var(--verde);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--verde);
+  padding-left: 0.8rem;
+}
+
+.conteudo-projeto ul {
+  list-style-type: disc;
+  padding-left: 2rem;
+}
+
+.conteudo-projeto li {
+  margin-bottom: 0.8rem;
+}
+
+.conteudo-projeto a {
+  color: var(--verde); /* Cor secundária para o link */
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 1rem;
+  transition: transform 0.2s;
+}
+
+.conteudo-projeto a:hover {
+  text-decoration: underline;
+  transform: translateX(4px);
+}
+
+/* --- ESTILOS PARA A DEMONSTRAÇÃO INTERATIVA --- */
+
+.demonstracao-container {
+  display: flex;
+  gap: 2rem;
+  background-color: var(--bege); /* Usa a cor de fundo da página para se destacar da seção */
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-top: 1.5rem;
+  border: 1px solid var(--branco);
+}
+
+.secao-demonstracao {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.subtitulo-demonstracao {
+  font-size: 1.3rem;
+  color: var(--preto);
+  margin-top: 0;
+  margin-bottom: 1rem;
+  text-align: center;
+  border-bottom: 2px solid var(--bege);
+  padding-bottom: 0.5rem;
+}
+
+.opcoes-demonstracao {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 0.8rem;
+}
+
+.card-demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 2px solid var(--bege);
+  background-color: var(--branco);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  color: var(--preto);
+  font-weight: 600;
+  text-align: center;
+}
+
+.card-demo:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-demo.selecionado {
+  border-color: var(--verde);
+  background-color: #f0fff0; /* Um verde bem claro */
+  box-shadow: 0 0 10px var(--verde);
+}
+
+.icone-demo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
