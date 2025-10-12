@@ -7,7 +7,7 @@ const membros = [
     {
         nome: "Guilherme Zamboni",
         cargo: "Desenvolvedor Full-Stack",
-        bio: "Responsável principal pelo desenvolvimento visual e funcional da interface Front-End, além da coleta, tratamento e filtragem de dados provenientes do banco de dados do projeto.",
+        bio: "Responsável principal pelo desenvolvimento do Front-End, além da coleta, tratamento e filtragem de dados do banco de dados do projeto.",
         foto: "/carrossel/gui.png",
         github: "https://github.com/GuilhermeZamboni32",
         linkedin: "https://www.linkedin.com/in/seu-linkedin-aqui",
@@ -62,6 +62,15 @@ const iconesCategoria = {
   Complementos: "/icons/amendoim-preto.png",
 };
 
+const iconesIngrediente = {
+  "Bacon": "/icons/bacon-preto.png", "Frango": "/icons/frango-preto.png", "Calabresa": "/icons/calabresa-preto.png", "Camarão": "/icons/camarao-preto.png",
+  "Mussarela": "/icons/mussarela-preto.png", "Cheddar": "/icons/cheddar-preto.png", "Parmesão": "/icons/parmesao-preto.png", "Gorgonzola": "/icons/gorgonzola-preto.png",
+  "Tomate": "/icons/tomate-preto.png", "Brócolis": "/icons/brocolis-preto.png", "Rúcula": "/icons/rucula-preto.png", "Cebola": "/icons/cebola-preto.png",
+  "Uva": "/icons/uva-preto.png", "Morango": "/icons/morango-preto.png", "Banana": "/icons/banana-preto.png", "Cereja": "/icons/cereja-preto.png",
+  "Chocolate Preto": "/icons/chocolate-preto.png", "Chocolate Branco": "/icons/chocolate-branco-preto.png", "Nutella": "/icons/nutella-preto.png", "Ovomaltine": "/icons/ovomaltine-preto.png",
+  "Milho": "/icons/milho-preto.png", "Orégano": "/icons/oregano-preto.png", "M&M": "/icons/mm-preto.png", "Coco ralado": "/icons/coco-ralado-preto.png"
+};
+
 const ingredientesPorCategoria = {
   Carnes: ["Bacon", "Frango", "Calabresa", "Camarão"],
   Queijos: ["Mussarela", "Cheddar", "Parmesão", "Gorgonzola"],
@@ -71,14 +80,41 @@ const ingredientesPorCategoria = {
   Complementos: ["Milho", "Orégano", "M&M", "Coco ralado"]
 };
 
-const iconesIngrediente = {
-  "Bacon": "/icons/bacon-preto.png", "Frango": "/icons/frango-preto.png", "Calabresa": "/icons/calabresa-preto.png", "Camarão": "/icons/camarao-preto.png",
-  "Mussarela": "/icons/mussarela-preto.png", "Cheddar": "/icons/cheddar-preto.png", "Parmesão": "/icons/parmesao-preto.png", "Gorgonzola": "/icons/gorgonzola-preto.png",
-  "Tomate": "/icons/tomate-preto.png", "Brócolis": "/icons/brocolis-preto.png", "Rúcula": "/icons/rucula-preto.png", "Cebola": "/icons/cebola-preto.png",
-  "Uva": "/icons/uva-preto.png", "Morango": "/icons/morango-preto.png", "Banana": "/icons/banana-preto.png", "Cereja": "/icons/cereja-preto.png",
-  "Chocolate Preto": "/icons/chocolate-preto.png", "Chocolate Branco": "/icons/chocolate-branco-preto.png", "Nutella": "/icons/nutella-preto.png", "Ovomaltine": "/icons/ovomaltine-preto.png",
-  "Milho": "/icons/milho-preto.png", "Orégano": "/icons/oregano-preto.png", "M&M": "/icons/mm-preto.png", "Coco ralado": "/icons/coco-ralado-preto.png"
-};
+const tecnologias = [
+    {
+        nome: "React.js",
+        logo: "/icons/react-preto.png", // Exemplo de caminho
+        link: "https://reactjs.org/"
+    },
+      {
+        nome: "Node.js",
+        logo: "/icons/nodejs-preto.png",
+        link: "https://developer.mozilla.org/en-US/docs/Web/NODE"
+    },
+    {
+        nome: "JavaScript",
+        logo: "/icons/js-preto.png",
+        link: "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
+    },
+    {
+        nome: "HTML5",
+        logo: "/icons/html-preto.png",
+        link: "https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5"
+    },
+    {
+        nome: "CSS3",
+        logo: "/icons/css-preto.png",
+        link: "https://developer.mozilla.org/en-US/docs/Web/CSS"
+    }, 
+    {
+        nome: "PostgreSql",
+        logo: "/icons/postgresql-preto.png",
+        link: "https://postgresql.com/"
+    },
+    
+    
+];
+
 
 // --- COMPONENTE DE DEMONSTRAÇÃO INTERATIVA (AQUI ESTÁ A CORREÇÃO) ---
 const DemonstracaoIngredientes = () => {
@@ -139,6 +175,11 @@ const DemonstracaoIngredientes = () => {
 // --- COMPONENTE DO CARD DE MEMBRO ---
 const MemberCard = ({ membro, className }) => (
     <div className={`card-membro ${className}`}>
+        {/* --- ADIÇÃO DA COROA --- */}
+        {/* Verifica se o nome do membro é "Guilherme Zamboni" para exibir a coroa */}
+        {membro.nome === "Guilherme Zamboni" && (
+            <img src="/icons/medalha-preto.png" alt="Coroa" className="medalha-icone" />
+        )}
         <img src={membro.foto} alt={membro.nome} className="foto-membro" />
         <h3 className="nome-membro">{membro.nome}</h3>
         <p className="cargo-membro">{membro.cargo}</p>
@@ -214,23 +255,35 @@ function Contato() {
                         </li>
                     </ul>
                     
-                    {/* AQUI USAMOS O COMPONENTE CORRIGIDO */}
+                    
                     <DemonstracaoIngredientes />
 
-                    <h3>💻 Arquitetura e Tecnologia</h3>
-                    <p>
-                        Para entregar essa experiência de usuário fluida e responsiva, o Panteão Pizzaria foi desenvolvido com 
-                        <strong>React.js</strong> no front-end, garantindo uma interface dinâmica e de fácil interação. 
-                        <p />
-                        <p></p>
-                        A lógica complexa por trás da montagem da pizza e a gestão dos pedidos são suportadas por um back-end robusto, 
-                        enquanto um banco de dados otimizado armazena todas as informações de forma segura. 
-                      <p />
-                        Esta combinação tecnológica assegura um sistema eficiente e escalável, pronto para atender à demanda da sua pizzaria.
-                    </p>
-                </div>
-            </section>
-        </div>
+                   <h3> Arquitetura e Tecnologia</h3>
+                      <p>
+                          Para entregar essa experiência de usuário fluida e responsiva, o Panteão Pizzaria foi desenvolvido com <strong>React.js</strong> no front-end, 
+                          garantindo uma interface dinâmica e de fácil interação. 
+                          A lógica complexa por trás da montagem da pizza e a gestão dos pedidos são suportadas por um back-end robusto, 
+                          enquanto um banco de dados otimizado armazena todas as informações de forma segura. 
+                          Esta combinação tecnológica assegura um sistema eficiente e escalável, pronto para atender à demanda da sua pizzaria.
+                      </p>
+
+                      <div className="lista-tecnologias">
+                          {tecnologias.map((tech) => (
+                              <a 
+                                  key={tech.nome} 
+                                  href={tech.link} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer" 
+                                  className="card-tecnologia"
+                              >
+                                  <img src={tech.logo} alt={`Logo ${tech.nome}`} />
+                                  <span>{tech.nome}</span>
+                              </a>
+                          ))}
+                      </div>
+                    </div>
+                </section>
+              </div>
     );
 }
 
