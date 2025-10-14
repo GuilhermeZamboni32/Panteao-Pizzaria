@@ -217,7 +217,7 @@ function Contato() {
                     {/* AQUI USAMOS O COMPONENTE CORRIGIDO */}
                     <DemonstracaoIngredientes />
 
-                    <h3>💻 Arquitetura e Tecnologia</h3>
+                    <h3> Arquitetura e Tecnologia</h3>
                     <p>
                         Para entregar essa experiência de usuário fluida e responsiva, o Panteão Pizzaria foi desenvolvido com 
                         <strong>React.js</strong> no front-end, garantindo uma interface dinâmica e de fácil interação. 
