@@ -1,11 +1,14 @@
-// serverUser.js
+// IMPORTANTE: Adicione esta linha no TOPO do arquivo para carregar as variáveis de ambiente
+import 'dotenv/config';
+
 import express from 'express';
 import cors from 'cors';
 import pool from './db.js';
 import bcrypt from 'bcryptjs';
 
 const app = express();
-const PORT = 3001;
+// Usa a porta do ambiente ou 3001 como padrão
+const PORT = process.env.PORT || 3001;
 
 app.use(cors({ origin: 'http://localhost:5173' })); 
 app.use(express.json());
@@ -138,12 +141,3 @@ app.delete('/api/users/:id', async (req, res) => {
 
 
 app.listen(PORT, () => console.log(`Servidor de usuários rodando na porta ${PORT}`));
-
-
-  /** 
-  
-  POST /api/users → criar usuário
-  GET /api/users → listar todos os usuários
-  GET /api/users/:id → buscar usuário por ID
-  PUT /api/users/:id → atualizar usuário
-  DELETE /api/users/:id → deletar usuário*/

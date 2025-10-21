@@ -1,7 +1,7 @@
 /* Estrutura principal da página, alinhada com as telas de Login/Cadastro */
 .pagina-pedidos {
     min-height: 100vh;
-    background: linear-gradient(to right, #FFF2F2, #FFEBEB); /* Fundo suave */
+    background: var(--branco);
     display: flex;
     flex-direction: column;
 }
