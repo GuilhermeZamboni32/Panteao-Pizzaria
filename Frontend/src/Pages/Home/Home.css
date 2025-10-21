@@ -257,3 +257,213 @@ h3 {
   border-color: var(--verde);
   background-color: #dff0d8; /* Um branco levemente esverdeado */
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:root {
+    --vermelho: #BC4749;
+    --bege: #E7C8A7;
+    --branco: #F2E8CF;
+    --verde: #6A994E;
+    --preto: #000000;
+    --cinza: #7c7c7c;
+}
+
+.pagina-home {
+    background-color: var(--branco);
+}
+
+.home-container {
+    width: 100%;
+}
+
+.hero-section {
+    position: relative;
+    height: 65vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--branco);
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    padding: 20px;
+}
+
+.hero-titulo {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.hero-subtitulo {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.hero-botao {
+    background-color: var(--verde);
+    color: var(--branco);
+    border: 2px solid var(--verde);
+    border-radius: 6px;
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.hero-botao:hover {
+    background-color: transparent;
+    border-color: var(--branco);
+}
+
+.secao-loja {
+    background-color: var(--branco);
+    padding: 50px 20px;
+}
+
+.secao-loja-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.texto-intro {
+    text-align: center;
+    color: var(--cinza);
+    line-height: 1.7;
+}
+
+.secao-titulo-maior {
+    font-size: 2rem;
+    color: var(--preto);
+    margin-bottom: 15px;
+}
+
+.card-unidade {
+    display: flex;
+    flex-wrap: wrap;
+    background: var(--bege);
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.card-unidade-imagem {
+    flex: 1 1 350px;
+}
+
+.card-unidade-imagem img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-unidade-info {
+    flex: 1.5 1 400px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.unidade-nome {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--vermelho);
+    margin-bottom: 20px;
+}
+
+.unidade-contatos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.unidade-contatos li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+}
+
+.unidade-botoes {
+    margin-top: auto;
+    padding-top: 20px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.link-mapa, .botao-reserva {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.link-mapa {
+    color: var(--verde);
+    text-decoration: none;
+    border: 2px solid transparent;
+}
+
+.link-mapa:hover {
+    text-decoration: underline;
+}
+
+.botao-reserva {
+    background-color: var(--vermelho);
+    color: var(--branco);
+    border: 2px solid var(--vermelho);
+}
+
+.botao-reserva:hover {
+    background-color: #a13d3f;
+    border-color: #a13d3f;
+}
+
+.secao-outras-coisas {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #e9e3cf;
+}
