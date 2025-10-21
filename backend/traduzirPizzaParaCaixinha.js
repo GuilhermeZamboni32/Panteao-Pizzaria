@@ -1,3 +1,4 @@
+// traduzirPizzaParaCaixinha.js
 /**
  * Recebe uma pizza estruturada do frontend e retorna o objeto "caixinha"
  * no formato esperado, preenchendo os blocos de forma sequencial.
@@ -11,8 +12,7 @@ function traduzirPizzaParaCaixinha(pizza) {
         Média: 2,
         Grande: 3
     };
-    
-    const corBlocoMap = {
+     const corBlocoMap = {
         "Molho de Tomate": 2,
         "Molho Doce": 3
     };
@@ -81,10 +81,9 @@ function traduzirPizzaParaCaixinha(pizza) {
         blocoAtual[`padrao${slotNum}`] = padraoId;
     });
 
-    // --- RETORNO DO OBJETO FINAL ---
     return {
         payload: {
-            orderId: `ORDER-${Date.now()}`, // Usando um ID dinâmico
+            orderId: `ORDER-${Date.now()}`, // Usando um ID dinâmico temporário
             caixa: {
                 codigoProduto: tamanhoMap[pizza.tamanho] || 1,
                 bloco1: blocos.bloco1,
@@ -98,4 +97,3 @@ function traduzirPizzaParaCaixinha(pizza) {
 }
 
 export default traduzirPizzaParaCaixinha;
-

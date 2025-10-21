@@ -69,7 +69,7 @@ app.post('/api/users', async (req, res) => {
         res.status(500).json({ error: 'Erro ao cadastrar usuário.' });
     }
 });
-
+ 
 
 // --- ROTAS CRUD PARA GERENCIAMENTO DE USUÁRIOS ---
 
@@ -140,16 +140,7 @@ app.delete('/api/users/:id', async (req, res) => {
 app.listen(PORT, () => console.log(`Servidor de usuários rodando na porta ${PORT}`));
 
 
-  /** cliente_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-      nome VARCHAR(255) NOT NULL,
-      email VARCHAR(255) NOT NULL UNIQUE,
-      senha VARCHAR(255) NOT NULL,
-      telefone VARCHAR(20),
-      endereco VARCHAR(255),
-      numero_cartao VARCHAR(20),   
-      validade_cartao VARCHAR(7),  
-      cvv VARCHAR(4) 
-  
+  /** 
   
   POST /api/users → criar usuário
   GET /api/users → listar todos os usuários

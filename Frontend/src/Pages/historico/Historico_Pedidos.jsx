@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import Header from "../../components/pastaheader/Header";
 import './Historico_Pedidos.css';
 
-// --- Ícones em SVG ---
+// --- Ícones ---
 const IconeCarrinho = () => (
-  <img src="./icons/brancos/carrinho-compras-branco.png" className="carrinho-historico" alt="" />
+  <img src="/icons/brancos/carrinho-compras-branco.png" className="carrinho-historico" alt="Ícone de carrinho" />
 );
 
 const IconeInfo = () => (
-  <img src="./icons/brancos/lupa-branco.png" className="info-historico" alt="" />
+  <img src="/icons/brancos/lupa-branco.png" className="info-historico" alt="Ícone de lupa" />
 );
 
 function HistoricoPedidos() {
@@ -21,7 +21,10 @@ function HistoricoPedidos() {
 
   useEffect(() => {
     const usuarioLogadoString = localStorage.getItem('usuarioLogado');
-    if (!usuarioLogadoString) return navigate('/login');
+    if (!usuarioLogadoString) {
+        navigate('/login');
+        return;
+    }
 
     const userId = JSON.parse(usuarioLogadoString).cliente_id;
 
@@ -47,6 +50,7 @@ function HistoricoPedidos() {
   };
 
   const statusClasse = (status) => {
+    if (!status) return '';
     switch (status.toLowerCase()) {
       case 'entregue': return 'status-entregue';
       case 'cancelado': return 'status-cancelado';
@@ -64,11 +68,9 @@ function HistoricoPedidos() {
           Voltar ao Cardápio
         </button>
 
-         <button className="btn-pedidos-andamento" onClick={() => navigate('/pedidosemandamento')}>
+        <button className="btn-pedidos-andamento" onClick={() => navigate('/pedidosemandamento')}>
           Pedidos em Andamento
         </button>
-
-       
 
         {carregando && <p className="mensagem-info">Carregando...</p>}
         {erro && <p className="mensagem-erro">{erro}</p>}
@@ -77,12 +79,12 @@ function HistoricoPedidos() {
         {pedidos.map(pedido => (
           <div key={pedido.pedido_id} className="pedido-card">
             <div className="pedido-card-header">
-              <h3>Pedido #{pedido.pedido_id} <span>- {new Date(pedido.data_pedido).toLocaleDateString('pt-BR')}</span></h3>
+              <h3>Pedido #{pedido.pedido_id.substring(0, 8)} <span>- {new Date(pedido.data_pedido).toLocaleDateString('pt-BR')}</span></h3>
               <span className={`pedido-status ${statusClasse(pedido.status)}`}>{pedido.status}</span>
             </div>
             <div className="pedido-card-body">
               <div className="pedido-info-resumo">
-                <p><strong>{pedido.itens.length} item(ns)</strong> neste pedido</p>
+                <p><strong>{pedido.itens ? pedido.itens.length : 0} item(ns)</strong> neste pedido</p>
               </div>
               <div className="pedido-acoes">
                 <strong className="pedido-valor">R$ {parseFloat(pedido.valor_total).toFixed(2)}</strong>
@@ -90,17 +92,18 @@ function HistoricoPedidos() {
                 <button className="btn-acao btn-detalhes" onClick={() => toggleInfo(pedido.pedido_id)}><IconeInfo /> Detalhes</button>
               </div>
             </div>
+
             <div className={`pedido-detalhes ${pedidoAberto === pedido.pedido_id ? "aberto" : ""}`}>
-              {pedido.itens.map((item, idx) => (
-                <div key={idx} className="pedido-item">
+              {pedido.itens && pedido.itens.map((item, idx) => (
+                <div key={item.item_id || idx} className="pedido-item">
                   <div className="pedido-item-info">
-                    <h4>{item.nome}</h4>
-                    <ul>{item.ingredientes.map((ing, i) => <li key={i}>{ing.nome}</li>)}</ul>
+                    <h4>{item.nome_item}</h4>
                   </div>
-                  <span className="pedido-item-preco">R$ {parseFloat(item.preco).toFixed(2)}</span>
+                  <span className="pedido-item-preco">R$ {parseFloat(item.valor_unitario).toFixed(2)}</span>
                 </div>
               ))}
             </div>
+
           </div>
         ))}
       </div>
@@ -109,3 +112,4 @@ function HistoricoPedidos() {
 }
 
 export default HistoricoPedidos;
+
