@@ -253,15 +253,92 @@
   transform: translateY(-3px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
 .card-demo.selecionado {
   border-color: var(--verde);
-  background-color: #f0fff0; /* Um verde bem claro */
+  background-color: #f0fff0;
   box-shadow: 0 0 10px var(--verde);
 }
 
 .icone-demo {
   width: 40px;
   height: 40px;
+  object-fit: contain;
+}
+
+.card-membro {
+    position: relative;
+    background-color: var(--bege); 
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px var(--sombra-suave);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    width: 280px;
+}
+
+.medalha-icone {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 40px;
+    height: 40px;
+    z-index: 11;
+    transform: rotate(-15deg);
+}
+
+.foto-membro {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    border: 3px solid var(--verde);
+}
+
+.lista-tecnologias {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--bege);
+}
+
+.card-tecnologia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;      
+  justify-content: center;   
+  height: 130px;            
+  gap: 0.8rem;
+  padding: 1rem;
+  width: 120px;
+  
+  background-color: var(--branco);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px var(--sombra-suave);
+  
+  text-decoration: none;
+  color: var(--preto);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center; 
+  
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.card-tecnologia:hover {
+  transform: translateY(-5px);
+  border-color: var(--verde);
+}
+
+.card-tecnologia img {
+  height: 50px;
+  width: auto;
   object-fit: contain;
 }
