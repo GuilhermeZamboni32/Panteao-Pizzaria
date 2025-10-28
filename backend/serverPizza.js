@@ -10,7 +10,7 @@ const PORT = 3002;
 //  CONSTANTES DE ENDEREÇO 
 const URL_MAQUINA_PRINCIPAL = "http://52.1.197.112:3000/queue/items";
 const URL_MAQUINA_VIRTUAL = "http://localhost:3000/queue/items";
-const TIMEOUT_MAQUINA_MS = 5000; // 5 segundos
+const TIMEOUT_MAQUINA_MS = 3000; // 3 segundos
 
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
