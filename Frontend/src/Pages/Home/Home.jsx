@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from "react-router-dom";
 import Header from '../../components/pastaheader/Header'; 
 import './Home.css'; 
 
+function Home() {
 // --- IMPORTANTE: Substitua os caminhos pelas suas imagens ---
 const imagemFundoHero = '/imagens-de-fundo/pizza-salgada-fundo.png';
 const imagemDoLocal = '/imagens-de-fundo/local-fundo-3.png'; 
+
+ const location = useLocation();
+    const navigate = useNavigate();
 
 // --- INFORMAÇÕES DO RESTAURANTE ---
 const infoRestaurante = {
@@ -12,10 +17,9 @@ const infoRestaurante = {
     endereco: "Rod. José Carlos Daux, 5500 - Saco Grande, Florianópolis - SC, 88032-005",
     linkGoogleMaps: "https://maps.app.goo.gl/fsktMQHtunkKQ2Jf8",
     telefone: "(48) 933003929",
-    linkWhatsApp: "https://wa.me/5548933003929", // Substitua pelo link correto do WhatsApp se tiver
-    linkMenu: "https://drive.google.com/your-menu-link", // Substitua pelo link correto do menu
-    pagamentos: "Alelo",
-    opcoesServico: "Pratos para happy hour · Música ao vivo · Wi-Fi",
+    linkWhatsApp: "https://wa.me/5548933003929", 
+    pagamentos: "Cartão, Dinheiro, Pix .",
+    opcoesServico: "Uma infinidade de sabores de Pizzas · Música ao vivo · Wi-Fi",
     horarios: {
         // new Date().getDay() -> Domingo: 0, Segunda: 1, ..., Sábado: 6
         0: [{ abre: "12:00", fecha: "16:00" }, { abre: "19:00", fecha: "23:00" }], // Domingo
@@ -28,6 +32,10 @@ const infoRestaurante = {
     }
 };
 
+const RotaCardapio =() => {
+    navigate('/cardapio');
+    
+}
 // --- FUNÇÃO PARA VERIFICAR O STATUS DE FUNCIONAMENTO ---
 const getStatusFuncionamento = () => {
     const agora = new Date();
@@ -69,7 +77,6 @@ const getStatusFuncionamento = () => {
 };
 
 
-function Home() {
     const [statusLoja, setStatusLoja] = useState({ status: "Carregando..." });
     
     useEffect(() => {
@@ -83,8 +90,7 @@ function Home() {
 
         return () => clearInterval(intervalId); // Limpa o intervalo ao desmontar o componente
     }, []);
-
-    return (
+return (
         <div className="pagina-home">
             <Header />
 
@@ -101,8 +107,8 @@ function Home() {
                             Inspirada nas mais tradicionais Pizzarias Paulistanas, a Pantano é a escolha certa 
                             para quem busca uma pizza com massa de longa fermentação, borda crocante e, claro, 
                             muito sabor.
-                        </p>
-                        <a href={infoRestaurante.linkMenu} target="_blank" rel="noopener noreferrer" className="hero-botao">
+                       </p>
+                        <a onClick={RotaCardapio} target="_blank" rel="noopener noreferrer" className="hero-botao">
                             VER CARDÁPIO
                         </a>
                     </div>
@@ -163,5 +169,4 @@ function Home() {
         </div>
     );
 }
-
 export default Home;
