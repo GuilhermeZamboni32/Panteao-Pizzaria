@@ -1,293 +1,342 @@
+/* ======================================= */
+/* VARIÁVEIS DE COR                        */
+/* ======================================= */
 :root {
   --vermelho: #BC4749;
   --bege: #E7C8A7;
   --branco: #F2E8CF;
   --verde: #6A994E;
   --preto: #000000;
-  --cinza: #7c7c7c;
+  --cinza: #7c7c7c; /* Usando o cinza fornecido */
 }
 
-/* Header */
-.header-historico {
-  width: 100%;
-  background-color: var(--bege);
-  padding: 1.5rem;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  border-bottom: 2px solid var(--vermelho);
-}
-
-.header-historico h1 {
-  color: var(--preto);
-  margin: 0;
-}
-
-/* Página */
+/* ======================================= */
+/* ESTRUTURA GERAL DA PÁGINA               */
+/* ======================================= */
 .pagina-historico-pedidos {
   background-color: var(--branco);
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  
 }
 
-/* Container */
 .container-historico-pedidos {
-  padding: 2rem;
-  width: 90%;
-  
-  margin: 2rem auto;
+  max-width: 1400px; /* Largura máxima para o conteúdo */
+  margin: 2rem auto; /* Centraliza e adiciona margem */
+  padding: 1.5rem;
 }
 
 .container-historico-pedidos h1 {
   color: var(--preto);
   text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 2.5rem;
+  font-size: 2.2rem; /* Tamanho ligeiramente menor */
+  margin-bottom: 2rem;
   font-weight: 600;
 }
 
-/* Cards */
-.pedido-card {
+/* ======================================= */
+/* BOTÕES DE NAVEGAÇÃO NO TOPO            */
+/* ======================================= */
+.botoes-navegacao-historico {
+  display: flex;
+  justify-content: center; /* Centraliza os botões */
+  gap: 1rem; /* Espaço entre os botões */
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+}
+
+/* Estilos comuns aos botões de navegação (Voltar e Andamento) */
+.btn-voltar-cardapio,
+.btn-pedidos-andamento {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.5rem; /* Padding ligeiramente menor */
+  border: none;
+  border-radius: 8px; /* Bordas consistentes */
+  cursor: pointer;
+  font-size: 0.9rem; /* Fonte ligeiramente menor */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+  color: var(--branco); /* Texto branco padrão */
+}
+
+.btn-voltar-cardapio {
+  background-color: var(--verde);
+}
+
+.btn-pedidos-andamento {
+  background-color: var(--cinza); /* Usando o cinza definido */
+}
+
+.btn-voltar-cardapio:hover {
+  background-color: #5a8a42; /* Verde mais escuro */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-pedidos-andamento:hover {
+  background-color: var(--preto); /* Preto no hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ======================================= */
+/* MENSAGENS (Carregando, Erro, Vazio)     */
+/* ======================================= */
+.mensagem-info, .mensagem-erro {
+  text-align: center;
+  padding: 1rem;
+  margin: 2rem 0;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.mensagem-info {
   background-color: var(--bege);
-  border-radius: 15px;
+  color: var(--preto);
+  border: 1px solid var(--cinza);
+}
+
+.mensagem-erro {
+  background-color: var(--vermelho-claro); /* Usa a cor clara se definida, senão bege */
+  background-color: #ffdddd; /* Fallback para vermelho claro */
+  color: var(--vermelho);
+  border: 1px solid var(--vermelho);
+}
+
+.sem-historico {
+  text-align: center;
+  padding: 3rem 1rem;
+  border: 1px dashed var(--bege);
+  border-radius: 8px;
+  background-color: var(--branco);
+  margin-top: 1rem;
+}
+
+.sem-historico-icone {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.sem-historico h2 {
+  font-size: 1.3rem;
+  color: var(--preto);
+  margin-bottom: 0.5rem;
+}
+
+.sem-historico p {
+  color: var(--cinza);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+
+/* ======================================= */
+/* CARDS DE PEDIDO                         */
+/* ======================================= */
+.pedido-card {
+  background-color: var(--branco); /* Fundo branco para o card */
+  border-radius: 10px; /* Borda ligeiramente menos redonda */
   margin-bottom: 1.5rem;
-  box-shadow: 0 4px 12px  var(--cinza);
-  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08); /* Sombra mais sutil */
   border: 1px solid var(--bege);
+  overflow: hidden; /* Garante que o fundo dos detalhes não vaze */
+  transition: box-shadow 0.2s ease;
 }
 
 .pedido-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px  var(--cinza);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12); /* Sombra maior no hover */
 }
 
-/* Cabeçalho do card */
+/* Cabeçalho do Card */
 .pedido-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--branco);
+  padding: 0.8rem 1.2rem; /* Padding ligeiramente menor */
+  background-color: var(--bege); /* Fundo bege para o cabeçalho */
+  border-bottom: 1px solid var(--branco); /* Linha divisória branca */
 }
 
 .pedido-card-header h3 {
   margin: 0;
   color: var(--preto);
   font-size: 1.1rem;
+  font-weight: 600; /* Um pouco mais de peso */
 }
 
-.pedido-card-header h3 span {
+.pedido-card-header h3 span { /* Data */
   font-weight: normal;
-  color:  var(--preto);
+  color: var(--cinza); /* Cinza para a data */
+  font-size: 0.9em; /* Tamanho relativo */
+  margin-left: 0.5rem;
 }
 
+/* Status no Cabeçalho */
 .pedido-status {
   padding: 0.3rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
+  border-radius: 15px; /* Mais arredondado */
+  font-size: 0.75rem; /* Menor */
   font-weight: bold;
-  color: var(--preto);
+  text-transform: uppercase; /* Caixa alta */
+  color: var(--branco); /* Texto branco por padrão */
+  background-color: var(--verde); /* Fundo cinza padrão */
+  white-space: nowrap; /* Evita quebra de linha */
 }
 
 .status-entregue { background-color: var(--verde); }
 .status-cancelado { background-color: var(--vermelho); }
 
-/* Corpo do card */
+/* Corpo do Card */
 .pedido-card-body {
-  padding: 1.5rem;
+  padding: 1.2rem; /* Padding uniforme */
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+  gap: 1rem; /* Espaço entre elementos */
+}
+
+.pedido-info-resumo {
+  margin: 0;
+  color: var(--cinza); /* Cinza para a descrição */
+  font-size: 0.9rem;
 }
 
 .pedido-info-resumo p {
   margin: 0;
-  color:  var(--preto);
 }
 
-.pedido-info-resumo p strong {
-  color: var(--preto);
-}
-
-.pedido-valor {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--verde);
-}
-
-/* Botões */
+/* Ações no Corpo (Valor, Botões) */
 .pedido-acoes {
   display: flex;
   gap: 0.8rem;
   align-items: center;
+  flex-wrap: wrap; /* Permite quebrar linha */
 }
 
+.pedido-valor {
+  font-size: 1.4rem; /* Um pouco menor */
+  font-weight: bold;
+  color: var(--preto); /* Preto para o valor */
+  margin-right: 0.5rem; /* Espaço antes dos botões */
+}
+
+/* Botões de Ação (Pedir Novamente, Detalhes) */
 .btn-acao {
-  display: flex;
+  display: inline-flex; /* Usa inline-flex */
   align-items: center;
+  justify-content: center; /* Centraliza conteúdo */
   gap: 0.5rem;
   border: none;
-  border-radius: 8px;
-  padding: 0.7rem 1.2rem;
-  font-size: 0.9rem;
+  border-radius: 6px; /* Bordas consistentes */
+  padding: 0.6rem 1rem; /* Padding ajustado */
+  font-size: 0.85rem; /* Fonte ajustada */
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   color: var(--branco);
-  margin-right: 20px;
 }
 
 .btn-pedir-novamente { background-color: var(--verde); }
 .btn-detalhes { background-color: var(--vermelho); }
 
-.btn-acao:hover {
-  filter: brightness(1.1);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px  var(--cinza);
+
+
+.btn-acao:disabled {
+  background-color: var(--verde);
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
-/* Detalhes */
+/* Ícones dentro dos botões */
+.carrinho-historico,
+.info-historico {
+  width: 18px; /* Tamanho menor para ícones */
+  height: 18px;
+}
+
+/* ======================================= */
+/* DETALHES EXPANSÍVEIS                    */
+/* ======================================= */
 .pedido-detalhes {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
-  background-color: var(--branco);
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
+  transition: max-height 0.4s ease-out, padding 0.4s ease-out; /* Transição mais suave */
+  background-color: var(--branco); /* Fundo branco claro para detalhes */
+  padding: 0 1.2rem; /* Padding horizontal inicial */
 }
 
 .pedido-detalhes.aberto {
-  max-height: 500px;
-  padding: 1.5rem;
-  border-top: 1px solid var(--branco);
+  max-height: 600px; /* Altura máxima generosa */
+  padding: 1.2rem;
+  border-top: 1px solid var(--bege); /* Linha divisória bege */
 }
 
-/* Itens do pedido */
-.pedido-item {
+.pedido-detalhes h4 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--preto);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Itens dentro dos Detalhes */
+.pedido-item-detalhe {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  padding: 1rem 0;
-  border-bottom: 1px dashed var(--bege);
+  align-items: center;
+  padding: 0.6rem 0; /* Padding vertical menor */
+  border-bottom: 1px solid var(--bege); /* Linha divisória bege */
+  font-size: 0.9rem;
 }
 
-.pedido-item:last-child {
+.pedido-item-detalhe:last-child {
   border-bottom: none;
 }
 
-.pedido-item-info h4 {
-  margin: 0 0 0.5rem 0;
+.item-nome {
   color: var(--preto);
-  font-weight: 600;
+  margin-right: 1rem; /* Espaço antes do preço */
 }
 
-.pedido-item-info ul {
-  list-style-type: none;
-  padding-left: 0;
-  margin: 0;
-  color:  var(--preto);
-  font-size: 0.85rem;
+.item-preco {
+  font-weight: 500; /* Peso médio */
+  color: var(--preto); /* Cinza para o preço unitário */
+  white-space: nowrap; /* Evita quebra de linha */
 }
 
-.pedido-item-info ul li {
-  display: inline-block;
-  margin-right: 8px;
-  padding: 2px 6px;
-  background-color: var(--branco);
-  border: 1px solid var(--bege);
-  border-radius: 5px;
+/* ======================================= */
+/* RESPONSIVIDADE (Ajustes Finais)         */
+/* ======================================= */
+@media (max-width: 600px) {
+    .container-historico-pedidos h1 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+    .pedido-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    .pedido-card-body {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .pedido-acoes {
+        width: 100%;
+        justify-content: space-between; /* Espalha valor e botões */
+        margin-top: 1rem;
+    }
+    .btn-acao {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    .pedido-valor {
+        font-size: 1.3rem;
+    }
 }
-
-.pedido-item-preco {
-  font-weight: bold;
-  color: var(--preto);
-  font-size: 1rem;
-  white-space: nowrap;
-  margin-left: 1rem;
-}
-
-
-/* Adicione este estilo ao final do seu arquivo Historico_Pedidos.css */
-
-.btn-voltar-cardapio {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 20px;
-  padding: 0.8rem 1.8rem;
-  background-color: var(--verde);
-  color: var(--branco);
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 10px var(--cinza);
-  transition: all 0.3s ease;
-}
-
-.btn-voltar-cardapio:hover {
-  background-color: green;
-  transform: translateY(-3px);
-  box-shadow: 0 6px 14px var(--cinza);
-}
-
-.btn-voltar-cardapio:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 6px var(--cinza);
-}
-
-.btn-pedidos-andamento {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 20px;
-  padding: 0.8rem 1.8rem;
-  background-color: var(--cinza);
-  color: var(--branco);
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 10px var(--cinza);
-  transition: all 0.3s ease;
-  margin-left: 20px;
-}
-
-.btn-pedidos-andamento:hover {
-  background-color: var(--preto); 
-  color: var(--branco);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 14px var(--cinza);
-}
-
-.btn-pedidos-andamento:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 6px var(--cinza);
-}
-
-.carrinho-historico{
-  width: 30px;
-  height: 30px;
-}
-
-.info-historico{
-  width: 30px;
-  height: 30px;
-}
-
-
-
-
-
-
- 
