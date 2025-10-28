@@ -14,8 +14,8 @@ function PedidosEmAndamento() {
     const [pedidos, setPedidos] = useState([]); // Guarda { id, status, slot }
     const intervalRef = useRef(null);
     const navigate = useNavigate();
-    const removalTimersRef = useRef(new Map()); // Guarda timers para remover pedidos concluídos
-    const [carregamentoInicialCompleto, setCarregamentoInicialCompleto] = useState(false); // Controla o atraso da primeira exibição
+    const removalTimersRef = useRef(new Map());
+    const [carregamentoInicialCompleto, setCarregamentoInicialCompleto] = useState(false);
 
     // Determina classe CSS e ícone baseado no status vindo do backend
     const getStatusInfo = (status) => {
@@ -28,17 +28,17 @@ function PedidosEmAndamento() {
         if (lowerStatus.includes("erro") || lowerStatus.includes("falha") || lowerStatus.includes("não encontrado")) {
             return { className: "status-erro", icon: icons.erro };
         }
-        if (lowerStatus.endsWith("carregando...")) { // Apenas o status inicial definido pelo frontend
+        if (lowerStatus.endsWith("carregando...")) { // Apenas o status inicial do frontend
              return { className: "status-carregando", icon: icons.carregando };
         }
-        if (lowerStatus.includes("pronto") || lowerStatus.includes("entregue")) {
+        if (lowerStatus.includes("pronto") || lowerStatus.includes("entregue") || lowerStatus.includes("completed")) { // Inclui "completed" da máquina real
             return { className: "status-sucesso", icon: icons.sucesso };
         }
-        // Status intermediários
+        // Status intermediários (Recebido, Em Producao, etc.)
         return { className: "status-ok", icon: icons.ok };
     };
 
-    // Efeito para carregar IDs do localStorage ao montar o componente
+    // Efeito para carregar IDs do localStorage na montagem inicial
     useEffect(() => {
         try {
             const idsSalvos = JSON.parse(localStorage.getItem("pedidosEmAndamento")) || [];
@@ -53,18 +53,17 @@ function PedidosEmAndamento() {
             localStorage.removeItem("pedidosEmAndamento");
             setCarregamentoInicialCompleto(true);
         }
-    }, []); // Roda apenas uma vez
+    }, []); // Roda só uma vez
 
     // Efeito principal: busca status, agenda remoção de concluídos e controla o intervalo de atualização
     useEffect(() => {
-        // --- Agendamento de Remoção ---
+        // Agendamento de Remoção: Remove pedidos concluídos após um tempo
         pedidos.forEach(pedido => {
             if (typeof pedido.status !== 'string') return;
             const statusLower = pedido.status.toLowerCase();
-            const isConcluido = statusLower.includes("pronto") || statusLower.includes("entregue");
+            const isConcluido = statusLower.includes("pronto") || statusLower.includes("entregue") || statusLower.includes("completed");
             const isErro = statusLower.includes("erro") || statusLower.includes("falha") || statusLower.includes("não encontrado");
 
-            // Se concluído, não for erro e não tiver timer, agenda a remoção
             if (isConcluido && !isErro && !removalTimersRef.current.has(pedido.id)) {
                 const timerId = setTimeout(() => {
                     setPedidos(prev => prev.filter(p => p.id !== pedido.id));
@@ -75,19 +74,19 @@ function PedidosEmAndamento() {
                         localStorage.setItem("pedidosEmAndamento", JSON.stringify(idsAtualizados));
                     } catch (e) { console.error("Erro ao remover do localStorage:", e); }
                     removalTimersRef.current.delete(pedido.id);
-                }, 8000); // 8 segundos de espera antes de remover
+                }, 20000); // 20 segundos para remover
                 removalTimersRef.current.set(pedido.id, timerId);
             }
         });
 
-        // --- Busca de Status ---
+        // Busca de Status: Atualiza o status dos pedidos
         const atualizarStatusDeTodos = async (isInitialLoad = false) => {
              if (pedidos.length === 0) return;
 
-            // Verifica se todos já finalizaram (para parar buscas)
+            // Para o intervalo se todos já finalizaram
             const todosRealmenteFinalizados = pedidos.every(p => {
                 const s = typeof p.status === 'string' ? p.status.toLowerCase() : '';
-                return s.includes("pronto") || s.includes("entregue") || s.includes("erro") || s.includes("não encontrado");
+                return s.includes("pronto") || s.includes("entregue") || s.includes("completed") || s.includes("erro") || s.includes("não encontrado");
             });
             if(todosRealmenteFinalizados && !isInitialLoad){
                 if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
@@ -95,79 +94,84 @@ function PedidosEmAndamento() {
             }
 
             const promessasDeStatus = pedidos.map(async (pedido) => {
+                 // Evita buscar status de pedidos já finalizados (exceto na carga inicial)
                  if (typeof pedido.status === 'string') {
                      const statusLower = pedido.status.toLowerCase();
-                     // Não busca novamente se já estiver em estado final (exceto na carga inicial)
-                     if (!isInitialLoad && (statusLower.includes("pronto") || statusLower.includes("entregue") || statusLower.includes("erro") || statusLower.includes("não encontrado"))) {
+                     if (!isInitialLoad && (statusLower.includes("pronto") || statusLower.includes("entregue") || statusLower.includes("completed") || statusLower.includes("erro") || statusLower.includes("não encontrado"))) {
                          return pedido;
                      }
                  }
 
-                // Busca o status no backend
+                // Faz o fetch para o backend proxy
                 try {
                     const res = await fetch(`http://localhost:3002/api/pedidos/status/${pedido.id}`);
-                    if (res.status === 404) return { ...pedido, status: "Pedido não encontrado", slot: null };
-                    if (!res.ok) return { ...pedido, status: `Erro ${res.status}`, slot: null };
-                    const data = await res.json();
-                    const statusRecebido = typeof data.status === 'string' ? data.status : "Status Desconhecido";
-                    return { id: pedido.id, status: statusRecebido, slot: data.slot || null };
-                } catch (err) {
+                    if (res.ok) {
+                        const data = await res.json();
+                        console.log(`DEBUG: Status recebido para ${pedido.id}: "${data.status}" (Slot: ${data.slot})`); // Log útil para debug
+                        const statusRecebido = typeof data.status === 'string' ? data.status : "Status Desconhecido";
+                        return { id: pedido.id, status: statusRecebido, slot: data.slot || null };
+                    } else if (res.status === 404) {
+                        return { ...pedido, status: "Pedido não encontrado", slot: null };
+                    } else {
+                        return { ...pedido, status: `Erro ${res.status}`, slot: null };
+                    }
+                } catch (err) { // Erro de rede/conexão
                     return { ...pedido, status: "Falha na conexão", slot: null };
                 }
             });
 
             const pedidosComStatusBuscados = await Promise.all(promessasDeStatus);
 
-            // Aplica a atualização (com ou sem atraso na carga inicial)
+            // Aplica atualização com atraso na carga inicial
             if (isInitialLoad) {
                 setTimeout(() => {
                     setPedidos(pedidosComStatusBuscados);
                     setCarregamentoInicialCompleto(true); // Libera o início do intervalo
-                }, 3000); // 3 segundos de atraso inicial
+                }, 3000); // 3 segundos de atraso
             } else {
-                 // Atualiza o estado apenas se houver mudanças
+                // Atualiza apenas se houver mudanças
                  const mudouAlgo = pedidosComStatusBuscados.some((novoPedido, index) => {
                      const pedidoAntigo = pedidos[index];
                      if (!pedidoAntigo) return true;
-                     return novoPedido.status !== pedidoAntigo.status || novoPedido.slot !== pedidoAntigo.slot;
+                     return novoPedido.status !== pedidoAntigo.status || (novoPedido.slot || null) !== (pedidoAntigo.slot || null);
                  });
                  if(mudouAlgo){ setPedidos(pedidosComStatusBuscados); }
             }
         };
 
-        // --- Controle do Intervalo de Busca ---
-        const todosFinalizadosCheck = pedidos.every(p => {
+        // Controle do Intervalo de Busca
+         const todosFinalizadosCheck = pedidos.every(p => {
            const statusLower = typeof p.status === 'string' ? p.status.toLowerCase() : '';
-           return statusLower.includes("pronto") || statusLower.includes("entregue") || statusLower.includes("erro") || statusLower.includes("não encontrado");
+           return statusLower.includes("pronto") || statusLower.includes("entregue") || statusLower.includes("completed") || statusLower.includes("erro") || statusLower.includes("não encontrado");
          });
 
         if (pedidos.length > 0 && !todosFinalizadosCheck) {
-            // Se o carregamento inicial AINDA não foi feito, dispara a busca inicial (com atraso)
+            // Dispara a busca inicial (com atraso)
             if (!carregamentoInicialCompleto) {
                  if (pedidos.some(p => typeof p.status === 'string' && p.status === "Carregando...")) {
                     atualizarStatusDeTodos(true);
                  }
             }
-            // Se o carregamento inicial JÁ foi feito E o intervalo não está rodando, inicia o intervalo
+            // Inicia o intervalo após a carga inicial
             else if (carregamentoInicialCompleto && !intervalRef.current) {
-                atualizarStatusDeTodos(false); // Busca uma vez imediatamente
+                atualizarStatusDeTodos(false); // Busca uma vez
                 intervalRef.current = setInterval(() => atualizarStatusDeTodos(false), 10000); // E depois a cada 10s
             }
         }
-        // Se todos finalizaram E o intervalo AINDA está rodando, para ele
+        // Para o intervalo se todos finalizaram
         else if (todosFinalizadosCheck && intervalRef.current) {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
         }
 
-        // --- Limpeza do useEffect ---
+        // Limpeza do useEffect: para o intervalo e limpa timers de remoção
         return () => {
             if (intervalRef.current) clearInterval(intervalRef.current);
-            removalTimersRef.current.forEach(timerId => clearTimeout(timerId)); // Limpa timers de remoção
+            removalTimersRef.current.forEach(timerId => clearTimeout(timerId));
         };
     }, [pedidos, carregamentoInicialCompleto]); // Dependências do efeito
 
-    // --- Renderização ---
+    // Renderização do componente
     return (
         <div className="pagina-pedidos">
             <Header />
@@ -179,7 +183,6 @@ function PedidosEmAndamento() {
                     </button>
                     <h1 className="titulo-pedidos">Pedidos em Andamento</h1>
 
-                    {/* Exibe mensagem ou lista de pedidos */}
                     {pedidos.length === 0 && carregamentoInicialCompleto ? (
                        <div className="sem-pedidos">
                             <div className="sem-pedidos-icone">🍕</div>
@@ -190,7 +193,10 @@ function PedidosEmAndamento() {
                         <ul className="lista-pedidos-status">
                             {pedidos.map((pedido) => {
                                 const statusInfo = getStatusInfo(pedido.status || 'Erro');
-                                const mostrarSlot = pedido.slot && typeof pedido.status === 'string' && (pedido.status.toLowerCase().includes("pronto") || pedido.status.toLowerCase().includes("entregue"));
+                                const mostrarSlot = pedido.slot && typeof pedido.status === 'string' &&
+                                                    (pedido.status.toLowerCase().includes("pronto") ||
+                                                     pedido.status.toLowerCase().includes("entregue") ||
+                                                     pedido.status.toLowerCase().includes("completed"));
 
                                 return (
                                     <li key={pedido.id} className="pedido-item">
@@ -208,8 +214,8 @@ function PedidosEmAndamento() {
                                             {mostrarSlot && (
                                                 <div className="pedido-slot-info">
                                                    <span>
-                                                    <img src="/icons/local-preto.png" className="icone-local" alt="" />
-                                                    </span> Retirar no: <strong>{pedido.slot}</strong>
+                                                    <img src="/icons/local-preto.png" className="icone-local" alt="Ícone de local" />
+                                                   </span> Retirar no: <strong>{pedido.slot}</strong>
                                                 </div>
                                             )}
                                         </div>

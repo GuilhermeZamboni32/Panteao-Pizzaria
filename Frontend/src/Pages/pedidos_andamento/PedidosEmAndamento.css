@@ -12,11 +12,11 @@
   /* Cores para detalhes */
   --cinza: #555555;
   --azul: #096DD9;
-  --azul-claro: #1175e788; /* Mantido como original */
+  --azul-claro: #1175e788; 
   --amarelo: #d4b506;
-  --amarelo-claro: #d8c86c; /* Mantido como original */
-  --vermelho-claro: #cc7071; /* Mantido como original */
-  --verde-claro: #91c075;   /* Mantido como original */
+  --amarelo-claro: #d8c86c; 
+  --vermelho-claro: #cc7071; 
+  --verde-claro: #91c075;   
 }
 
 /* ======================================= */
@@ -38,10 +38,10 @@
 }
 
 .box-pedidos {
-    background-color: #ffffff; /* Mantido branco puro para o box */
+    background-color: var(--bege); 
     padding: 2rem;
     border-radius: 12px;
-    border: 1px solid var(--bege); /* Usando bege para a borda */
+    border: 1px solid var(--bege); 
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
     width: 100%;
     max-width: 700px;
@@ -88,7 +88,7 @@
     padding: 3rem 1rem;
     border: 1px dashed var(--bege);
     border-radius: 8px;
-    background-color: var(--branco); /* Usando branco */
+    background-color: var(--branco); 
 }
 
 .sem-pedidos-icone {
@@ -125,8 +125,8 @@
     padding: 1rem 1.2rem;
     border-radius: 8px;
     margin-bottom: 1rem;
-    background-color: #ffffff; /* Mantido branco puro */
-    border: 1px solid var(--bege); /* Usando bege para a borda */
+    background-color: var(--branco);
+    border: 1px solid var(--bege); 
     transition: border-color 0.2s ease-in-out, transform 0.2s ease;
 }
 
@@ -149,7 +149,7 @@
 
 .pedido-texto {
     font-size: 0.75rem;
-    color: var(--cinza); /* Usando cinza existente */
+    color: var(--cinza); 
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -209,29 +209,29 @@
     height: 100%;
 }
 
-/* Cores específicas para cada status (usando variáveis existentes) */
+
 .status-sucesso {
     background-color: var(--verde-claro);
-    color: var(--preto); /* Usando preto para o texto para melhor contraste */
+    color: var(--preto);
     border-color: var(--verde);
 }
 
 .status-erro {
     background-color: var(--vermelho-claro);
-    color: var(--preto); /* Usando preto para o texto */
+    color: var(--preto);
     border-color: var(--vermelho);
 }
 
 .status-carregando {
     background-color: var(--amarelo-claro);
-    color: var(--preto); /* Usando preto para o texto */
+    color: var(--preto);
     border-color: var(--amarelo);
     animation: pulse 1.5s infinite ease-in-out;
 }
 
 .status-ok {
     background-color: var(--azul-claro);
-    color: var(--preto); /* Usando preto para o texto */
+    color: var(--preto);
     border-color: var(--azul);
 }
 
@@ -248,10 +248,10 @@
 .pedido-slot-info {
     font-size: 0.85rem;
     color: var(--preto);
-    background-color: var(--bege); /* Usando bege para o fundo */
+    background-color: var(--bege); 
     padding: 0.3rem 0.8rem;
     border-radius: 15px;
-    border: 1px solid var(--cinza); /* Uma borda sutil em cinza */
+    border: 1px solid var(--cinza); 
     text-align: center;
     display: flex;
     align-items: center;
