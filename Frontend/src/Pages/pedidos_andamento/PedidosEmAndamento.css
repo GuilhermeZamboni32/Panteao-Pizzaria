@@ -1,24 +1,27 @@
 /* ======================================= */
+/* VARIÁVEIS DE COR                        */
+/* ======================================= */
+:root {
+  /* Cores principais */
+  --vermelho: #BC4749;
+  --bege: #E7C8A7;
+  --branco: #F2E8CF;
+  --verde: #6A994E;
+  --preto: #000000;
+
+  /* Cores para detalhes */
+  --cinza: #555555;
+  --azul: #096DD9;
+  --azul-claro: #1175e788; /* Mantido como original */
+  --amarelo: #d4b506;
+  --amarelo-claro: #d8c86c; /* Mantido como original */
+  --vermelho-claro: #cc7071; /* Mantido como original */
+  --verde-claro: #91c075;   /* Mantido como original */
+}
+
+/* ======================================= */
 /* ESTRUTURA DA PÁGINA                     */
 /* ======================================= */
-
-:root{
-/*Cores principais*/
---vermelho: #BC4749;
---bege: #E7C8A7;
---branco: #F2E8CF ; 
---verde: #6A994E ;
---preto: #000000;
-
-/*Cores para detalhes*/
---cinza: #555555;
---azul: #096DD9;
---azul-claro: #1175e788;
---amarelo: #d4b506;
---amarelo-claro: #d8c86c;
---vermelho-claro: #cc7071;
---verde-claro: #91c075;
-}
 .pagina-pedidos {
     min-height: 100vh;
     background-color: var(--branco);
@@ -30,16 +33,16 @@
     flex-grow: 1;
     display: flex;
     justify-content: center;
-    align-items: flex-start; 
+    align-items: flex-start;
     padding: 2rem 1rem;
 }
 
 .box-pedidos {
-    background-color: var(--branco);
+    background-color: #ffffff; /* Mantido branco puro para o box */
     padding: 2rem;
     border-radius: 12px;
-    border: 5px solid var(--bege);
-    box-shadow: 0 8px 20px var(--cinza);
+    border: 1px solid var(--bege); /* Usando bege para a borda */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
     width: 100%;
     max-width: 700px;
 }
@@ -78,16 +81,20 @@
 }
 
 /* ======================================= */
-/* ESTADOS DA LISTA (VAZIA E CHEIA)        */
+/* MENSAGEM "SEM PEDIDOS"                  */
 /* ======================================= */
 .sem-pedidos {
     text-align: center;
-    padding: 2rem;
+    padding: 3rem 1rem;
+    border: 1px dashed var(--bege);
+    border-radius: 8px;
+    background-color: var(--branco); /* Usando branco */
 }
 
 .sem-pedidos-icone {
     font-size: 3rem;
     margin-bottom: 1rem;
+    display: inline-block;
 }
 
 .sem-pedidos h2 {
@@ -102,15 +109,15 @@
     line-height: 1.6;
 }
 
+/* ======================================= */
+/* LISTA E ITENS DE PEDIDOS                */
+/* ======================================= */
 .lista-pedidos-status {
     list-style-type: none;
     padding: 0;
     margin: 0;
 }
 
-/* ======================================= */
-/* ITENS DA LISTA DE PEDIDOS               */
-/* ======================================= */
 .pedido-item {
     display: flex;
     justify-content: space-between;
@@ -118,9 +125,9 @@
     padding: 1rem 1.2rem;
     border-radius: 8px;
     margin-bottom: 1rem;
-    background-color: var(--branco);
-    border: 1px solid var(--bege);
-    transition: all 0.2s ease-in-out;
+    background-color: #ffffff; /* Mantido branco puro */
+    border: 1px solid var(--bege); /* Usando bege para a borda */
+    transition: border-color 0.2s ease-in-out, transform 0.2s ease;
 }
 
 .pedido-item:last-child {
@@ -135,22 +142,40 @@
 .pedido-info {
     display: flex;
     flex-direction: column;
+    gap: 0.1rem;
+    overflow: hidden;
+    margin-right: 1rem;
 }
 
 .pedido-texto {
-    font-size: 0.8rem;
-    color: var(--cinza);
+    font-size: 0.75rem;
+    color: var(--cinza); /* Usando cinza existente */
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .pedido-id {
     font-weight: bold;
     font-size: 1.1rem;
     color: var(--preto);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* ======================================= */
-/* BADGES DE STATUS (MAIOR MELHORIA)       */
+/* STATUS E SLOT CONTAINER                 */
+/* ======================================= */
+.pedido-status-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+/* ======================================= */
+/* BADGES DE STATUS                        */
 /* ======================================= */
 .status-badge {
     padding: 0.5rem 1rem;
@@ -159,53 +184,88 @@
     font-size: 0.9rem;
     text-align: center;
     min-width: 160px;
+    max-width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     border: 1px solid transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .status-icone {
     width: 20px;
     height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
+.status-icone img, .status-icone svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Cores específicas para cada status (usando variáveis existentes) */
 .status-sucesso {
-    background-color: var(--verde-claro); 
-    color: var(--preto);
+    background-color: var(--verde-claro);
+    color: var(--preto); /* Usando preto para o texto para melhor contraste */
     border-color: var(--verde);
 }
 
 .status-erro {
-    background-color: var(--vermelho-claro); 
-    color: var(--preto);
+    background-color: var(--vermelho-claro);
+    color: var(--preto); /* Usando preto para o texto */
     border-color: var(--vermelho);
 }
 
 .status-carregando {
-    background-color: var(--amarelo-claro); 
-    color: var(--preto);
-    border-color: #FFE58F;
-    animation: pulse 2s infinite ease-in-out;
+    background-color: var(--amarelo-claro);
+    color: var(--preto); /* Usando preto para o texto */
+    border-color: var(--amarelo);
+    animation: pulse 1.5s infinite ease-in-out;
 }
 
 .status-ok {
-    background-color: var(--azul-claro); 
-    color: var(--preto);
+    background-color: var(--azul-claro);
+    color: var(--preto); /* Usando preto para o texto */
     border-color: var(--azul);
 }
 
+/* Animação para o status 'carregando' */
 @keyframes pulse {
-    0% { opacity: 0.7; }
+    0% { opacity: 0.6; }
     50% { opacity: 1; }
-    100% { opacity: 0.7; }
+    100% { opacity: 0.6; }
 }
 
-.icone-status {
-    width: 20px;
-    height: 20px;
+/* ======================================= */
+/* INFORMAÇÃO DO SLOT                      */
+/* ======================================= */
+.pedido-slot-info {
+    font-size: 0.85rem;
+    color: var(--preto);
+    background-color: var(--bege); /* Usando bege para o fundo */
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    border: 1px solid var(--cinza); /* Uma borda sutil em cinza */
+    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    align-self: flex-end;
 }
+.pedido-slot-info span {
+    font-size: 0.9rem;
+}
+
+.pedido-slot-info strong {
+    font-weight: bold;
+}
+
 
 /* ======================================= */
 /* RESPONSIVIDADE                          */
@@ -215,14 +275,35 @@
         padding: 1.5rem;
     }
     .titulo-pedidos {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
     }
     .pedido-item {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.8rem;
     }
-    .status-badge {
-        width: 100%;
+    .pedido-info {
+        margin-right: 0;
+        max-width: 100%;
     }
+    .pedido-id {
+         max-width: calc(100% - 10px);
+    }
+    .pedido-status-container {
+        width: 100%;
+        align-items: stretch;
+    }
+     .pedido-slot-info {
+        text-align: center;
+        align-self: center;
+    }
+     .status-badge {
+         min-width: auto;
+         justify-content: center;
+     }
+}
+
+.icone-local {
+    width: 16px;
+    height: 16px;
 }
