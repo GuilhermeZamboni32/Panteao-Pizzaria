@@ -1,7 +1,27 @@
-/* Estrutura principal da página, alinhada com as telas de Login/Cadastro */
+/* ======================================= */
+/* ESTRUTURA DA PÁGINA                     */
+/* ======================================= */
+
+:root{
+/*Cores principais*/
+--vermelho: #BC4749;
+--bege: #E7C8A7;
+--branco: #F2E8CF ; 
+--verde: #6A994E ;
+--preto: #000000;
+
+/*Cores para detalhes*/
+--cinza: #555555;
+--azul: #096DD9;
+--azul-claro: #1175e788;
+--amarelo: #d4b506;
+--amarelo-claro: #d8c86c;
+--vermelho-claro: #cc7071;
+--verde-claro: #91c075;
+}
 .pagina-pedidos {
     min-height: 100vh;
-    background: linear-gradient(to right, #FFF2F2, #FFEBEB); /* Fundo suave */
+    background-color: var(--branco);
     display: flex;
     flex-direction: column;
 }
@@ -10,139 +30,198 @@
     flex-grow: 1;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; 
     padding: 2rem 1rem;
 }
 
-/* Box central que contém a lista de pedidos */
 .box-pedidos {
-    background-color: var(--bege);
-    padding: 2.5rem;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    background-color: var(--branco);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 5px solid var(--bege);
+    box-shadow: 0 8px 20px var(--cinza);
     width: 100%;
     max-width: 700px;
-    
 }
 
-/* Título principal da página */
+/* ======================================= */
+/* CABEÇALHO DO BOX                      */
+/* ======================================= */
+.btn-voltar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    color: var(--cinza);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    transition: color 0.2s ease;
+}
+
+.btn-voltar svg {
+    width: 24px;
+    height: 24px;
+}
+
+.btn-voltar:hover {
+    color: var(--preto);
+}
+
 .titulo-pedidos {
     text-align: center;
-    font-size: 2.2rem;
-    font-weight: 700;
+    font-size: 2rem;
     color: var(--preto);
     margin-bottom: 2rem;
-    position: relative;
 }
 
-/* Detalhe visual para o título */
-
-
-/* Mensagem para quando não há pedidos */
+/* ======================================= */
+/* ESTADOS DA LISTA (VAZIA E CHEIA)        */
+/* ======================================= */
 .sem-pedidos {
     text-align: center;
-    font-size: 1.1rem;
-    color: var(--preto);
-    margin-top: 1.5rem;
     padding: 2rem;
-    background-color: var(--branco);
-    border-radius: 8px;
 }
 
-/* Lista de pedidos */
-.lista-pedidos {
+.sem-pedidos-icone {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.sem-pedidos h2 {
+    font-size: 1.3rem;
+    color: var(--preto);
+    margin-bottom: 0.5rem;
+}
+
+.sem-pedidos p {
+    color: var(--cinza);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.lista-pedidos-status {
     list-style-type: none;
     padding: 0;
     margin: 0;
 }
 
-/* Item individual da lista */
+/* ======================================= */
+/* ITENS DA LISTA DE PEDIDOS               */
+/* ======================================= */
 .pedido-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.2rem;
-   
-    border-radius: 10px;
+    border-radius: 8px;
     margin-bottom: 1rem;
     background-color: var(--branco);
+    border: 1px solid var(--bege);
     transition: all 0.2s ease-in-out;
+}
+
+.pedido-item:last-child {
+    margin-bottom: 0;
 }
 
 .pedido-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px var(--cinza)
+    border-color: var(--bege);
 }
 
 .pedido-info {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
 }
 
 .pedido-texto {
     font-size: 0.8rem;
-    color: var(--preto);
+    color: var(--cinza);
+    text-transform: uppercase;
 }
 
 .pedido-id {
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--cinza);
-    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--preto);
 }
 
-/* "Badge" que mostra o status */
+/* ======================================= */
+/* BADGES DE STATUS (MAIOR MELHORIA)       */
+/* ======================================= */
 .status-badge {
     padding: 0.5rem 1rem;
     border-radius: 20px;
-    font-weight: 600;
+    font-weight: bold;
     font-size: 0.9rem;
     text-align: center;
-    min-width: 150px;
+    min-width: 160px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    border: 1px solid transparent;
 }
 
-/* Cores diferentes para cada status */
-.status-ok {
-    background-color: var(--bege); /* Azul claro */
-    color: #1890FF;
-}
-
-.status-carregando {
-    background-color:  var(--bege); /* Amarelo claro */
-    color: #FAAD14;
+.status-icone {
+    width: 20px;
+    height: 20px;
 }
 
 .status-sucesso {
-    background-color:  var(--bege); /* Verde claro */
-    color: #52C41A;
+    background-color: var(--verde-claro); 
+    color: var(--preto);
+    border-color: var(--verde);
 }
 
 .status-erro {
-    background-color:  var(--bege); /* Vermelho claro */
-    color: #F5222D;
+    background-color: var(--vermelho-claro); 
+    color: var(--preto);
+    border-color: var(--vermelho);
 }
 
-/* Responsividade para telas menores */
+.status-carregando {
+    background-color: var(--amarelo-claro); 
+    color: var(--preto);
+    border-color: #FFE58F;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+.status-ok {
+    background-color: var(--azul-claro); 
+    color: var(--preto);
+    border-color: var(--azul);
+}
+
+@keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
+.icone-status {
+    width: 20px;
+    height: 20px;
+}
+
+/* ======================================= */
+/* RESPONSIVIDADE                          */
+/* ======================================= */
 @media (max-width: 600px) {
     .box-pedidos {
         padding: 1.5rem;
     }
-
     .titulo-pedidos {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
     }
-    
     .pedido-item {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.8rem;
     }
-
     .status-badge {
         width: 100%;
     }
