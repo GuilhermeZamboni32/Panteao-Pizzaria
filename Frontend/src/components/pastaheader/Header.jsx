@@ -19,6 +19,7 @@ function Header (){
         <Link className="texto-header" to="/Login">Login</Link>
         <Link className="texto-header" to="/cadastro">Cadastro</Link>
         <Link className="texto-header" to="/Crie_Pizza">Crie a sua pizza</Link>
+        <Link className="texto-header" to="/gestao_estoque">Gestão de Estoque</Link>
       </div>
     </div>
   )
