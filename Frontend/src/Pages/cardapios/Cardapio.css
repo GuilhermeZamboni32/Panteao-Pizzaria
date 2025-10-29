@@ -1,0 +1,321 @@
+/* ======================================= */
+/* VARIÁVEIS DE COR                        */
+/* ======================================= */
+:root {
+  --vermelho: #BC4749;
+  --bege: #E7C8A7;
+  --branco: #F2E8CF;
+  --verde: #6A994E;
+  --preto: #000000;
+  --cinza: #7c7c7c;
+}
+
+/* ======================================= */
+/* CONFIGURAÇÕES GERAIS                  */
+/* ======================================= */
+.pagina-cardapio {
+  background-color: var(--branco);
+  min-height: 100vh;
+}
+
+.container-cardapio {
+  max-width: 1200px; /* Limita largura máxima */
+  margin: 0 auto; /* Centraliza */
+  padding: 20px;
+}
+
+/* ======================================= */
+/* CABEÇALHO E FILTROS (Estilo Tabs)       */
+/* ======================================= */
+.cardapio-controles {
+  text-align: center;
+  margin-bottom: 2rem; /* Espaço abaixo dos controles */
+  padding-bottom: 1rem; /* Espaço abaixo da linha */
+  border-bottom: 1px solid var(--bege); /* Linha divisória sutil */
+}
+
+.cardapio-titulo {
+  font-size: 2.5rem;
+  color: var(--preto);
+  margin-bottom: 1.5rem; /* Espaço abaixo do título */
+}
+
+.filtros-container {
+   /* Container para os botões */
+   margin-top: 1rem;
+}
+
+.filtros {
+  display: flex;
+  justify-content: center;
+  gap: 25px; /* Espaço entre os botões */
+  flex-wrap: wrap; /* Permite quebrar linha */
+}
+
+/* Estilo "Tab" para os botões */
+.filtros button {
+  background-color: transparent; /* Sem fundo */
+  border: none;
+  border-bottom: 3px solid transparent; /* Borda inferior invisível */
+  border-radius: 0;
+  padding: 10px 8px; /* Padding vertical e horizontal ajustado */
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--cinza); /* Cor padrão */
+  cursor: pointer;
+  transition: color 0.2s ease, border-bottom-color 0.2s ease;
+  margin: 0 5px; /* Pequeno espaço lateral */
+  white-space: nowrap; /* Evita quebra de linha no texto */
+}
+
+.filtros button:hover {
+  color: var(--preto); /* Texto preto no hover */
+  border-bottom-color: var(--bege); /* Borda bege no hover */
+}
+
+/* Estilo do botão ativo */
+.filtros button.ativo {
+  color: var(--vermelho); /* Texto vermelho */
+  font-weight: 700; /* Negrito */
+  border-bottom-color: var(--vermelho); /* Borda vermelha */
+}
+
+/* ======================================= */
+/* SEÇÃO AÇÕES SECUNDÁRIAS                 */
+/* ======================================= */
+.cardapio-acoes-secundarias {
+  text-align: center;
+  margin: 2rem auto 3rem auto; /* Ajusta margens */
+  padding: 2rem;
+  background-color: var(--bege);
+  border-radius: 8px;
+  max-width: 800px;
+}
+
+.cardapio-acoes-secundarias h2 {
+    color: var(--preto);
+    font-size: 1.6rem; /* Tamanho ajustado */
+    margin-bottom: 0.8rem;
+}
+
+.cardapio-acoes-secundarias p {
+    color: var(--cinza);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.botoes-container {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem; /* Espaço entre botões */
+    flex-wrap: wrap;
+}
+
+.btn-acao-principal, .btn-acao-secundario {
+    padding: 10px 24px; /* Padding ajustado */
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.95rem; /* Fonte ajustada */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent; /* Borda transparente inicial */
+}
+
+.btn-acao-principal {
+    background-color: var(--verde);
+    color: var(--branco);
+    border-color: var(--verde);
+}
+
+.btn-acao-principal:hover {
+    background-color: #5a8a42; /* Verde mais escuro */
+    border-color: #5a8a42;
+    transform: translateY(-2px);
+}
+
+.btn-acao-secundario {
+    background-color: transparent;
+    color: var(--preto);
+    border-color: var(--preto);
+}
+
+.btn-acao-secundario:hover {
+    background-color: var(--preto);
+    color: var(--branco);
+    transform: translateY(-2px);
+}
+
+/* ======================================= */
+/* LISTA E CARDS DE PIZZA                  */
+/* ======================================= */
+.lista-pizzas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Ajuste leve na largura mínima */
+  gap: 25px; /* Espaçamento entre cards */
+  margin-top: 2rem; /* Adiciona espaço acima da lista de pizzas */
+}
+
+/* Mensagem caso não haja pizzas */
+.nenhuma-pizza-encontrada {
+    grid-column: 1 / -1; /* Ocupa todas as colunas */
+    text-align: center;
+    padding: 2rem;
+    color: var(--cinza);
+    font-style: italic;
+    background-color: rgba(255, 255, 255, 0.5); /* Fundo semi-transparente */
+    border-radius: 8px;
+}
+
+
+.card-pizza {
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid #EAE2D5; /* Borda bem clara */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative; /* Para a tag de promoção */
+  overflow: hidden; /* Garante que imagem não vaze */
+}
+
+.card-pizza:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.tag-promocao {
+    position: absolute;
+    top: 10px; /* Ajuste posicionamento */
+    right: 10px;
+    background-color: var(--vermelho);
+    color: white;
+    padding: 3px 8px; /* Padding menor */
+    border-radius: 4px; /* Borda menor */
+    font-size: 0.75rem; /* Fonte menor */
+    font-weight: bold;
+    z-index: 2;
+    text-transform: uppercase;
+}
+
+.card-pizza-imagem-container {
+    width: 100%;
+    height: 180px; /* Altura ligeiramente menor */
+    overflow: hidden;
+}
+
+.pizza-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card-pizza:hover .pizza-img {
+  transform: scale(1.05); /* Efeito de zoom no hover */
+}
+
+.card-pizza-body {
+    padding: 1rem 1.2rem; /* Padding ajustado */
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Faz o corpo ocupar espaço */
+}
+
+.card-pizza-body h3 {
+  font-size: 1.2rem; /* Fonte ajustada */
+  margin-top: 0;
+  margin-bottom: 0.5rem; /* Espaço menor */
+  color: var(--preto);
+}
+
+.card-pizza-body .descricao {
+    font-size: 0.85rem; /* Fonte menor */
+    color: var(--cinza);
+    line-height: 1.5;
+    margin-bottom: 1rem; /* Espaço antes do preço */
+    flex-grow: 1; /* Ocupa espaço para empurrar preço/botão para baixo */
+}
+
+.card-pizza-preco {
+    margin-bottom: 1rem; /* Espaço antes do botão */
+    display: flex;
+    align-items: baseline;
+    gap: 8px; /* Espaço menor entre preços */
+}
+
+.preco-normal {
+    font-size: 1.3rem; /* Fonte ajustada */
+    font-weight: bold;
+    color: var(--preto);
+}
+
+.preco-antigo {
+  text-decoration: line-through;
+  color: var(--cinza);
+  font-size: 0.9rem; /* Fonte menor */
+}
+
+.preco-novo {
+  color: var(--verde);
+  font-size: 1.4rem; /* Fonte ajustada */
+  font-weight: bold;
+}
+
+.btn-adicionar {
+  width: 100%;
+  background-color: var(--vermelho);
+  color: var(--branco);
+  border: 1px solid var(--vermelho);
+  padding: 10px; /* Padding ajustado */
+  border-radius: 6px;
+  font-size: 0.95rem; /* Fonte ajustada */
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: auto; /* Garante que fique na base */
+}
+
+.btn-adicionar:hover:not(:disabled) { /* Só aplica hover se não estiver desabilitado */
+  background-color: #a13c3e; /* Vermelho mais escuro */
+  border-color: #a13c3e;
+}
+
+.btn-adicionar.adicionado {
+    background-color: var(--verde);
+    border-color: var(--verde);
+    cursor: not-allowed;
+}
+
+.btn-adicionar.adicionado:hover {
+     background-color: var(--verde); /* Mantém verde no hover quando adicionado */
+     border-color: var(--verde);
+}
+
+/* ======================================= */
+/* RESPONSIVIDADE                          */
+/* ======================================= */
+@media (max-width: 600px) {
+    .cardapio-titulo {
+        font-size: 2rem;
+    }
+    .filtros {
+        gap: 10px; /* Menor espaço entre filtros */
+    }
+    .filtros button {
+        font-size: 1rem;
+        padding: 8px 6px;
+    }
+    .lista-pizzas {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Cards um pouco menores */
+        gap: 20px;
+    }
+     .cardapio-acoes-secundarias {
+         margin: 2rem auto 2.5rem auto;
+         padding: 1.5rem;
+     }
+     .cardapio-acoes-secundarias h2 {
+         font-size: 1.4rem;
+     }
+}
+

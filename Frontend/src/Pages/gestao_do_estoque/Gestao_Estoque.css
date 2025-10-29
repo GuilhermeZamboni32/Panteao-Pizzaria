@@ -1,0 +1,214 @@
+
+:root {
+  /* Cores principais */
+  --vermelho: #BC4749;
+  --bege: #E7C8A7;
+  --branco: #F2E8CF;
+  --verde: #6A994E;
+  --preto: #000000;
+
+  /* Cores para detalhes */
+  --cinza: #555555; 
+  --azul: #096DD9;
+  --azul-claro: #1175e788;
+  --amarelo: #d4b506;
+  --amarelo-claro: #d8c86c;
+  --vermelho-claro: #cc7071;
+  --verde-claro: #91c075;
+}
+
+/* ======================================= */
+/* ESTRUTURA DA PÁGINA                     */
+/* ======================================= */
+.pagina-estoque {
+  background-color: var(--branco); 
+  min-height: 100vh;
+}
+
+.container-estoque {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: var(--branco); 
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 6px solid var(--bege); 
+}
+
+.container-estoque h1 {
+  text-align: center;
+  color: var(--preto);
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.btn-voltar-estoque {
+    display: block;
+    width: fit-content;
+    margin: 0 auto 2rem auto;
+    padding: 0.8rem 1.5rem;
+    background-color: var(--cinza); 
+    color: var(--branco);
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-voltar-estoque:hover {
+    background-color: var(--preto); 
+}
+
+.mensagem-erro-geral {
+    text-align: center;
+    color: var(--preto);
+    background-color: var(--vermelho-claro); 
+    padding: 0.8rem;
+    border: 1px solid var(--vermelho);
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+}
+
+
+/* ======================================= */
+/* LAYOUT DAS PRATELEIRAS                  */
+/* ======================================= */
+.prateleiras {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; 
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: var(--bege); 
+}
+
+.secao-estoque {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem; 
+  background-color: var(--branco); 
+  border-radius: 6px; 
+  border: 1px solid var(--bege); 
+}
+
+/* ======================================= */
+/* ELEMENTOS DENTRO DE CADA SEÇÃO          */
+/* ======================================= */
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.item-icone {
+  width: 50px; 
+  height: 50px;
+  flex-shrink: 0;
+  border-radius: 8px; 
+}
+
+
+.item-icone.cor-massa { 
+    color: var(--preto); 
+}
+.item-icone.cor-molho-salgado { 
+    color: var(--vermelho); 
+}
+.item-icone.cor-molho-doce { 
+    color: var(--azul); 
+}
+
+
+.item-titulo {
+  font-size: 1.3rem; 
+  color: var(--preto);
+  margin: 0;
+  font-weight: 500;
+}
+
+.item-quantidade {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; 
+  text-align: right;
+  min-width: 80px;
+}
+
+.item-quantidade .quantidade-valor {
+  font-size: 1.8rem; 
+  font-weight: bold;
+  color: var(--verde);
+  line-height: 1;
+}
+
+.item-quantidade .quantidade-carregando,
+.item-quantidade .quantidade-erro {
+  font-size: 0.9rem; 
+  font-style: italic;
+  color: var(--cinza);
+  line-height: 1;
+}
+.item-quantidade .quantidade-erro{
+    color: var(--vermelho); 
+    font-weight: bold;
+    font-style: normal; 
+}
+
+
+.item-quantidade span:last-child { 
+  font-size: 0.75rem; 
+  color: var(--cinza);
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+}
+
+
+/* ======================================= */
+/* RESPONSIVIDADE                          */
+/* ======================================= */
+@media (max-width: 600px) {
+  .container-estoque h1 {
+    font-size: 1.6rem;
+  }
+  .prateleiras {
+      padding: 0.5rem; 
+      gap: 1rem; 
+      background-color: transparent; 
+      border: none; 
+  }
+  .secao-estoque {
+    flex-wrap: wrap;
+    justify-content: space-between; 
+    gap: 1rem; 
+    padding: 1rem;
+  }
+  .item-info {
+      gap: 1rem;
+     
+      width: 100%;
+      justify-content: space-between; 
+  }
+  .item-icone {
+      width: 40px;
+      height: 40px;
+  }
+  .item-titulo {
+      font-size: 1.1rem;
+      white-space: normal;
+      text-align: left;
+      flex-grow: 1; 
+      margin-right: 1rem; 
+  }
+  .item-quantidade {
+    align-items: flex-end;
+    min-width: auto;
+   }
+   .item-quantidade .quantidade-valor {
+       font-size: 1.5rem;
+   }
+}
+
