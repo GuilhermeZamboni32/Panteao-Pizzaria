@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from '../../components/pastaheader/Header';
-import './Cadastro.css'; // O CSS atualizado (ficheiro 2) será usado
+import './Cadastro.css';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 function Cadastro() {
     // Estado simplificado, sem dados de pagamento
@@ -14,6 +15,7 @@ function Cadastro() {
     });
     const [mensagem, setMensagem] = useState('');
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.id]: e.target.value });
@@ -102,9 +104,25 @@ function Cadastro() {
                             <label htmlFor="endereco">Endereço:</label>
                             <input type="text" id="endereco" value={form.endereco} onChange={handleChange} placeholder="Rua, Número, Bairro" required />
                         </div>
-                        <div className='form-group'>
-                            <label htmlFor="senha">Senha:</label>
-                            <input type="password" id="senha" value={form.senha} onChange={handleChange} placeholder="Senha (mín. 8 caracteres)" required />
+                        <div className='form-group senha-group'>
+                          <label htmlFor="senha">Senha:</label>
+                          
+                          <div className="input-com-icone">
+                            <input 
+                              type={showPassword ? "text" : "password"} 
+                              id="senha" 
+                              placeholder="Sua senha"
+                              value={form.senha}
+                              onChange={handleChange}
+                              required
+                            />
+                                <span 
+                                  className="password-toggle-icon"
+                                  onClick={() => setShowPassword(!showPassword)}
+                                >
+                                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                                </span>
+                          </div>
                         </div>
                         
                         <button className='botao-form' type="submit">Cadastrar</button>
