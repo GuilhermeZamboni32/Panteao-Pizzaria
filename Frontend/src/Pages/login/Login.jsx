@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom'; // Importa o Link
 import './login.css';
 import Header from '../../components/pastaheader/Header';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 function Login() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [mensagem, setMensagem] = useState('');
     const navigate = useNavigate();
 
@@ -61,16 +63,24 @@ function Login() {
                                 required
                             />
                         </div>
-                        <div className='form-group'>
+                         <div className='form-group form-group-password'>
                             <label htmlFor="senha">Senha:</label>
                             <input 
-                                type="password" 
+                                // Muda o tipo baseado no estado 'showPassword'
+                                type={showPassword ? "text" : "password"} 
                                 id="senha" 
                                 placeholder="Sua senha"
                                 value={senha}
                                 onChange={(e) => setSenha(e.target.value)}
                                 required
                             />
+                            {/* Ícone que muda ao clicar */}
+                            <span 
+                                className="password-toggle-icon"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <FiEyeOff /> : <FiEye />}
+                            </span>
                         </div>
                         <button className='botao-form' type="submit">Entrar</button>
                     </form>

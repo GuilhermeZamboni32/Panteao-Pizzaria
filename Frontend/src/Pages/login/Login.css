@@ -8,53 +8,37 @@
   --cinza: #7c7c7c;
 }
 
-/* Página inteira:
-  - Ocupa 100% da altura da tela
-  - Imagem de fundo da pizza de morango (ajuste o caminho se necessário)
-  - 'background-attachment: fixed' mantém a imagem parada durante o scroll
-*/
+/* Página inteira com imagem de fundo */
 .pagina-login {
-  /* ATUALIZAÇÃO: Caminho da imagem da sua referência */
-  /* Certifique-se que este caminho está correto a partir da pasta 'public' */
   background-image: url('/imagens-de-fundo/pizza-doce-fundo.png'); 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed; /* Efeito de imagem parada */
-  
+  background-attachment: fixed;
   width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* Container Principal:
-  - Ocupa todo o espaço abaixo do Header
-  - Alinha o card do formulário à direita
-  - Aplica o gradiente suave que você pediu
-*/
+/* Container com gradiente à direita */
 .container-login {
-  flex: 1; /* Ocupa todo o espaço restante */
+  flex: 1; 
   display: flex;
   align-items: center; 
-  justify-content: flex-end; /* Alinha o conteúdo (o form) à direita */
-  padding: 2rem 4rem; /* Espaçamento interno */
-
-  /* O Gradiente Suave */
+  justify-content: flex-end; /* Alinha à direita */
+  padding: 2rem 4rem;
   background: linear-gradient(
     to left, 
     var(--bege) 30%, 
-    rgba(231, 200, 167, 0.7) 50%, /* Cor bege com transparência */
+    rgba(231, 200, 167, 0.7) 50%,
     transparent 70%
   );
 }
 
-/* Card do Formulário:
-  - Fundo branco para destacar do gradiente
-  - Sombra para dar profundidade
-*/
+/* Card do Formulário */
 .form-container {
-  background-color: var(--branco); /* Fundo branco/creme para o formulário */
+  background-color: var(--branco);
   padding: 2.5rem;
   border-radius: 12px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
@@ -73,15 +57,16 @@
 .form-auth {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem; /* Espaço entre os inputs */
+  gap: 1.2rem;
 }
 
+/* --- CORREÇÃO AQUI --- */
+/* .form-group agora é 'position: relative' 
+   Removido 'display: flex' que podia complicar o cálculo da altura */
 .form-group {
-  display: flex;
-  flex-direction: column;
+  position: relative;
 }
 
-/* Esconde a label (acessibilidade) */
 .form-group label {
   position: absolute;
   width: 1px;
@@ -93,24 +78,27 @@
   border: 0;
 }
 
+/* Estilo padrão para TODOS os inputs */
 .form-group input {
-  background-color: #fff; /* Fundo branco para inputs */
+  background-color: #fff;
   border: 1px solid var(--bege);
   border-radius: 8px;
-  padding: 1rem;
+  padding: 1rem; /* Padding padrão */
   font-size: 1rem;
   color: var(--preto);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%; /* Garante que o input ocupe o espaço */
+  box-sizing: border-box; /* Garante que o padding não aumente a largura */
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--verde); /* Destaque verde ao focar */
+  border-color: var(--verde);
   box-shadow: 0 0 0 3px rgba(106, 153, 78, 0.3);
 }
 
 .form-group input::placeholder {
-  color: var(--cinza); /* Placeholder cinza */
+  color: var(--cinza);
   font-weight: 500;
 }
 
@@ -129,7 +117,7 @@
 }
 
 .botao-form:hover {
-  background-color: #5a8a42; /* Verde mais escuro */
+  background-color: #5a8a42;
 }
 
 /* Mensagem de Erro */
@@ -160,24 +148,54 @@
   text-decoration: underline;
 }
 
-/* Responsividade para telas menores */
+/* --- ESTILOS CORRIGIDOS PARA O "OLHINHO" --- */
+
+/* Sobrescreve o padding-right APENAS do input dentro de .form-group-password */
+.form-group.form-group-password input {
+  padding-right: 3.5rem; /* 1rem (padding padrão) + 2.5rem (espaço para o ícone) */
+}
+
+.password-toggle-icon {
+  position: absolute;
+  top: 50%; /* Alinha o ícone ao centro vertical do .form-group */
+  right: 1rem; /* Posiciona 1rem da direita */
+  transform: translateY(-50%); /* Ajuste fino para centrar perfeitamente */
+  
+  cursor: pointer;
+  color: var(--cinza);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.password-toggle-icon:hover {
+  color: var(--preto);
+}
+/* ------------------------------------- */
+
+
+/* Responsividade */
 @media (max-width: 768px) {
   .container-login {
-    /* Centraliza o form e remove o gradiente */
     justify-content: center;
-    background: var(--branco);
+    background: var(--branco); /* Fundo sólido no mobile */
     padding: 1.5rem;
   }
   
   .pagina-login {
-      /* Remove a imagem de fundo no mobile para focar no formulário */
-      background-image: none;
+      background-image: none; /* Remove imagem de fundo */
       background-color: var(--branco);
   }
 
   .form-container {
     max-width: 100%;
-    box-shadow: none; /* Remove sombra no mobile */
+    box-shadow: none;
     padding: 1rem;
   }
 }
+
