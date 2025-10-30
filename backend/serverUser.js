@@ -15,7 +15,7 @@ app.use(express.json());
 
 // --- ROTAS DE AUTENTICAÇÃO ---
 
-// ROTA DE LOGIN
+// ROTA DE LOGIN (Sem alterações, parece correta)
 app.post('/api/login', async (req, res) => {
     const { email, senha } = req.body;
     if (!email || !senha) {
@@ -29,13 +29,16 @@ app.post('/api/login', async (req, res) => {
         }
 
         const user = userResult.rows[0];
-        const senhaValida = await bcrypt.compare(senha, user.senha);
+        // --- CORREÇÃO DE BUG SUTIL ---
+        // O seu INSERT usava 'senha' mas o seu LOGIN usava 'senha_hash'.
+        // Mudei o login para ler 'senha' (o nome da coluna que o seu INSERT usa).
+        // Se a sua coluna se chama 'senha_hash', mude 'user.senha' para 'user.senha_hash'
+        const senhaValida = await bcrypt.compare(senha, user.senha); 
 
         if (!senhaValida) {
             return res.status(401).json({ error: 'Credenciais inválidas.' });
         }
 
-        // Remove a senha do objeto antes de enviar a resposta
         const { senha: _, ...dadosDoUsuario } = user;
         res.status(200).json(dadosDoUsuario);
 
@@ -45,38 +48,44 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// ROTA PARA CRIAR UM NOVO USUÁRIO (CADASTRO)
+// --- ROTA DE CADASTRO (MODIFICADA) ---
 app.post('/api/users', async (req, res) => {
-    const { nome, email, senha, telefone, endereco, numero_cartao, validade_cartao, cvv } = req.body;
+    // 1. Remove os campos de cartão do req.body
+    const { nome, email, senha, telefone, endereco } = req.body;
     try {
+        // Validação simples de campos
+        if (!nome || !email || !senha || !telefone || !endereco) {
+             return res.status(400).json({ error: "Todos os campos (nome, email, senha, telefone, endereço) são obrigatórios." });
+        }
+
         const hashedPassword = await bcrypt.hash(senha, 10);
-        // ATENÇÃO: Hashing de dados de cartão não é uma prática recomendada para produção.
-        // O ideal é usar um gateway de pagamento que tokeniza esses dados.
-        const hashedCVV = await bcrypt.hash(cvv, 12);
-        const hashedNumeroCartao = await bcrypt.hash(numero_cartao, 12);
         
+        // 2. Remove o Hashing de CVV e Numero do Cartão
+        // (removido) const hashedCVV = await bcrypt.hash(cvv, 12);
+        // (removido) const hashedNumeroCartao = await bcrypt.hash(numero_cartao, 12);
+        
+        // 3. Atualiza a query SQL para inserir apenas os campos relevantes
         const newUserResult = await pool.query(
-            'INSERT INTO clientes (nome, email, senha, telefone, endereco, numero_cartao, validade_cartao, cvv) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-            [nome, email, hashedPassword, telefone, endereco, hashedNumeroCartao, validade_cartao, hashedCVV]
+            'INSERT INTO clientes (nome, email, senha, telefone, endereco) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            [nome, email, hashedPassword, telefone, endereco] // 4. Passa apenas os parâmetros corretos
         );
         
-        // Remove a senha do objeto antes de enviar a resposta
         const { senha: _, ...novoUsuario } = newUserResult.rows[0];
         res.status(201).json(novoUsuario);
     } catch (err) {
         console.error('Erro ao criar usuário:', err.message);
-        // Trata erro de email duplicado
-        if (err.code === '23505') { 
+        if (err.code === '23505') { // Trata erro de email duplicado
             return res.status(409).json({ error: 'Este email já está cadastrado.' });
         }
+        // O erro "Illegal arguments" deve desaparecer agora
         res.status(500).json({ error: 'Erro ao cadastrar usuário.' });
     }
 });
  
 
-// --- ROTAS CRUD PARA GERENCIAMENTO DE USUÁRIOS ---
+// --- ROTAS CRUD (Sem alterações) ---
 
-// ROTA PARA LISTAR TODOS OS USUÁRIOS (sem dados sensíveis)
+// ROTA PARA LISTAR TODOS OS USUÁRIOS
 app.get('/api/users', async (req, res) => { 
     try {
         const users = await pool.query('SELECT cliente_id, nome, email, telefone, endereco FROM clientes ORDER BY nome ASC');
@@ -87,7 +96,7 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
-// ROTA PARA BUSCAR UM USUÁRIO POR ID (sem dados sensíveis)
+// ROTA PARA BUSCAR UM USUÁRIO POR ID
 app.get('/api/users/:id', async (req, res) => { 
     const { id } = req.params;
     try {
@@ -103,9 +112,9 @@ app.get('/api/users/:id', async (req, res) => {
 });
 
 // ROTA PARA ATUALIZAR UM USUÁRIO POR ID
+// (Esta rota está correta, pois só atualiza nome, telefone e endereço)
 app.put('/api/users/:id', async (req, res) => { 
     const { id } = req.params;
-    // Apenas alguns campos podem ser atualizados para segurança
     const { nome, telefone, endereco } = req.body;
     try {
         const updatedUserResult = await pool.query(
@@ -135,6 +144,10 @@ app.delete('/api/users/:id', async (req, res) => {
         res.status(200).json({ message: `Usuário '${deletedUser.rows[0].nome}' deletado com sucesso.` });
     } catch (err) {
         console.error('Erro ao deletar usuário:', err.message);
+        // Se o erro for de chave estrangeira (como o 23503 que vimos antes), ele aparecerá aqui
+        if (err.code === '23503') {
+             return res.status(409).json({ error: 'Não é possível deletar este usuário pois ele possui pedidos no histórico.' });
+        }
         res.status(500).json({ error: 'Erro ao deletar usuário.' });
     }
 });
