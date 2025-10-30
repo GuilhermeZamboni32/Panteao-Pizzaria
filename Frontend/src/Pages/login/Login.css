@@ -1,85 +1,88 @@
-/* Definindo as variáveis de cor no root */
+/* Cores do seu projeto */
 :root {
   --vermelho: #BC4749;
   --bege: #E7C8A7;
   --branco: #F2E8CF;
   --verde: #6A994E;
   --preto: #000000;
+  --cinza: #7c7c7c;
 }
 
-
+/* Página inteira:
+  - Ocupa 100% da altura da tela
+  - Imagem de fundo da pizza de morango (ajuste o caminho se necessário)
+  - 'background-attachment: fixed' mantém a imagem parada durante o scroll
+*/
 .pagina-login {
-  background-color: var(--branco);
+  /* ATUALIZAÇÃO: Caminho da imagem da sua referência */
+  /* Certifique-se que este caminho está correto a partir da pasta 'public' */
+  background-image: url('/imagens-de-fundo/pizza-doce-fundo.png'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Efeito de imagem parada */
+  
   width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-
+/* Container Principal:
+  - Ocupa todo o espaço abaixo do Header
+  - Alinha o card do formulário à direita
+  - Aplica o gradiente suave que você pediu
+*/
 .container-login {
+  flex: 1; /* Ocupa todo o espaço restante */
   display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  gap: 5rem;
+  align-items: center; 
+  justify-content: flex-end; /* Alinha o conteúdo (o form) à direita */
+  padding: 2rem 4rem; /* Espaçamento interno */
+
+  /* O Gradiente Suave */
+  background: linear-gradient(
+    to left, 
+    var(--bege) 30%, 
+    rgba(231, 200, 167, 0.7) 50%, /* Cor bege com transparência */
+    transparent 70%
+  );
 }
 
-
-.coluna-imagem-login {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.imagem-login {
-  max-width: 1000px;
+/* Card do Formulário:
+  - Fundo branco para destacar do gradiente
+  - Sombra para dar profundidade
+*/
+.form-container {
+  background-color: var(--branco); /* Fundo branco/creme para o formulário */
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   width: 100%;
-  height: auto;
-  border-radius: 50%;
+  max-width: 420px;
+  border: 1px solid var(--bege);
 }
 
-
-.coluna-formulario-login {
-  flex: 1;
-  display: flex;
-  justify-content: flex-start;
-}
-
-
-.container-info-form-login {
-  background-color: var(--bege);
-  padding: 3rem;
-  border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.titulo-form-login {
+.titulo-form {
   color: var(--preto);
   text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
 }
 
-.form-login {
+.form-auth {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem; /* Espaço entre os inputs */
 }
 
-.form-group-login {
+.form-group {
   display: flex;
   flex-direction: column;
 }
 
-
-.form-group-login label {
+/* Esconde a label (acessibilidade) */
+.form-group label {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -90,41 +93,91 @@
   border: 0;
 }
 
-.form-group-login input {
-  background-color: var(--branco);
-  border: 2px solid transparent;
-  border-radius: 10px;
+.form-group input {
+  background-color: #fff; /* Fundo branco para inputs */
+  border: 1px solid var(--bege);
+  border-radius: 8px;
   padding: 1rem;
   font-size: 1rem;
-  color: var(--vermelho);
-  transition: border-color 0.3s ease;
+  color: var(--preto);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.form-group-login input:focus {
+.form-group input:focus {
   outline: none;
-  border-color: var(--verde);
+  border-color: var(--verde); /* Destaque verde ao focar */
+  box-shadow: 0 0 0 3px rgba(106, 153, 78, 0.3);
 }
 
-.form-group-login input::placeholder {
-  color: var(--verde);
-  opacity: 0.8;
-  font-weight: bold;
+.form-group input::placeholder {
+  color: var(--cinza); /* Placeholder cinza */
+  font-weight: 500;
 }
 
-/* Botão de Logar */
-.botao-form-login {
+/* Botão de Entrar */
+.botao-form {
   background-color: var(--verde);
   color: var(--branco);
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 1rem;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: filter 0.3s ease;
+  transition: background-color 0.3s ease;
   margin-top: 1rem;
 }
 
-.botao-form-login:hover {
-  filter: brightness(0.9);
+.botao-form:hover {
+  background-color: #5a8a42; /* Verde mais escuro */
+}
+
+/* Mensagem de Erro */
+.mensagem-form-erro {
+  margin-top: 1rem;
+  color: var(--vermelho);
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Link para Cadastro */
+.auth-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--cinza);
+}
+
+.auth-link a {
+  color: var(--verde);
+  font-weight: bold;
+  text-decoration: none;
+  transition: text-decoration 0.2s ease;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .container-login {
+    /* Centraliza o form e remove o gradiente */
+    justify-content: center;
+    background: var(--branco);
+    padding: 1.5rem;
+  }
+  
+  .pagina-login {
+      /* Remove a imagem de fundo no mobile para focar no formulário */
+      background-image: none;
+      background-color: var(--branco);
+  }
+
+  .form-container {
+    max-width: 100%;
+    box-shadow: none; /* Remove sombra no mobile */
+    padding: 1rem;
+  }
 }

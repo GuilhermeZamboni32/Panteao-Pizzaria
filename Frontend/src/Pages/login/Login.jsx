@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Importa o Link
 import './login.css';
 import Header from '../../components/pastaheader/Header';
 
@@ -29,66 +29,63 @@ function Login() {
 
             if (response.ok) {
                 // SUCESSO NO LOGIN
-                // 1. Salva os dados do usuário no localStorage para usar em outras partes do site
                 localStorage.setItem('usuarioLogado', JSON.stringify(data));
-                
-                // 2. Redireciona o usuário para a página de cardápio
-                navigate('/cardapio');
+                navigate('/cardapio'); // Redireciona para o cardápio
             } else {
-                // ERRO DE LOGIN
                 setMensagem(data.error || 'Falha no login. Verifique suas credenciais.');
             }
         } catch (err) {
             console.error('Erro de conexão:', err);
-            setMensagem('Erro ao conectar com o servidor. Tente novamente mais tarde.');
+            setMensagem('Erro ao conectar com o servidor. Tente novamente.');
         }
     };
 
     return (
+        // A 'pagina-login' agora tem a imagem de fundo
         <div className='pagina-login'>
             <Header />
+            {/* O 'container-login' agora tem o gradiente e alinha o form à direita */}
             <main className='container-login'>
-                <div className='coluna-imagem-login'>
-                    <img
-                        className='imagem-login'
-                        src="/imagens-de-fundo/pizza-doce-sem-fundo.png" 
-                        alt="Pizza de chocolate com morangos"
-                    />
-                </div>
-                <div className='coluna-formulario-login'>
-                    <div className='container-info-form-login'>
-                        <h1 className='titulo-form-login'>Login</h1>
-                        <form className='form-login' onSubmit={handleSubmit}>
-                            <div className='form-group-login'>
-                                <label htmlFor="email">Email:</label>
-                                <input 
-                                    type="email" 
-                                    id="email" 
-                                    placeholder="seuemail@exemplo.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <div className='form-group-login'>
-                                <label htmlFor="senha">Senha:</label>
-                                <input 
-                                    type="password" 
-                                    id="senha" 
-                                    placeholder="Senha:"
-                                    value={senha}
-                                    onChange={(e) => setSenha(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <button className='botao-form-login' type="submit">Logar</button>
-                        </form>
-                        {mensagem && (
-                            <p style={{ marginTop: '1rem', color: 'red', textAlign: 'center' }}>
-                                {mensagem}
-                            </p>
-                        )}
-                    </div>
+                {/* O 'form-container' é o card bege que segura o formulário */}
+                <div className='form-container'>
+                    <h1 className='titulo-form'>Login</h1>
+                    <form className='form-auth' onSubmit={handleSubmit}>
+                        <div className='form-group'>
+                            <label htmlFor="email">Email:</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                placeholder="Seu email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className='form-group'>
+                            <label htmlFor="senha">Senha:</label>
+                            <input 
+                                type="password" 
+                                id="senha" 
+                                placeholder="Sua senha"
+                                value={senha}
+                                onChange={(e) => setSenha(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <button className='botao-form' type="submit">Entrar</button>
+                    </form>
+                    
+                    {mensagem && (
+                        <p className="mensagem-form-erro">
+                            {mensagem}
+                        </p>
+                    )}
+
+                    {/* Link para a página de Cadastro */}
+                    <p className="auth-link">
+                        Não tem uma conta?{' '}
+                        <Link to="/cadastro">Cadastre-se</Link>
+                    </p>
                 </div>
             </main>
         </div>

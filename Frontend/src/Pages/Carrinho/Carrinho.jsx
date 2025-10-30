@@ -7,24 +7,27 @@ function Carrinho() {
     const location = useLocation();
     const navigate = useNavigate();
     
+    // Pega itens do 'state' da navegação (vindo do Cardapio ou CriePizza)
     const [itensCarrinho, setItensCarrinho] = useState(location.state?.carrinho || []);
     const [usuarioLogado, setUsuarioLogado] = useState(null);
 
     const frete = 5;
     const desconto = 0;
 
+    // Preços base (você já tem isto)
     const precos = {
         Broto: 25,
         Média: 30,
         Grande: 45,
     };
     
-    // Efeito para carregar o carrinho da navegação e o usuário do localStorage
     useEffect(() => {
+        // Atualiza o carrinho se a navegação mudar
         setItensCarrinho(location.state?.carrinho || []);
 
+        // Carrega o usuário logado
         const usuarioSalvo = JSON.parse(localStorage.getItem('usuarioLogado'));
-        if (usuarioSalvo && usuarioSalvo.cliente_id) { // Verifica pelo ID que vem do BD
+        if (usuarioSalvo && usuarioSalvo.cliente_id) {
             setUsuarioLogado(usuarioSalvo);
         }
     }, [location.state]);
@@ -33,7 +36,7 @@ function Carrinho() {
     const clonarItem = (itemParaClonar) => {
         const novoItem = {
             ...itemParaClonar,
-            id: Date.now() // Novo ID único para o item clonado
+            id: Date.now()
         };
         setItensCarrinho(prev => [...prev, novoItem]);
     };
@@ -44,7 +47,13 @@ function Carrinho() {
 
     const calcularSubtotal = () => {
         return itensCarrinho.reduce(
-            (soma, item) => soma + (precos[item.tamanho] || 0),
+            (soma, item) => {
+                // Lógica para calcular preço de item do histórico ou item novo
+                if (item.origem === 'historico') {
+                    return soma + (item.preco || 0);
+                }
+                return soma + (precos[item.tamanho] || 0);
+            },
             0
         );
     };
@@ -53,6 +62,7 @@ function Carrinho() {
     const total = subtotal + frete - desconto;
 
     const handleAdicionarMais = () => {
+        // Volta para CriePizza mantendo o estado do carrinho
         navigate('/crie_pizza', { state: { carrinho: itensCarrinho } });
     };
 
@@ -66,13 +76,28 @@ function Carrinho() {
             alert('Seu carrinho está vazio!');
             return;
         }
+        
+        // --- MUDANÇA IMPORTANTE 1: Gerar os nomes ANTES de enviar ---
+        // Vamos criar os 'nome_item' que serão usados no Histórico e Pedidos em Andamento
+        const itensComNomeFormatado = itensCarrinho.map(item => {
+            // Se já veio do histórico, apenas retorna
+            if (item.origem === 'historico') {
+                return { ...item, nome_item: item.nome }; // Garante que 'nome_item' exista
+            }
+            // Se veio do CriePizza, formata o nome
+            const nomeFormatado = `Pizza ${item.tamanho} (${item.ingredientes.map(i => i.nome).join(', ')})`;
+            return { ...item, nome_item: nomeFormatado };
+        });
+
+
         const pedidoPayload = {
             usuario: {
                 id: usuarioLogado.cliente_id,
                 nome: usuarioLogado.nome,
                 email: usuarioLogado.email
             },
-            itens: itensCarrinho,
+            // Envia os itens com o nome_item formatado
+            itens: itensComNomeFormatado, 
             total: total
         };
     
@@ -89,21 +114,31 @@ function Carrinho() {
                 alert('🍕 Pedido realizado com sucesso! Acompanhe na tela de "Pedidos em Andamento".');
                 console.log("📦 Retorno do servidor:", data);
     
-                // CORREÇÃO: Pegar os IDs da MÁQUINA, não do seu banco de dados
-                const idsDaMaquina = data.idsDaMaquina;
+                const idsDaMaquina = data.idsDaMaquina || []; // IDs [ "machine-id-1", "machine-id-2" ]
     
-                // Salva os IDs corretos no localStorage
+                // --- MUDANÇA IMPORTANTE 2: Salvar {id, nome} no localStorage ---
                 try {
                     const idsEmAndamento = JSON.parse(localStorage.getItem("pedidosEmAndamento")) || [];
-                    // Adiciona todos os novos IDs da máquina à lista
-                    const idsAtualizados = [...idsEmAndamento, ...idsDaMaquina];
+                    
+                    // Mapeia os IDs da máquina para os nomes dos itens que acabamos de formatar
+                    const novosPedidosParaAndamento = idsDaMaquina.map((id, index) => {
+                        const itemCorrespondente = itensComNomeFormatado[index];
+                        return {
+                            id: id, // O ID da máquina
+                            nome: itemCorrespondente.nome_item // O nome completo (ex: "Pizza Média (Bacon...)")
+                        };
+                    });
+
+                    // Adiciona os novos objetos ao array existente
+                    const idsAtualizados = [...idsEmAndamento, ...novosPedidosParaAndamento];
                     localStorage.setItem("pedidosEmAndamento", JSON.stringify(idsAtualizados));
+
                 } catch (error) {
                     console.error("Falha ao salvar o ID do pedido no localStorage:", error);
                 }
                 
-                setItensCarrinho([]);
-                navigate('/pedidosemandamento');
+                setItensCarrinho([]); // Limpa o carrinho
+                navigate('/pedidosemandamento'); // Navega para a tela de andamento
             } else {
                 alert(data.error || 'Erro ao concluir o pedido.');
             }
@@ -112,7 +147,11 @@ function Carrinho() {
             alert("Erro ao conectar com o servidor de pedidos.");
         }
     };
-
+    
+    // --- Lógica de Renderização do Carrinho (JSX) ---
+    // (O seu JSX do carrinho continua aqui, sem necessidade de alterações)
+    // ...
+    // Apenas um exemplo de como exibir os itens (adapte ao seu código real)
     return (
         <div className="pagina-carrinho">
             <Header />
@@ -127,21 +166,31 @@ function Carrinho() {
                                 {itensCarrinho.map((pizza) => (
                                     <div key={pizza.id} className="produto-item">
                                         <div className="info-produto">
-                                            <p className="nome-produto">
-                                                Pizza {pizza.tamanho} {pizza.molho.includes('Doce') ? 'Doce' : 'Salgada'}
-                                            </p>
-                                            <ul className="ingredientes-lista">
-                                                {pizza.ingredientes.map((ingrediente, i) => (
-                                                    <li key={i}>{ingrediente.nome}</li>
-                                                ))}
-                                            </ul>
+                                            {/* --- MUDANÇA 3: Lógica de exibição adaptada --- */}
+                                            {pizza.origem === 'historico' ? (
+                                                <p className="nome-produto">{pizza.nome}</p>
+                                            ) : (
+                                                <>
+                                                    <p className="nome-produto">
+                                                        Pizza {pizza.tamanho} {pizza.molho.includes('Doce') ? 'Doce' : 'Salgada'}
+                                                    </p>
+                                                    <ul className="ingredientes-lista">
+                                                        {pizza.ingredientes.map((ingrediente, i) => (
+                                                            <li key={i}>{ingrediente.nome}</li>
+                                                        ))}
+                                                    </ul>
+                                                </>
+                                            )}
                                         </div>
                                         <div className="controle-produto">
                                             <div className="seletor-quantidade">
                                                 <button onClick={() => removerItem(pizza.id)}>Remover</button>
                                                 <button onClick={() => clonarItem(pizza)}>+</button>
                                             </div>
-                                            <p className="preco-produto">R$ {(precos[pizza.tamanho] || 0).toFixed(2)}</p>
+                                            {/* Lógica de preço adaptada */}
+                                            <p className="preco-produto">
+                                                R$ {(pizza.origem === 'historico' ? pizza.preco : (precos[pizza.tamanho] || 0)).toFixed(2)}
+                                            </p>
                                         </div>
                                     </div>
                                 ))}
@@ -185,4 +234,3 @@ function Carrinho() {
 }
 
 export default Carrinho;
-
