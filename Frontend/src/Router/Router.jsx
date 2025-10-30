@@ -1,14 +1,14 @@
 import { createBrowserRouter } from "react-router-dom";
-import Home from "../pages/home/Home";
-import Cadastro from "../pages/cadastro/Cadastro";
-import Login from "../Pages/login/Login";
-import Historico_Pedidos from "../Pages/historico/Historico_Pedidos";
-import Cardapio from "../Pages/cardapios/Cardapio";
-import Crie from "../Pages/crie_sua_pizza/Crie_Pizza";
-import Carrinho from "../pages/carrinho/Carrinho";
+import Home from "../Pages/Home/Home";
+import Cadastro from "../Pages/Cadastro/Cadastro";
+import Login from "../Pages/Login/Login";
+import Historico_Pedidos from "../Pages/Historico/Historico_Pedidos";
+import Cardapio from "../Pages/Cardapios/Cardapio";
+import Crie from "../Pages/Crie_sua_pizza/Crie_Pizza";
+import Carrinho from "../Pages/Carrinho/Carrinho";
 import PedidosEmAndamento from "../Pages/pedidos_andamento/PedidosEmAndamento";
-import Contato from "../Pages/contato/Contato";
-import Gestao_Estoque from "../Pages/gestao_do_estoque/Gestao_Estoque";
+import Contato from "../Pages/Contato/Contato";
+import Gestao_Estoque from "../Pages/Gestao_do_estoque/Gestao_Estoque";
 
 const router = createBrowserRouter([
     { path: "/", element: <Home/> },

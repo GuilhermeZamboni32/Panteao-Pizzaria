@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom'; // Importa o Link
-import './login.css';
+import './Login.css';
 import Header from '../../components/pastaheader/Header';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 
