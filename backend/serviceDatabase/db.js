@@ -2,8 +2,6 @@
 import pg from 'pg';
 import 'dotenv/config';
 
-// Cria um "pool" de conexões com o banco de dados.
-// Um pool é mais eficiente que criar uma nova conexão para cada consulta.
 const { Pool } = pg;
 
 const pool = new Pool({
@@ -14,10 +12,10 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
-// Mensagem para confirmar que a conexão foi bem-sucedida
+
 pool.on('connect', () => {
   console.log('Conexão com o banco de dados PostgreSQL estabelecida com sucesso!');
 });
 
-// Exporta o pool para que outros arquivos (como o server.js) possam usá-lo
+
 export default pool;

@@ -41,7 +41,7 @@ export const pizzasData = [
   },
   {
     id: 5,
-    nome: "Pizza de Cuscuz Paulista",
+    nome: "Pizza estilo Cuscuz Paulista",
     descricao: "O sabor e a essemcia inigualável do cuscuz paulista em uma base de pizza crocante.",
     preco: 48.00,
     imagem: "/imagens-pizza/Pizza-Cuscus-Paulista.png",
