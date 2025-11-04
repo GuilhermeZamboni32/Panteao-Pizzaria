@@ -82,4 +82,3 @@ app.listen(PORT, () => {
     console.log(`🔥 Máquina Virtual (servidor simulado) rodando na porta ${PORT}`);
     console.log(`   Aguardando pedidos em http://localhost:${PORT}/queue/items`);
 });
-
