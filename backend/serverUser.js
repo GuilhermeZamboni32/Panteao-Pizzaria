@@ -6,6 +6,8 @@ import cors from 'cors';
 import pool from './db.js';
 import bcrypt from 'bcryptjs';
 
+
+
 const app = express();
 // Usa a porta do ambiente ou 3001 como padrão
 const PORT = process.env.PORT || 3001;
@@ -15,7 +17,7 @@ app.use(express.json());
 
 // --- ROTAS DE AUTENTICAÇÃO ---
 
-// ROTA DE LOGIN (Sem alterações, parece correta)
+// ROTA DE LOGIN 
 app.post('/api/login', async (req, res) => {
     const { email, senha } = req.body;
     if (!email || !senha) {
@@ -29,10 +31,7 @@ app.post('/api/login', async (req, res) => {
         }
 
         const user = userResult.rows[0];
-        // --- CORREÇÃO DE BUG SUTIL ---
-        // O seu INSERT usava 'senha' mas o seu LOGIN usava 'senha_hash'.
-        // Mudei o login para ler 'senha' (o nome da coluna que o seu INSERT usa).
-        // Se a sua coluna se chama 'senha_hash', mude 'user.senha' para 'user.senha_hash'
+      
         const senhaValida = await bcrypt.compare(senha, user.senha); 
 
         if (!senhaValida) {
@@ -48,9 +47,8 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// --- ROTA DE CADASTRO (MODIFICADA) ---
+//  ROTA DE CADASTRO 
 app.post('/api/users', async (req, res) => {
-    // 1. Remove os campos de cartão do req.body
     const { nome, email, senha, telefone, endereco } = req.body;
     try {
         // Validação simples de campos
@@ -59,12 +57,6 @@ app.post('/api/users', async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(senha, 10);
-        
-        // 2. Remove o Hashing de CVV e Numero do Cartão
-        // (removido) const hashedCVV = await bcrypt.hash(cvv, 12);
-        // (removido) const hashedNumeroCartao = await bcrypt.hash(numero_cartao, 12);
-        
-        // 3. Atualiza a query SQL para inserir apenas os campos relevantes
         const newUserResult = await pool.query(
             'INSERT INTO clientes (nome, email, senha, telefone, endereco) VALUES ($1, $2, $3, $4, $5) RETURNING *',
             [nome, email, hashedPassword, telefone, endereco] // 4. Passa apenas os parâmetros corretos
@@ -83,7 +75,7 @@ app.post('/api/users', async (req, res) => {
 });
  
 
-// --- ROTAS CRUD (Sem alterações) ---
+
 
 // ROTA PARA LISTAR TODOS OS USUÁRIOS
 app.get('/api/users', async (req, res) => { 
@@ -112,7 +104,6 @@ app.get('/api/users/:id', async (req, res) => {
 });
 
 // ROTA PARA ATUALIZAR UM USUÁRIO POR ID
-// (Esta rota está correta, pois só atualiza nome, telefone e endereço)
 app.put('/api/users/:id', async (req, res) => { 
     const { id } = req.params;
     const { nome, telefone, endereco } = req.body;
@@ -144,7 +135,6 @@ app.delete('/api/users/:id', async (req, res) => {
         res.status(200).json({ message: `Usuário '${deletedUser.rows[0].nome}' deletado com sucesso.` });
     } catch (err) {
         console.error('Erro ao deletar usuário:', err.message);
-        // Se o erro for de chave estrangeira (como o 23503 que vimos antes), ele aparecerá aqui
         if (err.code === '23503') {
              return res.status(409).json({ error: 'Não é possível deletar este usuário pois ele possui pedidos no histórico.' });
         }

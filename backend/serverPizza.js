@@ -4,10 +4,14 @@ import fetch from 'node-fetch';
 import pool from './db.js';
 import traduzirPizzaParaCaixinha from './traduzirPizzaParaCaixinha.js';
 
+
+
+
+
 const app = express();
 const PORT = 3002;
 
-// --- CONSTANTES DE ENDEREÇO E TIMEOUT ---
+//  CONSTANTES DE ENDEREÇO E TIMEOUT 
 const URL_MAQUINA_PRINCIPAL = "http://52.1.197.112:3000/queue/items";
 const URL_MAQUINA_VIRTUAL = "http://localhost:3000/queue/items";
 const TIMEOUT_MAQUINA_MS = 3000;
@@ -16,7 +20,7 @@ const API_KEY_MAQUINA_REAL = process.env.MACHINE_API_KEY || 'CHAVE_SECRETA_DA_AP
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
 
-// Definição de preços (como no seu código)
+// Definição de preços das pizzas
 const precos = { Broto: 25, Média: 30, Grande: 45 };
 
 // ROTA PARA CRIAR UM NOVO PEDIDO
@@ -50,7 +54,7 @@ app.post('/api/pedidos', async (req, res) => {
 
         // Salva os itens do pedido
         console.log("[PASSO 3/4] 💾 Inserindo itens...");
-        // --- MUDANÇA 1: Capturar os item_ids e nomes salvos ---
+        // MUDANÇA 1: Capturar os item_ids e nomes salvos 
         const itensSalvos = [];
         for (const item of pedido.itens) {
             const nomeDoItem = `Pizza ${item.tamanho} (${item.ingredientes.map(i => i.nome).join(', ')})`;
@@ -65,14 +69,14 @@ app.post('/api/pedidos', async (req, res) => {
 
         // Envia cada item (pizza) para a máquina
         console.log("\n[PASSO 4/4] 🚀 Enviando para produção...");
-        // --- MUDANÇA 2: Usar map com index para ligar o item salvo ao item do pedido ---
+        //  Usa map com index para ligar o item salvo ao item do pedido 
         const promessasDeEnvio = pedido.itens.map(async (item, index) => {
             const itemSalvo = itensSalvos[index]; // Pega o item correspondente que foi salvo no BD { item_id, nome_item }
 
             const payloadTraduzido = traduzirPizzaParaCaixinha(item);
             payloadTraduzido.payload.orderId = pedidoSalvo.pedido_id; // ID do Pedido
             
-            // --- MUDANÇA 3: Adiciona o ID e Nome do item ao payload da máquina ---
+            //  Adiciona o ID e Nome do item ao payload da máquina 
             // Isso permite-nos saber qual item é este quando verificamos o status
             payloadTraduzido.payload.itemId = itemSalvo.item_id; 
             payloadTraduzido.payload.nomeItem = itemSalvo.nome_item;
@@ -129,7 +133,7 @@ app.post('/api/pedidos', async (req, res) => {
     }
 });
 
-// --- ROTA GET /api/pedidos/cliente/:clienteId (sem alterações) ---
+//  ROTA GET /api/pedidos/cliente/:clienteId 
 app.get('/api/pedidos/cliente/:clienteId', async (req, res) => {
     const { clienteId } = req.params;
     if (!clienteId) return res.status(400).json({ error: 'ID do cliente não fornecido.' });
@@ -149,7 +153,7 @@ app.get('/api/pedidos/cliente/:clienteId', async (req, res) => {
 });
 
 
-// --- ROTA PROXY GET /api/pedidos/status/:machineId (COM MODIFICAÇÃO) ---
+//  ROTA PROXY GET /api/pedidos/status/:machineId 
 app.get('/api/pedidos/status/:machineId', async (req, res) => {
     const { machineId } = req.params;
     if (!machineId) {
@@ -179,7 +183,7 @@ app.get('/api/pedidos/status/:machineId', async (req, res) => {
         let statusData = await responseDaMaquina.json(); // Pega a resposta da máquina
         console.log(`[PROXY STATUS] Resposta original da máquina para ${machineId}:`, statusData);
 
-        // --- MUDANÇA 4: Buscar o nome_item no nosso BD ---
+        //  Buscar o nome_item no nosso BD 
         let nomeItemDoBD = null;
         let itemIdDoPayload = null;
         
@@ -210,7 +214,7 @@ app.get('/api/pedidos/status/:machineId', async (req, res) => {
                            (isMaquinaVirtual && statusData.payload && statusData.payload.payload && statusData.payload.payload.nomeItem);
         }
 
-        // --- MUDANÇA 5: Adicionar slot aleatório (se necessário) ---
+        // Adicionar slot aleatório 
         if (!isMaquinaVirtual &&
             statusData.status &&
             statusData.status.toUpperCase() === 'COMPLETED' &&
@@ -222,7 +226,7 @@ app.get('/api/pedidos/status/:machineId', async (req, res) => {
             console.log(`[PROXY STATUS] Adicionando slot simulado: ${statusData.slot}`);
         }
         
-        // --- MUDANÇA 6: Enviar resposta final para o frontend ---
+        // Enviar resposta final para o frontend 
         res.json({
             id: statusData.id || machineId,
             status: statusData.status || "Desconhecido",
