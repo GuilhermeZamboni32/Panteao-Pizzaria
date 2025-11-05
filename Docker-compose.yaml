@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: senai
+      POSTGRES_PASSWORD: senai
+      POSTGRES_DB: Panteao-Pizzaria
+    volumes:
+      - pgdata:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+      
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/usr/share/nginx/html
+    restart: always
+
+volumes:
+  pgdata:
