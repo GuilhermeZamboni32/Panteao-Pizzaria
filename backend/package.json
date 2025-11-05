@@ -10,6 +10,7 @@
     "dev:pizza": "nodemon --exec \"node serverPizza.js\""
   },
   "dependencies": {
+    "@google/genai": "^1.28.0",
     "@google/generative-ai": "^0.24.1",
     "@lottiefiles/react-lottie-player": "^3.6.0",
     "axios": "^1.11.0",
