@@ -1,14 +1,14 @@
-
+/* ======================================= */
+/* VARIÁVEIS DE COR                        */
+/* ======================================= */
 :root {
-  /* Cores principais */
   --vermelho: #BC4749;
   --bege: #E7C8A7;
   --branco: #F2E8CF;
   --verde: #6A994E;
   --preto: #000000;
 
-  /* Cores para detalhes */
-  --cinza: #555555; 
+  --cinza: #555555;
   --azul: #096DD9;
   --azul-claro: #1175e788;
   --amarelo: #d4b506;
@@ -21,7 +21,7 @@
 /* ESTRUTURA DA PÁGINA                     */
 /* ======================================= */
 .pagina-estoque {
-  background-color: var(--branco); 
+  background-color: var(--branco);
   min-height: 100vh;
 }
 
@@ -29,16 +29,19 @@
   max-width: 900px;
   margin: 2rem auto;
   padding: 1.5rem;
-  background-color: var(--branco); 
+  background-color: var(--bege);
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border: 6px solid var(--bege); 
+  border: 1px solid var(--bege);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Espaço entre as seções (Resumo, Reposição, Lista) */
 }
 
 .container-estoque h1 {
   text-align: center;
   color: var(--preto);
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem; /* Margem menor */
   font-size: 2rem;
   font-weight: 600;
 }
@@ -46,9 +49,9 @@
 .btn-voltar-estoque {
     display: block;
     width: fit-content;
-    margin: 0 auto 2rem auto;
+    margin: 0 auto 1rem auto; /* Centraliza */
     padding: 0.8rem 1.5rem;
-    background-color: var(--cinza); 
+    background-color: var(--cinza);
     color: var(--branco);
     border: none;
     border-radius: 6px;
@@ -59,45 +62,49 @@
 }
 
 .btn-voltar-estoque:hover {
-    background-color: var(--preto); 
+    background-color: var(--preto);
 }
 
 .mensagem-erro-geral {
     text-align: center;
     color: var(--preto);
-    background-color: var(--vermelho-claro); 
+    background-color: var(--vermelho-claro);
     padding: 0.8rem;
     border: 1px solid var(--vermelho);
     border-radius: 6px;
-    margin-bottom: 1.5rem;
+    margin: -1rem 0 1rem 0; /* Posição se houver erro */
 }
 
+/* Título comum para as seções */
+.titulo-secao-estoque {
+    font-size: 1.3rem;
+    color: var(--preto);
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--bege);
+}
 
 /* ======================================= */
-/* LAYOUT DAS PRATELEIRAS                  */
+/* 1. SEÇÃO RESUMO (Prateleiras)           */
 /* ======================================= */
 .prateleiras {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; 
-  padding: 1rem;
+  gap: 1rem; /* Espaço menor entre itens */
+  padding: 1.5rem;
   border-radius: 8px;
-  background-color: var(--bege); 
+  background-color: var(--branco);
+  border: 1px solid var(--preto);
 }
 
 .secao-estoque {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem; 
-  background-color: var(--branco); 
-  border-radius: 6px; 
-  border: 1px solid var(--bege); 
+  padding: 0.5rem 0;
 }
 
-/* ======================================= */
-/* ELEMENTOS DENTRO DE CADA SEÇÃO          */
-/* ======================================= */
 .item-info {
   display: flex;
   align-items: center;
@@ -105,26 +112,18 @@
 }
 
 .item-icone {
-  width: 50px; 
-  height: 50px;
+  width: 40px; /* Ícone menor */
+  height: 40px;
   flex-shrink: 0;
-  border-radius: 8px; 
+  border-radius: 6px;
 }
 
+.item-icone.cor-massa { color: var(--preto); }
+.item-icone.cor-molho-salgado { color: var(--vermelho); }
+.item-icone.cor-molho-doce { color: var(--azul); }
 
-.item-icone.cor-massa { 
-    color: var(--preto); 
-}
-.item-icone.cor-molho-salgado { 
-    color: var(--vermelho); 
-}
-.item-icone.cor-molho-doce { 
-    color: var(--azul); 
-}
-
-
-.item-titulo {
-  font-size: 1.3rem; 
+.item-titulo { /* Agora é h3 */
+  font-size: 1.1rem;
   color: var(--preto);
   margin: 0;
   font-weight: 500;
@@ -133,13 +132,13 @@
 .item-quantidade {
   display: flex;
   flex-direction: column;
-  align-items: flex-end; 
+  align-items: flex-end;
   text-align: right;
   min-width: 80px;
 }
 
 .item-quantidade .quantidade-valor {
-  font-size: 1.8rem; 
+  font-size: 1.6rem;
   font-weight: bold;
   color: var(--verde);
   line-height: 1;
@@ -147,68 +146,178 @@
 
 .item-quantidade .quantidade-carregando,
 .item-quantidade .quantidade-erro {
-  font-size: 0.9rem; 
+  font-size: 0.9rem;
   font-style: italic;
   color: var(--cinza);
   line-height: 1;
 }
 .item-quantidade .quantidade-erro{
-    color: var(--vermelho); 
+    color: var(--vermelho);
     font-weight: bold;
-    font-style: normal; 
+    font-style: normal;
 }
 
-
-.item-quantidade span:last-child { 
-  font-size: 0.75rem; 
+.item-quantidade span:last-child {
+  font-size: 0.75rem;
   color: var(--cinza);
   text-transform: uppercase;
   margin-top: 0.2rem;
 }
 
+/* ======================================= */
+/* 2. NOVA SEÇÃO: REPOSIÇÃO (Formulário)   */
+/* ======================================= */
+.reposicao-container {
+    padding: 1.5rem;
+    border: 1px solid var(--branco);
+    border-radius: 8px;
+}
+
+.reposicao-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Layout responsivo */
+    gap: 1rem;
+    align-items: flex-end; /* Alinha labels e inputs */
+}
+
+.form-grupo-reposicao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.form-grupo-reposicao label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--cinza);
+}
+
+.form-grupo-reposicao input,
+.form-grupo-reposicao select {
+    padding: 0.7rem;
+    font-size: 1rem;
+    border: 1px solid var(--branco);
+    border-radius: 6px;
+    background-color: #fff;
+    color: var(--preto);
+}
+
+.btn-salvar-posicao {
+    background-color: var(--verde);
+    color: var(--branco);
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    height: fit-content; /* Alinha com os inputs */
+}
+.btn-salvar-posicao:hover {
+    background-color: #5a8a42;
+}
+
+.mensagem-form-estoque {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--verde);
+    margin-top: 1rem;
+    text-align: center;
+}
 
 /* ======================================= */
-/* RESPONSIVIDADE                          */
+/* 3. NOVA SEÇÃO: LISTA DETALHADA          */
+/* ======================================= */
+.lista-detalhada-container {
+    padding: 1.5rem;
+    border: 1px solid var(--branco);
+    border-radius: 8px;
+}
+
+.lista-detalhada-slots {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.slot-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr auto; /* Layout da linha */
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem;
+    background-color: var(--branco);
+    border: 1px solid var(--branco);
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.slot-item strong {
+    color: var(--preto);
+    font-weight: 600;
+}
+
+.slot-pos { color: var(--cinza); }
+.slot-cor { color: var(--cinza); }
+.slot-op { color: var(--cinza); }
+
+.btn-liberar-slot {
+    background-color: var(--vermelho);
+    color: var(--branco);
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-liberar-slot:hover {
+    background-color: #a13c3e; /* Vermelho mais escuro */
+}
+
+/* ======================================= */
+/* RESPONSIVIDADE (Ajustes)                */
 /* ======================================= */
 @media (max-width: 600px) {
   .container-estoque h1 {
     font-size: 1.6rem;
   }
-  .prateleiras {
-      padding: 0.5rem; 
-      gap: 1rem; 
-      background-color: transparent; 
-      border: none; 
+  .prateleiras, .reposicao-container, .lista-detalhada-container {
+      padding: 1rem;
   }
   .secao-estoque {
-    flex-wrap: wrap;
-    justify-content: space-between; 
-    gap: 1rem; 
-    padding: 1rem;
-  }
-  .item-info {
-      gap: 1rem;
-     
-      width: 100%;
-      justify-content: space-between; 
-  }
-  .item-icone {
-      width: 40px;
-      height: 40px;
-  }
-  .item-titulo {
-      font-size: 1.1rem;
-      white-space: normal;
-      text-align: left;
-      flex-grow: 1; 
-      margin-right: 1rem; 
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
   .item-quantidade {
-    align-items: flex-end;
-    min-width: auto;
-   }
-   .item-quantidade .quantidade-valor {
-       font-size: 1.5rem;
-   }
+    align-items: flex-start;
+  }
+  .reposicao-form {
+      grid-template-columns: 1fr; /* Empilha o formulário */
+  }
+  .slot-item {
+      grid-template-columns: 1fr 1fr; /* 2 colunas no mobile */
+      gap: 0.5rem;
+  }
+  .slot-op {
+      grid-column: 1 / span 2; /* Ocupa a linha inteira de baixo */
+      font-size: 0.8rem;
+  }
+  .btn-liberar-slot {
+      grid-row: 1; /* Move o botão para o canto superior direito */
+      grid-column: 2;
+      justify-self: flex-end;
+  }
 }
-

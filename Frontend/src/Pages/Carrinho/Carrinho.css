@@ -1,8 +1,17 @@
-/* Importando as variáveis de cores (ajuste o caminho se necessário) */
-
+/* ======================================= */
+/* VARIÁVEIS DE COR                        */
+/* ======================================= */
+:root {
+  --vermelho: #BC4749;
+  --bege: #E7C8A7;
+  --branco: #F2E8CF;
+  --verde: #6A994E;
+  --preto: #000000;
+  --cinza: #7c7c7c; /* Adicionado cinza para consistência */
+}
 
 /* ======================================= */
-/* CONFIGURAÇÕES GERAIS           */
+/* CONFIGURAÇÕES GERAIS (Seu código)      */
 /* ======================================= */
 .pagina-carrinho {
     background-color: var(--branco);
@@ -19,7 +28,7 @@
 }
 
 /* ======================================= */
-/* COLUNA ESQUERDA                */
+/* COLUNA ESQUERDA (Seu código)            */
 /* ======================================= */
 .coluna-esquerda {
     flex: 2; /* Ocupa 2/3 do espaço */
@@ -125,7 +134,7 @@
 }
 
 /* ======================================= */
-/* COLUNA DIREITA                 */
+/* COLUNA DIREITA (Seu código)             */
 /* ======================================= */
 .coluna-direita {
     flex: 1; /* Ocupa 1/3 do espaço */
@@ -174,9 +183,8 @@
 }
 
 /* ======================================= */
-/* ESTILO DO BOTÃO DE ADICIONAR MAIS       */
+/* BOTÃO ADICIONAR MAIS (Seu código)       */
 /* ======================================= */
-
 .btn-adicionar-mais {
     display: flex;
     align-items: center;
@@ -221,7 +229,7 @@
     border-style: solid;
   }
   
-
+/* Lista de ingredientes (Seu código) */
 .ingredientes-lista {
     margin-top: 5px;
     padding-left: 20px;
@@ -232,3 +240,179 @@
 .ingredientes-lista li {
     list-style-type: disc;
 }
+
+/* ================================================= */
+/* --- ESTILOS DO MODAL DE PAGAMENTO (ADICIONADOS) --- */
+/* ================================================= */
+.modal-overlay {
+  position: fixed; /* Cobre a tela inteira */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Fundo escuro semi-transparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background-color: var(--branco); /* Fundo do modal */
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  max-width: 450px;
+  width: 100%;
+  border: 1px solid var(--bege);
+}
+
+.modal-content h2 {
+  color: var(--preto);
+  text-align: center;
+  font-size: 1.6rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.modal-content p {
+  text-align: center;
+  color: var(--cinza); /* Usa o cinza do :root */
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-form-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Para o grupo inline */
+}
+
+.modal-form-group label {
+  /* Esconde a label visualmente, mas mantém para acessibilidade */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.modal-form-group input {
+  background-color: #fff;
+  border: 1px solid var(--bege);
+  border-radius: 8px;
+  padding: 0.8rem;
+  font-size: 1rem;
+  color: var(--preto);
+  width: 100%;
+  box-sizing: border-box; /* Garante que o padding não quebre o layout */
+}
+
+.modal-form-group input::placeholder {
+    color: var(--cinza);
+    font-weight: 500;
+}
+
+.modal-form-group input:focus {
+  outline: none;
+  border-color: var(--verde);
+  box-shadow: 0 0 0 3px rgba(106, 153, 78, 0.3);
+}
+
+/* Para Validade e CVV */
+.modal-form-group-inline {
+  display: flex;
+  gap: 1rem;
+}
+
+.modal-mensagem-erro {
+  color: var(--vermelho);
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.modal-botoes {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn-modal-cancelar,
+.btn-modal-salvar {
+  flex: 1; /* Ocupam espaço igual */
+  padding: 0.8rem;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-modal-salvar {
+  background-color: var(--verde);
+  color: var(--branco);
+  border: 1px solid var(--verde);
+}
+.btn-modal-salvar:hover {
+  background-color: #5a8a42;
+}
+
+.btn-modal-cancelar {
+  background-color: transparent;
+  color: var(--cinza);
+  border: 1px solid var(--cinza);
+}
+.btn-modal-cancelar:hover {
+  background-color: var(--cinza);
+  color: var(--branco);
+}
+
+
+/* ======================================= */
+/* RESPONSIVIDADE (Carrinho) (Adicionado)  */
+/* ======================================= */
+@media (max-width: 768px) {
+    .container-carrinho {
+        flex-direction: column-reverse; /* Coloca pagamento em baixo */
+        gap: 1.5rem;
+        padding: 0 1rem; /* Ajuste no padding mobile */
+        margin: 20px auto; /* Margem menor no mobile */
+    }
+    .coluna-direita {
+        position: static; /* Remove o 'sticky' */
+        top: auto;
+        width: 100%; /* Ocupa largura total */
+    }
+    .coluna-esquerda {
+        width: 100%;
+    }
+    .produto-item {
+        flex-direction: column;
+        align-items: stretch; /* Alinha ao início */
+        gap: 0.8rem;
+    }
+    .controle-produto {
+        flex-direction: row; /* Linha no mobile */
+        justify-content: space-between;
+        align-items: center;
+    }
+    .seletor-quantidade {
+        order: 2; /* Move botões para a direita */
+    }
+    .preco-produto {
+        order: 1; /* Move preço para a esquerda */
+    }
+}
+

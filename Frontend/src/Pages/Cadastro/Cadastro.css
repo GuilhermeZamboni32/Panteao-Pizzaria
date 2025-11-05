@@ -1,87 +1,93 @@
-/* Definindo as variáveis de cor no root */
+/* Cores do seu projeto (usando a paleta consistente) */
 :root {
   --vermelho: #BC4749;
   --bege: #E7C8A7;
   --branco: #F2E8CF;
   --verde: #6A994E;
   --preto: #000000;
-  --azul: #1747cb;
-  --amarelo: #F2A900;
+  --cinza: #7c7c7c; /* Garante que o cinza esteja definido */
 }
 
-
+/* Página inteira: Imagem de fundo e altura total */
 .pagina-cadastro {
-  background-color: var(--branco);
+  /* Caminho da imagem (ajuste se necessário, a partir da pasta 'public') */
+  background-image: url('/imagens-de-fundo/pizza-doce-fundo.png'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  
   width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-
+/* Container Principal: Gradiente e alinhamento à direita */
 .container-cadastro {
+  flex: 1; 
   display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  gap: 5rem;
+  align-items: center; 
+  justify-content: flex-end; /* Alinha o formulário à direita */
+  padding: 2rem 4rem;
+
+  /* Gradiente suave da esquerda (transparente) para a direita (bege) */
+  background: linear-gradient(
+    to left, 
+    var(--bege) 30%, 
+    rgba(231, 200, 167, 0.7) 50%, /* bege com transparência */
+    transparent 70%
+  );
 }
 
-
-.coluna-imagem-cadastro {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.imagem-cadastro {
-  max-width: 1000px;
+/* Card do Formulário (Container bege do seu código antigo) */
+.form-container {
+  background-color: var(--branco); /* Fundo branco/creme para o card */
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   width: 100%;
-  height: auto;
-  border-radius: 50%;
+  max-width: 420px; /* Largura máxima do formulário */
+  border: 1px solid var(--bege);
+  
+  /* Adicionado para permitir scroll se o formulário for muito longo */
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
-
-.coluna-formulario-cadastro {
-  flex: 1;
-  display: flex;
-  justify-content: flex-start;
-}
-
-
-.container-info-form-cadastro {
-  background-color: var(--bege);
-  padding: 3rem;
-  border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.titulo-form-cadastro {
+.titulo-form {
   color: var(--preto);
   text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem; /* Menos espaço */
 }
 
-.form-cadastro {
+.subtitulo-form {
+    color: var(--preto);
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    border-top: 1px solid var(--bege); /* Linha divisória */
+    padding-top: 1rem;
+}
+
+/* Estilo do formulário (substitui .form-cadastro) */
+.form-auth {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem; /* Espaço menor entre os inputs */
 }
 
-.form-group-cadastro {
+/* Estilo do grupo de input (substitui .form-group-cadastro) */
+.form-group {
   display: flex;
   flex-direction: column;
 }
 
-
-.form-group-cadastro label {
+/* Esconde a label (acessibilidade) */
+.form-group label {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -92,41 +98,122 @@
   border: 0;
 }
 
-.form-group-cadastro input {
-  background-color: var(--branco);
-  border: 2px solid transparent;
-  border-radius: 10px;
-  padding: 1rem;
+.form-group input {
+  background-color: #fff; /* Fundo branco para inputs */
+  border: 1px solid var(--bege);
+  border-radius: 8px;
+  padding: 0.9rem; /* Padding menor */
   font-size: 1rem;
-  color: var(--vermelho);
-  transition: border-color 0.3s ease;
+  color: var(--preto);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.form-group-cadastro input:focus {
+.form-group input:focus {
   outline: none;
   border-color: var(--verde);
+  box-shadow: 0 0 0 3px rgba(106, 153, 78, 0.3);
 }
 
-.form-group-cadastro input::placeholder {
-  color: var(--verde);
-  opacity: 0.8;
-  font-weight: bold;
+.form-group input::placeholder {
+  color: var(--cinza);
+  font-weight: 500;
+}
+
+/* Novo: Grupo para Validade e CVV */
+.form-group-inline {
+    display: flex;
+    gap: 1rem; /* Espaço entre os inputs */
+}
+.form-group-inline .form-group {
+    flex: 1; /* Faz os dois inputs ocuparem espaço igual */
 }
 
 
-.botao-form-cadastro {
+/* Botão de Cadastrar (substitui .botao-form-cadastro) */
+.botao-form {
   background-color: var(--verde);
   color: var(--branco);
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 1rem;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: filter 0.3s ease;
+  transition: background-color 0.3s ease;
   margin-top: 1rem;
 }
 
-.botao-form-cadastro:hover {
-  filter: brightness(0.9);
+.botao-form:hover {
+  background-color: #5a8a42; /* Verde mais escuro */
 }
+
+/* Mensagens de Erro e Sucesso */
+.mensagem-form-erro {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  color: var(--vermelho);
+  background-color: #ffe0e0;
+  border: 1px solid var(--vermelho);
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+.mensagem-form-sucesso {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  color: var(--verde);
+  background-color: #e0ffe0;
+  border: 1px solid var(--verde);
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Link para Login */
+.auth-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--cinza);
+}
+
+.auth-link a {
+  color: var(--verde);
+  font-weight: bold;
+  text-decoration: none;
+  transition: text-decoration 0.2s ease;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}
+
+/* Responsividade (Igual ao Login) */
+@media (max-width: 768px) {
+  .container-cadastro {
+    justify-content: center;
+    background: var(--branco); /* Fundo sólido no mobile */
+    padding: 1rem;
+  }
+  
+  .pagina-cadastro {
+      background-image: none; /* Remove imagem de fundo */
+      background-color: var(--branco);
+  }
+
+  .form-container {
+    max-width: 100%;
+    box-shadow: none;
+    padding: 1rem;
+    max-height: none; /* Remove altura máxima no mobile */
+    overflow-y: visible; /* Remove scroll */
+  }
+
+  .titulo-form {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+}
+

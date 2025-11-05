@@ -1,3 +1,5 @@
+import 'dotenv/config'; 
+
 import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
@@ -7,18 +9,53 @@ import traduzirPizzaParaCaixinha from './traduzirPizzaParaCaixinha.js';
 const app = express();
 const PORT = 3002;
 
-// --- CONSTANTES DE ENDEREÇO E TIMEOUT ---
+// --- CONSTANTES ---
 const URL_MAQUINA_PRINCIPAL = "http://52.1.197.112:3000/queue/items";
+const URL_ESTOQUE_PRINCIPAL = "http://52.1.197.112:3000/estoque";
 const URL_MAQUINA_VIRTUAL = "http://localhost:3000/queue/items";
-const TIMEOUT_MAQUINA_MS = 3000; // 3 segundos
+const URL_ESTOQUE_VIRTUAL = "http://localhost:3000/estoque"; // Para testes
 
-// --- CHAVE DE API (Substitua pela sua real ou use variável de ambiente) ---
-const API_KEY_MAQUINA_REAL = process.env.MACHINE_API_KEY || 'CHAVE_SECRETA_DA_API';
+const TIMEOUT_MAQUINA_MS = 3000;
+// !!! IMPORTANTE: Substitua 'CHAVE_SECRETA_DA_API' pela sua chave real ou defina em .env
+const API_KEY_MAQUINA_REAL = process.env.MACHINE_API_KEY || 'CHAVE_SECRETA_DA_API'; 
 
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
 
-// --- ROTA POST /api/pedidos (sem alterações) ---
+const precos = { Broto: 25, Média: 30, Grande: 45 };
+
+/**
+ * Função auxiliar para contar os itens de estoque disponíveis
+ * (op: null significa que a peça está disponível)
+ * Movida para o topo para garantir que seja definida antes de ser usada.
+ */
+function contarEstoque(estoqueDaMaquina) {
+    let massas = 0;
+    let molhoSalgado = 0;
+    let molhoDoce = 0;
+
+    if (!Array.isArray(estoqueDaMaquina)) {
+        return { massas, molhoSalgado, molhoDoce };
+    }
+
+    for (const item of estoqueDaMaquina) {
+        // Verifica se a peça está disponível (não está vinculada a um pedido 'op')
+        if (item.op === null) {
+            // Conta baseado na cor, conforme a sua tradução
+            if (item.cor === 'preto') {
+                massas++;
+            } else if (item.cor === 'vermelho') {
+                molhoSalgado++;
+            } else if (item.cor === 'azul') {
+                molhoDoce++;
+            }
+        }
+    }
+    
+    return { massas, molhoSalgado, molhoDoce };
+}
+
+// --- ROTA POST /api/pedidos ---
 app.post('/api/pedidos', async (req, res) => {
     const pedido = req.body;
     const client = await pool.connect();
@@ -26,7 +63,6 @@ app.post('/api/pedidos', async (req, res) => {
     console.log(`\n\n--- 🍕 NOVO PEDIDO RECEBIDO [${new Date().toLocaleTimeString()}] 🍕 ---`);
 
     try {
-        // Validações
         if (!pedido.itens || pedido.itens.length === 0) {
             return res.status(400).json({ error: "Pedido sem itens" });
         }
@@ -40,7 +76,6 @@ app.post('/api/pedidos', async (req, res) => {
         // Salva pedido principal
         console.log("[PASSO 2/4] 💾 Inserindo pedido principal...");
         const clienteId = pedido.usuario.id;
-        const precos = { Broto: 25, Média: 30, Grande: 45 }; // Definição de exemplo
         const valorTotalCalculado = pedido.itens.reduce((soma, item) => soma + (precos[item.tamanho] || 0), 0) + 5; // + frete
 
         const pedidoQuery = `INSERT INTO pedidos (cliente_id, valor_total, status) VALUES ($1, $2, $3) RETURNING *`;
@@ -48,22 +83,26 @@ app.post('/api/pedidos', async (req, res) => {
         const pedidoSalvo = novoPedidoResult.rows[0];
         console.log(`   ✅ Pedido principal salvo (ID BD: ${pedidoSalvo.pedido_id})`);
 
-        // Salva itens do pedido
+        // Salva os itens do pedido
         console.log("[PASSO 3/4] 💾 Inserindo itens...");
-        const itemInsertPromises = pedido.itens.map(item => {
-            const nomeDoItem = `Pizza ${item.tamanho} (${item.ingredientes.map(i => i.nome).join(', ')})`;
-            const valorUnitario = precos[item.tamanho] || 0;
-            const itemQuery = `INSERT INTO itens_pedido (pedido_id, nome_item, quantidade, valor_unitario) VALUES ($1, $2, $3, $4)`;
-            return client.query(itemQuery, [pedidoSalvo.pedido_id, nomeDoItem, 1, valorUnitario]);
-        });
-        await Promise.all(itemInsertPromises);
-        console.log(`   ✅ ${pedido.itens.length} itens salvos.`);
+        const itensSalvos = [];
+        for (const item of pedido.itens) {
+            const nomeDoItem = item.nome_item || `Pizza ${item.tamanho} (${(item.ingredientes || []).map(i => i.nome).join(', ')})`;
+            const valorUnitario = (item.origem === 'historico' ? item.preco : (precos[item.tamanho] || 0));
+            const itemQuery = `INSERT INTO itens_pedido (pedido_id, nome_item, quantidade, valor_unitario) VALUES ($1, $2, $3, $4) RETURNING item_id, nome_item`;
+            const itemResult = await client.query(itemQuery, [pedidoSalvo.pedido_id, nomeDoItem, 1, valorUnitario]);
+            itensSalvos.push(itemResult.rows[0]);
+        }
+        console.log(`   ✅ ${itensSalvos.length} itens salvos no banco.`);
 
-        // Envia itens para a máquina (com failover)
+        // Envia cada item (pizza) para a máquina
         console.log("\n[PASSO 4/4] 🚀 Enviando para produção...");
         const promessasDeEnvio = pedido.itens.map(async (item, index) => {
+            const itemSalvo = itensSalvos[index];
             const payloadTraduzido = traduzirPizzaParaCaixinha(item);
-            payloadTraduzido.payload.orderId = pedidoSalvo.pedido_id; // Usa ID real do BD
+            payloadTraduzido.payload.orderId = pedidoSalvo.pedido_id;
+            payloadTraduzido.payload.itemId = itemSalvo.item_id; 
+            payloadTraduzido.payload.nomeItem = itemSalvo.nome_item;
 
             const fetchOptions = {
                 method: "POST",
@@ -75,61 +114,56 @@ app.post('/api/pedidos', async (req, res) => {
             const timeout = setTimeout(() => controller.abort(), TIMEOUT_MAQUINA_MS);
 
             try { // Tenta Máquina Principal
-                console.log(`   Enviando item ${index + 1} para MÁQUINA PRINCIPAL...`);
                 fetchOptions.headers['Authorization'] = API_KEY_MAQUINA_REAL;
                 const response = await fetch(URL_MAQUINA_PRINCIPAL, { ...fetchOptions, signal: controller.signal });
                 clearTimeout(timeout);
                 if (!response.ok) throw new Error(`Máquina principal falhou: ${response.status}`);
-                console.log(`   ✅ Sucesso MÁQUINA PRINCIPAL item ${index + 1}.`);
                 return await response.json();
             } catch (err) { // Falha na Principal -> Tenta Virtual
                 clearTimeout(timeout);
                 const networkErrors = ['ECONNREFUSED', 'ENOTFOUND', 'ETIMEDOUT', 'EHOSTUNREACH', 'ECONNRESET'];
                 if (err.name === 'AbortError' || (err.type === 'system' && networkErrors.includes(err.code))) {
                     const reason = err.name === 'AbortError' ? `TIMEOUT` : `ERRO REDE (${err.code})`;
-                    console.warn(`   ⚠️ MÁQUINA PRINCIPAL FALHOU item ${index + 1} (${reason}). Redirecionando p/ VM...`);
+                    console.warn(`   ⚠️ MÁQUINA PRINCIPAL FALHOU (${reason}). Redirecionando p/ VM...`);
                     try { // Tenta Máquina Virtual
-                        delete fetchOptions.headers['Authorization']; // Remove Auth se VM não precisar
+                        delete fetchOptions.headers['Authorization'];
                         const vmResponse = await fetch(URL_MAQUINA_VIRTUAL, fetchOptions);
                         if (!vmResponse.ok) throw new Error(`Máquina virtual falhou: ${vmResponse.status}`);
-                        console.log(`   ✅ Sucesso MÁQUINA VIRTUAL item ${index + 1}.`);
                         return await vmResponse.json();
-                    } catch (vmErr) { // Ambas falharam
-                        console.error(`   ❌ FALHA CRÍTICA item ${index + 1}: Ambas falharam.`, vmErr.message);
-                        throw vmErr; // Lança erro para Rollback
+                    } catch (vmErr) {
+                        throw vmErr;
                     }
-                } else { // Erro diferente na Principal (4xx, 5xx)
-                    console.error(`   ❌ Erro MÁQUINA PRINCIPAL item ${index + 1} (não timeout/rede): ${err.message}`);
-                    throw err; // Lança erro para Rollback
+                } else {
+                    throw err;
                 }
             }
         });
 
         const respostasDaMaquina = await Promise.all(promessasDeEnvio);
-        await client.query('COMMIT'); // Confirma no banco APÓS sucesso no envio
+        await client.query('COMMIT');
         console.log("   ✅ Transação banco concluída (COMMIT).");
 
         const idsValidosDaMaquina = respostasDaMaquina.filter(r => r && r.id).map(r => r.id);
         res.status(201).json({ message: "Pedido salvo!", pedido: pedidoSalvo, idsDaMaquina: idsValidosDaMaquina });
 
     } catch (err) {
-        await client.query('ROLLBACK'); // Desfaz alterações no banco em caso de erro
+        await client.query('ROLLBACK');
         console.error("\n❌ ERRO GERAL PEDIDO (ROLLBACK):", err.message);
         res.status(500).json({ error: "Erro interno", details: err.message });
     } finally {
-        client.release(); // Libera conexão com o banco
+        client.release();
         console.log("\n--- ✅ PROCESSAMENTO PEDIDO CONCLUÍDO ✅ ---\n");
     }
 });
 
-// --- ROTA GET /api/pedidos/cliente/:clienteId (sem alterações) ---
+// --- ROTA GET /api/pedidos/cliente/:clienteId ---
 app.get('/api/pedidos/cliente/:clienteId', async (req, res) => {
     const { clienteId } = req.params;
     if (!clienteId) return res.status(400).json({ error: 'ID do cliente não fornecido.' });
     try {
         const query = `
             SELECT p.pedido_id, p.data_pedido, p.valor_total, p.status,
-                   COALESCE(json_agg(json_build_object('nome_item', ip.nome_item, 'valor_unitario', ip.valor_unitario)) FILTER (WHERE ip.item_id IS NOT NULL), '[]'::json) AS itens
+                   COALESCE(json_agg(json_build_object('item_id', ip.item_id, 'nome_item', ip.nome_item, 'valor_unitario', ip.valor_unitario)) FILTER (WHERE ip.item_id IS NOT NULL), '[]'::json) AS itens
             FROM pedidos p LEFT JOIN itens_pedido ip ON p.pedido_id = ip.pedido_id
             WHERE p.cliente_id = $1 GROUP BY p.pedido_id ORDER BY p.data_pedido DESC;
         `;
@@ -141,8 +175,7 @@ app.get('/api/pedidos/cliente/:clienteId', async (req, res) => {
     }
 });
 
-
-// ROTA PROXY GET /api/pedidos/status/:machineId (com adição de slot aleatório FORMATADO)
+// --- ROTA GET /api/pedidos/status/:machineId ---
 app.get('/api/pedidos/status/:machineId', async (req, res) => {
     const { machineId } = req.params;
     if (!machineId) {
@@ -157,51 +190,128 @@ app.get('/api/pedidos/status/:machineId', async (req, res) => {
         console.log(`[PROXY STATUS] Consultando ID: ${machineId} em ${urlDeStatus}`);
         const headers = {};
         if (!isMaquinaVirtual) {
-            headers['Authorization'] = API_KEY_MAQUINA_REAL; // Usa a chave correta
+            headers['Authorization'] = API_KEY_MAQUINA_REAL;
         }
 
         const responseDaMaquina = await fetch(urlDeStatus, { method: 'GET', headers: headers });
 
         if (!responseDaMaquina.ok) {
              if (responseDaMaquina.status === 404) {
-                 console.warn(`[PROXY STATUS] Máquina (${isMaquinaVirtual ? 'VM' : 'Principal'}) 404 para ${machineId}`);
-                 return res.status(404).json({ status: 'Pedido não encontrado', slot: null });
+                 return res.status(404).json({ status: 'Pedido não encontrado', slot: null, nome_item: 'Item não encontrado' });
              }
             throw new Error(`Máquina (${isMaquinaVirtual ? 'VM' : 'Principal'}) status: ${responseDaMaquina.status}`);
         }
 
-        let statusData = await responseDaMaquina.json(); // Pega a resposta
+        let statusData = await responseDaMaquina.json();
         console.log(`[PROXY STATUS] Resposta original da máquina para ${machineId}:`, statusData);
 
-        //  SLOT ALEATÓRIO 
+        let nomeItemDoBD = null;
+        let itemIdDoPayload = null;
+        
+        if (statusData.payload && statusData.payload.itemId) {
+            itemIdDoPayload = statusData.payload.itemId;
+        } else if (isMaquinaVirtual && statusData.payload && statusData.payload.payload) {
+             itemIdDoPayload = statusData.payload.payload.itemId;
+        }
+
+        if (itemIdDoPayload) {
+            try {
+                const itemQuery = 'SELECT nome_item FROM itens_pedido WHERE item_id = $1';
+                const itemResult = await pool.query(itemQuery, [itemIdDoPayload]);
+                if (itemResult.rows.length > 0) {
+                    nomeItemDoBD = itemResult.rows[0].nome_item;
+                    console.log(`[PROXY STATUS] Nome do item encontrado no BD: ${nomeItemDoBD}`);
+                }
+            } catch (dbErr) {
+                console.error(`Erro ao buscar nome do item ${itemIdDoPayload} no BD:`, dbErr);
+            }
+        }
+        
+        if (!nomeItemDoBD) {
+            nomeItemDoBD = (statusData.payload && statusData.payload.nomeItem) || 
+                           (isMaquinaVirtual && statusData.payload && statusData.payload.payload && statusData.payload.payload.nomeItem);
+        }
+
         if (!isMaquinaVirtual &&
             statusData.status &&
             statusData.status.toUpperCase() === 'COMPLETED' &&
-            !statusData.slot 
+            !statusData.slot
         ) {
             const numeroSlot = Math.floor(Math.random() * 12) + 1;
             const numeroFormatado = String(numeroSlot).padStart(2, '0');
-
-            // Cria a string final no formato "Slot:XX"
-            const slotSimulado = `Slot:${numeroFormatado}`;
-
-            statusData.slot = slotSimulado; // Adiciona o slot simulado
-            console.log(`[PROXY STATUS] Slot não veio da máquina real (ou estava vazio). Adicionando slot simulado: ${slotSimulado}`);
+            statusData.slot = `Slot:${numeroFormatado}`;
+            console.log(`[PROXY STATUS] Adicionando slot simulado: ${statusData.slot}`);
         }
-
-        res.json(statusData); // Envia para o frontend (com ou sem slot simulado)
+        
+        res.json({
+            id: statusData.id || machineId,
+            status: statusData.status || "Desconhecido",
+            slot: statusData.slot || null,
+            nome_item: nomeItemDoBD || "Item não identificado"
+        });
 
     } catch (err) {
         console.error(`[PROXY STATUS] Erro ao buscar status para ${machineId}:`, err.message);
-        res.status(500).json({ error: 'Erro consulta status', details: err.message, status: 'Erro na consulta', slot: null });
+        res.status(500).json({ error: 'Erro consulta status', details: err.message, status: 'Erro na consulta', slot: null, nome_item: 'Erro' });
+    }
+});
+
+// --- NOVA ROTA PARA GESTÃO DE ESTOQUE ---
+app.get('/api/estoque', async (req, res) => {
+    console.log(`[PROXY ESTOQUE] Recebida consulta de estoque...`);
+
+    let urlEstoque = URL_ESTOQUE_PRINCIPAL;
+    let headers = { 'Authorization': API_KEY_MAQUINA_REAL };
+
+    try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), TIMEOUT_MAQUINA_MS);
+
+        let response = await fetch(urlEstoque, { 
+            method: 'GET', 
+            headers: headers,
+            signal: controller.signal 
+        });
+        clearTimeout(timeout);
+
+        if (!response.ok) {
+            throw new Error(`Máquina real falhou: ${response.status}`);
+        }
+
+        const estoqueCompleto = await response.json();
+        console.log(`[PROXY ESTOQUE] Sucesso na Máquina Principal. Itens recebidos: ${estoqueCompleto.length}`);
+        
+        const contagem = contarEstoque(estoqueCompleto);
+        res.json(contagem);
+
+    } catch (err) {
+        console.warn(`[PROXY ESTOQUE] Falha na Máquina Principal (${err.message}). Tentando Máquina Virtual...`);
+        try {
+            const vmResponse = await fetch(URL_ESTOQUE_VIRTUAL, { method: 'GET' }); // Sem auth para VM
+            if (!vmResponse.ok) {
+                 throw new Error(`Máquina virtual também falhou: ${vmResponse.status}`);
+            }
+            const estoqueVM = await vmResponse.json();
+            console.log(`[PROXY ESTOQUE] Sucesso na Máquina Virtual.`);
+            res.json(estoqueVM); 
+
+        } catch (vmErr) {
+            // --- LOG DE ERRO MELHORADO ---
+            console.error(`[PROXY ESTOQUE] FALHA CRÍTICA: Ambas as máquinas falharam.`);
+            console.error(`  > Erro Máquina Principal: ${err.message}`);
+            console.error(`  > Erro Máquina Virtual: ${vmErr.message}`);
+            res.status(500).json({ error: "Erro ao consultar o estoque em ambas as máquinas." });
+        }
     }
 });
 
 
+// Inicializa o servidor
 app.listen(PORT, () => {
     console.log(`✅ Servidor Pizzaria rodando na porta ${PORT}`);
     console.log(`   📞 Endpoint de Pedidos: http://localhost:${PORT}/api/pedidos`);
     console.log(`   📊 Endpoint de Status: http://localhost:${PORT}/api/pedidos/status/:machineId`);
     console.log(`   📜 Endpoint de Histórico: http://localhost:${PORT}/api/pedidos/cliente/:clienteId`);
+    console.log(`   📦 Endpoint de Estoque: http://localhost:${PORT}/api/estoque`); // Log para nova rota
 });
 

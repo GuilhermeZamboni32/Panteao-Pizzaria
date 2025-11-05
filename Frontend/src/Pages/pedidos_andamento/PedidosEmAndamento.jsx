@@ -10,14 +10,33 @@ const icons = {
   ok: <img src="/icons/carregando-2-preto.png" alt="Em andamento" className="icone-status"/>
 };
 
+// --- FUNÇÃO PARA GERAR NOME (Copiada do Histórico) ---
+const gerarNomePedido = (pedido) => {
+    if (!pedido || !pedido.itens || pedido.itens.length === 0) {
+        return "Pedido Vazio";
+    }
+    if (pedido.itens.length === 1) {
+        const item = pedido.itens[0];
+        const nomeItem = item?.nome_item || "";
+        let tamanho = "";
+        if (nomeItem.toLowerCase().includes("broto")) tamanho = "Broto";
+        else if (nomeItem.toLowerCase().includes("média")) tamanho = "Média";
+        else if (nomeItem.toLowerCase().includes("grande")) tamanho = "Grande";
+        
+        return `Pizza ${tamanho}`.trim();
+    }
+    return `Combo com ${pedido.itens.length} pizzas`;
+};
+// ----------------------------------------------------
+
 function PedidosEmAndamento() {
-    const [pedidos, setPedidos] = useState([]); // Guarda { id, status, slot }
+    const [pedidos, setPedidos] = useState([]); // Guarda { id, status, slot, nome }
     const intervalRef = useRef(null);
     const navigate = useNavigate();
     const removalTimersRef = useRef(new Map());
     const [carregamentoInicialCompleto, setCarregamentoInicialCompleto] = useState(false);
 
-    // Determina classe CSS e ícone baseado no status vindo do backend
+    // Determina classe CSS e ícone baseado no status
     const getStatusInfo = (status) => {
         if (typeof status !== 'string') {
              console.warn("getStatusInfo recebeu status inválido:", status);
@@ -28,23 +47,32 @@ function PedidosEmAndamento() {
         if (lowerStatus.includes("erro") || lowerStatus.includes("falha") || lowerStatus.includes("não encontrado")) {
             return { className: "status-erro", icon: icons.erro };
         }
-        if (lowerStatus.endsWith("carregando...")) { // Apenas o status inicial do frontend
+        if (lowerStatus.endsWith("carregando...")) {
              return { className: "status-carregando", icon: icons.carregando };
         }
-        if (lowerStatus.includes("pronto") || lowerStatus.includes("entregue") || lowerStatus.includes("completed")) { // Inclui "completed" da máquina real
+        if (lowerStatus.includes("pronto") || lowerStatus.includes("entregue") || lowerStatus.includes("completed")) {
             return { className: "status-sucesso", icon: icons.sucesso };
         }
-        // Status intermediários (Recebido, Em Producao, etc.)
         return { className: "status-ok", icon: icons.ok };
     };
 
-    // Efeito para carregar IDs do localStorage na montagem inicial
+    // --- CORREÇÃO AQUI ---
+    // Efeito para carregar IDs e NOMES do localStorage
     useEffect(() => {
         try {
-            const idsSalvos = JSON.parse(localStorage.getItem("pedidosEmAndamento")) || [];
-            const idsValidos = idsSalvos.filter(id => id);
-            if (idsValidos.length > 0) {
-              setPedidos(idsValidos.map((id) => ({ id, status: "Carregando...", slot: null })));
+            // Lê o array de objetos {id, nome}
+            const pedidosSalvos = JSON.parse(localStorage.getItem("pedidosEmAndamento")) || [];
+            // Filtra objetos válidos que tenham id E nome
+            const pedidosValidos = pedidosSalvos.filter(p => p && p.id && p.nome); 
+            
+            if (pedidosValidos.length > 0) {
+              // Mapeia os objetos para o estado inicial
+              setPedidos(pedidosValidos.map(p => ({ 
+                  id: p.id, // O ID da máquina
+                  status: "Carregando...", 
+                  slot: null, 
+                  nome: p.nome // O nome completo (vindo do localStorage)
+              })));
             } else {
               setCarregamentoInicialCompleto(true);
             }
@@ -55,9 +83,9 @@ function PedidosEmAndamento() {
         }
     }, []); // Roda só uma vez
 
-    // Efeito principal: busca status, agenda remoção de concluídos e controla o intervalo de atualização
+    // Efeito principal: busca status, agenda remoção, controla intervalo
     useEffect(() => {
-        // Agendamento de Remoção: Remove pedidos concluídos após um tempo
+        // Agendamento de Remoção
         pedidos.forEach(pedido => {
             if (typeof pedido.status !== 'string') return;
             const statusLower = pedido.status.toLowerCase();
@@ -67,23 +95,22 @@ function PedidosEmAndamento() {
             if (isConcluido && !isErro && !removalTimersRef.current.has(pedido.id)) {
                 const timerId = setTimeout(() => {
                     setPedidos(prev => prev.filter(p => p.id !== pedido.id));
-                    // Remove do localStorage também
                     try {
                         const idsSalvos = JSON.parse(localStorage.getItem("pedidosEmAndamento")) || [];
-                        const idsAtualizados = idsSalvos.filter(id => id !== pedido.id);
+                        // Filtra pelo ID do objeto
+                        const idsAtualizados = idsSalvos.filter(p => p.id !== pedido.id); 
                         localStorage.setItem("pedidosEmAndamento", JSON.stringify(idsAtualizados));
                     } catch (e) { console.error("Erro ao remover do localStorage:", e); }
                     removalTimersRef.current.delete(pedido.id);
-                }, 20000); // 20 segundos para remover
+                }, 20000); 
                 removalTimersRef.current.set(pedido.id, timerId);
             }
         });
 
-        // Busca de Status: Atualiza o status dos pedidos
+        // Busca de Status
         const atualizarStatusDeTodos = async (isInitialLoad = false) => {
              if (pedidos.length === 0) return;
 
-            // Para o intervalo se todos já finalizaram
             const todosRealmenteFinalizados = pedidos.every(p => {
                 const s = typeof p.status === 'string' ? p.status.toLowerCase() : '';
                 return s.includes("pronto") || s.includes("entregue") || s.includes("completed") || s.includes("erro") || s.includes("não encontrado");
@@ -94,7 +121,6 @@ function PedidosEmAndamento() {
             }
 
             const promessasDeStatus = pedidos.map(async (pedido) => {
-                 // Evita buscar status de pedidos já finalizados (exceto na carga inicial)
                  if (typeof pedido.status === 'string') {
                      const statusLower = pedido.status.toLowerCase();
                      if (!isInitialLoad && (statusLower.includes("pronto") || statusLower.includes("entregue") || statusLower.includes("completed") || statusLower.includes("erro") || statusLower.includes("não encontrado"))) {
@@ -102,76 +128,73 @@ function PedidosEmAndamento() {
                      }
                  }
 
-                // Faz o fetch para o backend proxy
                 try {
                     const res = await fetch(`http://localhost:3002/api/pedidos/status/${pedido.id}`);
                     if (res.ok) {
                         const data = await res.json();
-                        console.log(`DEBUG: Status recebido para ${pedido.id}: "${data.status}" (Slot: ${data.slot})`); // Log útil para debug
+                        console.log(`DEBUG: Recebido para ${pedido.id}: "${data.status}" (Slot: ${data.slot})`);
                         const statusRecebido = typeof data.status === 'string' ? data.status : "Status Desconhecido";
-                        return { id: pedido.id, status: statusRecebido, slot: data.slot || null };
+                        
+                        // Mantém o nome que já temos no estado (vindo do localStorage)
+                        return { id: pedido.id, status: statusRecebido, slot: data.slot || null, nome: pedido.nome };
                     } else if (res.status === 404) {
                         return { ...pedido, status: "Pedido não encontrado", slot: null };
                     } else {
                         return { ...pedido, status: `Erro ${res.status}`, slot: null };
                     }
-                } catch (err) { // Erro de rede/conexão
+                } catch (err) {
                     return { ...pedido, status: "Falha na conexão", slot: null };
                 }
             });
 
             const pedidosComStatusBuscados = await Promise.all(promessasDeStatus);
 
-            // Aplica atualização com atraso na carga inicial
             if (isInitialLoad) {
                 setTimeout(() => {
                     setPedidos(pedidosComStatusBuscados);
-                    setCarregamentoInicialCompleto(true); // Libera o início do intervalo
-                }, 3000); // 3 segundos de atraso
+                    setCarregamentoInicialCompleto(true);
+                }, 3000);
             } else {
-                // Atualiza apenas se houver mudanças
                  const mudouAlgo = pedidosComStatusBuscados.some((novoPedido, index) => {
                      const pedidoAntigo = pedidos[index];
                      if (!pedidoAntigo) return true;
-                     return novoPedido.status !== pedidoAntigo.status || (novoPedido.slot || null) !== (pedidoAntigo.slot || null);
+                     return novoPedido.status !== pedidoAntigo.status ||
+                            (novoPedido.slot || null) !== (pedidoAntigo.slot || null);
                  });
                  if(mudouAlgo){ setPedidos(pedidosComStatusBuscados); }
             }
         };
 
-        // Controle do Intervalo de Busca
+        // Controle do Intervalo (sem alteração)
          const todosFinalizadosCheck = pedidos.every(p => {
            const statusLower = typeof p.status === 'string' ? p.status.toLowerCase() : '';
            return statusLower.includes("pronto") || statusLower.includes("entregue") || statusLower.includes("completed") || statusLower.includes("erro") || statusLower.includes("não encontrado");
          });
 
         if (pedidos.length > 0 && !todosFinalizadosCheck) {
-            // Dispara a busca inicial (com atraso)
             if (!carregamentoInicialCompleto) {
                  if (pedidos.some(p => typeof p.status === 'string' && p.status === "Carregando...")) {
                     atualizarStatusDeTodos(true);
                  }
             }
-            // Inicia o intervalo após a carga inicial
             else if (carregamentoInicialCompleto && !intervalRef.current) {
-                atualizarStatusDeTodos(false); // Busca uma vez
-                intervalRef.current = setInterval(() => atualizarStatusDeTodos(false), 10000); // E depois a cada 10s
+                atualizarStatusDeTodos(false);
+                intervalRef.current = setInterval(() => atualizarStatusDeTodos(false), 10000);
             }
         }
-        // Para o intervalo se todos finalizaram
         else if (todosFinalizadosCheck && intervalRef.current) {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
         }
 
-        // Limpeza do useEffect: para o intervalo e limpa timers de remoção
+        // Limpeza (sem alteração)
         return () => {
             if (intervalRef.current) clearInterval(intervalRef.current);
             removalTimersRef.current.forEach(timerId => clearTimeout(timerId));
         };
-    }, [pedidos, carregamentoInicialCompleto]); // Dependências do efeito
+    }, [pedidos, carregamentoInicialCompleto]);
 
-    // Renderização do componente
+    // Renderização
     return (
         <div className="pagina-pedidos">
             <Header />
@@ -197,20 +220,26 @@ function PedidosEmAndamento() {
                                                     (pedido.status.toLowerCase().includes("pronto") ||
                                                      pedido.status.toLowerCase().includes("entregue") ||
                                                      pedido.status.toLowerCase().includes("completed"));
+                                
+                                // Usa a função 'gerarNomePedido' para formatar o nome
+                                const nomeDoPedido = pedido.nome ? 
+                                    gerarNomePedido({ itens: [{ nome_item: pedido.nome }] }) : 
+                                    "Carregando nome...";
 
                                 return (
                                     <li key={pedido.id} className="pedido-item">
                                         <div className="pedido-info">
-                                            <span className="pedido-texto">Pedido</span>
-                                            <span className="pedido-id" title={pedido.id}>
-                                                {pedido.id.length > 15 ? `${pedido.id.substring(0, 15)}...` : pedido.id}
-                                            </span>
+                                            {/* Exibe o nome formatado */}
+                                            <span className="pedido-texto-nome">{nomeDoPedido}</span>
+                                            {/* O ID foi removido como solicitado */}
                                         </div>
                                         <div className="pedido-status-container">
+                                            {/* Badge do Status */}
                                             <div className={`status-badge ${statusInfo.className}`}>
                                                 <span className="status-icone">{statusInfo.icon}</span>
                                                 {typeof pedido.status === 'string' ? pedido.status : 'Status Inválido'}
                                             </div>
+                                            {/* Informação do Slot (se existir) */}
                                             {mostrarSlot && (
                                                 <div className="pedido-slot-info">
                                                    <span>
