@@ -1,5 +1,3 @@
-
-
 .crie-pizza-container {
   display: flex;
   flex-direction: row;
@@ -160,6 +158,7 @@
   cursor: pointer;
   margin-left: 10px;
   transition: background-color 0.2s ease, transform 0.1s ease;
+  flex-shrink: 0; /* Impede que o botão diminua de tamanho */
 }
 
 .botao-remover-ingrediente:hover {
@@ -222,7 +221,7 @@ h3 {
 }
 
 /* ======================================= */
-/* SEÇÃO TOPO: TAMANHO E MOLHO        */
+/* SEÇÃO TOPO: TAMANHO E MOLHO       */
 /* ======================================= */
 
 .secao-tamanho,
@@ -291,7 +290,7 @@ h3 {
 }
 
 /* ======================================= */
-/* SEÇÃO MEIO: INGREDIENTES         */
+/* SEÇÃO MEIO: INGREDIENTES       */
 /* ======================================= */
 
 .secao-categorias,
@@ -341,19 +340,49 @@ h3 {
   height: 40px;
 }
 
-/* Card de Ingrediente */
+/* =======================================
+  == INÍCIO DAS REGRAS MODIFICADAS/NOVAS ==
+  =======================================
+*/
+
+/* Card de Ingrediente (MODIFICADO) */
 .card-ingrediente {
-  padding: 20px;
   font-size: 1rem;
   background-color: var(--branco);
   border: 2px solid transparent;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  height: 100px;
+
+  
+  /* ADICIONADO: Para alinhar o nome e o botão de remover */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px; /* Padding ajustado */
 }
 
+/* (NOVA REGRA) */
+/* Agrupa o ícone e o nome do ingrediente */
+.info-ingrediente {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espaço entre o ícone e o texto */
+  /* Impede que o texto quebre e vá para baixo do ícone */
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =======================================
+  == FIM DAS REGRAS MODIFICADAS/NOVAS ==
+  =======================================
+*/
+
+
 /* ======================================= */
-/* SEÇÃO BAIXO: RESUMO             */
+/* SEÇÃO BAIXO: RESUMO           */
 /* ======================================= */
 
 .resumo-pizza {
@@ -402,7 +431,7 @@ h3 {
 
 
 /* ======================================= */
-/* ESTADOS DE HOVER E SELEÇÃO     */
+/* ESTADOS DE HOVER E SELEÇÃO   */
 /* ======================================= */
 
 /* Efeito de hover (passar o mouse) para todos os botões */

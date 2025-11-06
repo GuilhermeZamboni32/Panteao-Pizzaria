@@ -182,6 +182,11 @@ function Crie_Pizza() {
                             ))}
                         </div>
                     </div>
+                    
+                    {/* =========================================================
+                      == INÍCIO DA SEÇÃO MODIFICADA .secao-ingredientes-especificos ==
+                      =========================================================
+                    */}
                     <div className="secao-ingredientes-especificos">
                         <h3>Ingredientes</h3>
                         <div className="opcoes-ingredientes">
@@ -189,22 +194,45 @@ function Crie_Pizza() {
                                 const nomeIngrediente = ingrediente.split('=')[1];
                                 const quantidade = ingredientes[ingrediente] || 0;
                                 return (
-                                    <button 
+                                    // MUDANÇA 1: De <button> para <div>
+                                    <div 
                                         key={`${categoriaSelecionada}-${nomeIngrediente}-${index}`} 
                                         className={`card-ingrediente ${quantidade > 0 ? 'selecionado' : ''}`} 
                                         onClick={() => adicionarIngrediente(ingrediente)}
                                     >
-                                        <img 
-                                            src={iconesIngrediente[nomeIngrediente]} 
-                                            alt={nomeIngrediente} 
-                                            className="icone-ingrediente" 
-                                        />
-                                        {nomeIngrediente} {quantidade > 0 && `(x${quantidade})`}
-                                    </button>
+                                        {/* Um <span> para agrupar o ícone e o nome */}
+                                        <span className="info-ingrediente">
+                                            <img 
+                                                src={iconesIngrediente[nomeIngrediente]} 
+                                                alt={nomeIngrediente} 
+                                                className="icone-ingrediente" 
+                                            />
+                                            {nomeIngrediente} {quantidade > 0 && `(x${quantidade})`}
+                                        </span>
+
+                                        {/* MUDANÇA 2: Novo botão de remover */}
+                                        {quantidade > 0 && (
+                                            <button 
+                                                className="botao-remover-ingrediente" 
+                                                onClick={(e) => {
+                                                    // MUDANÇA 3: e.stopPropagation() é VITAL
+                                                    e.stopPropagation(); 
+                                                    removerIngrediente(ingrediente);
+                                                }}
+                                            >
+                                                -
+                                            </button>
+                                        )}
+                                    </div>
                                 )
                             })}
                         </div>
                     </div>
+                    {/* =========================================================
+                      == FIM DA SEÇÃO MODIFICADA .secao-ingredientes-especificos ==
+                      =========================================================
+                    */}
+
                 </div>
 
                 {/* BAIXO */}
