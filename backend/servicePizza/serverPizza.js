@@ -3,7 +3,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
-import pool from './db.js';
+import  pool  from '../serviceDatabase/db.js';
 import traduzirPizzaParaCaixinha from './traduzirPizzaParaCaixinha.js';
 
 const app = express();
@@ -27,32 +27,32 @@ const precos = { Broto: 25, Média: 30, Grande: 45 };
 /**
  * Função auxiliar para contar os itens de estoque disponíveis
  * (op: null significa que a peça está disponível)
- * Movida para o topo para garantir que seja definida antes de ser usada.
  */
 function contarEstoque(estoqueDaMaquina) {
-    let massas = 0;
-    let molhoSalgado = 0;
-    let molhoDoce = 0;
+     let massas = 0;
+     let molhoSalgado = 0;
+     let molhoDoce = 0;
 
-    if (!Array.isArray(estoqueDaMaquina)) {
-        return { massas, molhoSalgado, molhoDoce };
-    }
+     if (!Array.isArray(estoqueDaMaquina)) {
+         return { massas, molhoSalgado, molhoDoce };
+     }
 
-    for (const item of estoqueDaMaquina) {
-        // Verifica se a peça está disponível (não está vinculada a um pedido 'op')
-        if (item.op === null) {
-            // Conta baseado na cor, conforme a sua tradução
-            if (item.cor === 'preto') {
-                massas++;
-            } else if (item.cor === 'vermelho') {
-                molhoSalgado++;
-            } else if (item.cor === 'azul') {
-                molhoDoce++;
-            }
-        }
-    }
-    
-    return { massas, molhoSalgado, molhoDoce };
+     for (const item of estoqueDaMaquina) {
+         // Verifica se a peça está disponível (não está vinculada a um pedido 'op')
+         if (item.op === null) {
+         if (item.cor === 1) { // 1 = Massa
+             massas++;
+         } else if (item.cor === 2) { // 2 = Molho Salgado
+             molhoSalgado++;
+         } else if (item.cor === 3) { // 3 = Molho Doce
+             molhoDoce++;
+         }
+         }
+     }
+     
+     // Com os dados da sua tela (Cor: 1 e Cor: 3),
+     // isso deve retornar { massas: 1, molhoSalgado: 0, molhoDoce: 1 }
+     return { massas, molhoSalgado, molhoDoce };
 }
 
 // --- ROTA POST /api/pedidos ---
@@ -303,6 +303,93 @@ app.get('/api/estoque', async (req, res) => {
             res.status(500).json({ error: "Erro ao consultar o estoque em ambas as máquinas." });
         }
     }
+});
+
+
+// --- ROTA PUT PARA ATUALIZAR ITEM NO ESTOQUE ---
+app.put('/api/estoque/:id', async (req, res) => {
+    const { id } = req.params;
+    const bodyDaRequisicao = req.body; // Dados do formulário (ex: { cor: 'preto' })
+
+    console.log(`[PROXY ESTOQUE PUT] Recebida atualização para Posição ID: ${id}`);
+    console.log(`  -> Dados enviados:`, bodyDaRequisicao);
+
+    // Define a URL e os headers para a máquina principal
+    const urlAlvo = `${URL_ESTOQUE_PRINCIPAL}/${id}`;
+    const headers = { 
+        'Authorization': API_KEY_MAQUINA_REAL,
+        'Content-Type': 'application/json' 
+    };
+
+    try {
+        // Tenta enviar o PUT para a Máquina Principal
+        const response = await fetch(urlAlvo, {
+        method: 'PUT',
+        headers: headers,
+        body: JSON.stringify(bodyDaRequisicao)
+        });
+
+        if (!response.ok) {
+        // Se a máquina real falhar, joga um erro
+        throw new Error(`Máquina real falhou (PUT): ${response.status} ${response.statusText}`);
+     }
+
+        const data = await response.json(); // Lê a resposta JSON da máquina
+        console.log(`[PROXY ESTOQUE PUT] Sucesso na Máquina Principal.`);
+        res.json(data); // Envia a resposta de sucesso de volta para o React
+
+    } catch (err) {
+        console.warn(`[PROXY ESTOQUE PUT] Falha na Máquina Principal (${err.message}).`);
+        // (Aqui você pode adicionar um fallback para a VM se necessário)
+        res.status(500).json({ error: "Erro ao atualizar item no estoque.", details: err.message });
+    }
+});
+
+app.get('/api/estoque/detalhes', async (req, res) => {
+ console.log(`[PROXY ESTOQUE DETALHES] Recebida consulta de detalhes...`); // Log diferente
+
+ let urlEstoque = URL_ESTOQUE_PRINCIPAL;
+ let headers = { 'Authorization': API_KEY_MAQUINA_REAL }; // Headers corretos
+
+ try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), TIMEOUT_MAQUINA_MS);
+
+    let response = await fetch(urlEstoque, { 
+        method: 'GET', 
+        headers: headers,
+         signal: controller.signal 
+         });
+     clearTimeout(timeout);
+
+     if (!response.ok) {
+        throw new Error(`Máquina real falhou: ${response.status}`);
+ }
+
+    const estoqueCompleto = await response.json();
+         console.log(`[PROXY ESTOQUE DETALHES] Sucesso na Máquina Principal. Itens: ${estoqueCompleto.length}`);
+ 
+     res.json(estoqueCompleto); // Retorna a lista completa
+
+    } catch (err) {
+        console.warn(`[PROXY ESTOQUE DETALHES] Falha na Máquina Principal (${err.message}). Tentando VM...`);
+     try {
+         const vmResponse = await fetch(URL_ESTOQUE_VIRTUAL, { method: 'GET' });
+    if (!vmResponse.ok) {
+     throw new Error(`Máquina virtual também falhou: ${vmResponse.status}`);
+    }
+        const estoqueVM = await vmResponse.json();
+            console.log(`[PROXY ESTOQUE DETALHES] Sucesso na Máquina Virtual.`);
+            
+        res.json(estoqueVM); // Retorna a lista completa da VM
+
+    } catch (vmErr) {
+        console.error(`[PROXY ESTOQUE DETALHES] FALHA CRÍTICA: Ambas as máquinas falharam.`);
+        console.error(` > Erro Máquina Principal: ${err.message}`);
+         console.error(` > Erro Máquina Virtual: ${vmErr.message}`);
+     res.status(500).json({ error: "Erro ao consultar o estoque em ambas as máquinas." });
+     }
+  }
 });
 
 
