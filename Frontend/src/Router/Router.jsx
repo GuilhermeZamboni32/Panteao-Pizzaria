@@ -9,6 +9,7 @@ import Carrinho from "../Pages/Carrinho/Carrinho";
 import PedidosEmAndamento from "../Pages/Pedidos_andamento/PedidosEmAndamento";
 import Contato from "../Pages/Contato/Contato";
 import Gestao_Estoque from "../Pages/gestao_do_estoque/Gestao_Estoque";
+import MinhaConta from "../Pages/Conta_de_Usuario/MinhaConta";
 
 const router = createBrowserRouter([
     { path: "/", element: <Home/> },
@@ -19,8 +20,9 @@ const router = createBrowserRouter([
     { path: "/Crie_pizza", element: <Crie/> },
     { path: "/Carrinho", element: <Carrinho/> },
     { path: "/PedidosEmAndamento", element: <PedidosEmAndamento/> },
-    {path: "/Contato", element: <Contato/> },
+    { path: "/Contato", element: <Contato/> },
     { path: "/Gestao_estoque", element: <Gestao_Estoque/> },
+    { path: "/minha-conta", element: <MinhaConta/> }
 ]);
 
 export default router;

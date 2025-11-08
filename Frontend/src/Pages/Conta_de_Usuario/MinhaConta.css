@@ -1,0 +1,510 @@
+:root {
+  --vermelho: #BC4749;
+  --bege: #E7C8A7;
+  --branco: #F2E8CF;
+  --verde: #6A994E;
+  --preto: #000000;
+  --cinza: #7c7c7c;
+}
+
+.pagina-conta {
+  background-color: var(--branco); 
+  min-height: 100vh;
+  color: var(--preto);
+}
+
+.container-conta {
+  display: flex;
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 0 20px;
+  gap: 20px;
+  align-items: flex-start; /* Alinha no topo */
+}
+
+/* ======================================= */
+/* NAVEGAÇÃO LATERAL (Menu)                */
+/* ======================================= */
+.conta-nav {
+  flex: 0 0 240px; 
+  background-color: var(--bege); 
+  border-radius: 12px;
+  padding: 20px 0;
+  box-shadow: 0 2px 8px var(--preto);
+}
+
+.conta-nav h1 {
+  color: var(--preto); 
+  font-size: 1.5rem;
+  padding: 0 25px 15px 25px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--branco); 
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 18px 25px;
+  background-color: transparent;
+  border: none;
+  color: var(--preto); 
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 4px solid transparent;
+}
+
+.nav-item:hover {
+  background-color: var(--branco); 
+  color: var(--preto);
+}
+
+.nav-item.active {
+  background-color: var(--branco); 
+  color: var(--preto);
+  font-weight: 600;
+  border-left-color: var(--verde); 
+}
+
+/* Botão de Sair específico */
+.nav-item-sair {
+    margin-top: 20px;
+    border-top: 1px solid var(--cinza);
+}
+.nav-item-sair:hover {
+    background-color: var(--vermelho-claro);
+    color: var(--preto);
+    border-left-color: var(--vermelho);
+}
+
+/* Estilo para os ícones do menu */
+.nav-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.8; 
+  transition: opacity 0.2s ease;
+}
+
+.nav-item:hover .nav-icon,
+.nav-item.active .nav-icon {
+  opacity: 1;
+}
+
+.nav-item-sair:hover .nav-icon {
+    filter: none; /* Remove o filtro no hover do Sair */
+    opacity: 1;
+}
+
+
+/* ======================================= */
+/* CONTEÚDO (Lado Direito)                 */
+/* ======================================= */
+.conta-conteudo {
+  flex: 1; 
+}
+
+
+
+
+/* ======================================= */
+/* conta                                   */
+/* ======================================= */
+/* Card base para os formulários */
+.form-card {
+  background-color: var(--bege); 
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.form-card h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--bege);
+  padding-bottom: 15px;
+}
+
+
+/* Estilo para os formulários de dados e senha */
+.form-conta {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-grupo-conta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-grupo-conta label {
+    font-weight: 500;
+    color: var(--preto);
+}
+
+.form-grupo-conta input {
+    padding: 12px;
+    border: 1px solid var(--bege); 
+    background-color: var(--branco);
+    border-radius: 6px;
+    font-size: 1rem;
+    color: var(--preto);
+}
+
+.form-grupo-conta input.input-disabled {
+    background-color: #f0f0f0; /* Um cinza claro para campos desativados */
+    color: var(--cinza);
+    cursor: not-allowed;
+}
+
+/* Botão de salvar */
+.btn-salvar-conta {
+    background-color: var(--verde); 
+    color: var(--branco);
+    border: none;
+    padding: 14px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+}
+
+.btn-salvar-conta:hover {
+    background-color: #91c075; /* Assumindo var(--verde-claro) */
+}
+
+/* Espaçamento entre os cards */
+.conta-conteudo .form-card + .form-card {
+    margin-top: 20px;
+}
+
+/* Classes de Mensagem */
+.form-mensagem {
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-weight: 500;
+    text-align: center;
+}
+.form-mensagem.sucesso {
+    background-color: #91c075; /* Assumindo var(--verde-claro) */
+    color: var(--preto);
+}
+.form-mensagem.erro {
+    background-color: #cc7071; /* Assumindo var(--vermelho-claro) */
+    color: var(--preto);
+}
+.form-mensagem.info {
+    background-color: #d8c86c; /* Assumindo var(--amarelo-claro) */
+    color: var(--preto);
+}
+
+
+/* Ícone de olho (senha) */
+.input-com-icone {
+    position: relative;
+}
+.input-com-icone .password-toggle-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%; /* Alinha no meio da altura do label+input */
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--cinza);
+    font-size: 1.2rem;
+}
+/* Ajuste caso o ícone fique em cima do label */
+.input-com-icone input {
+    padding-right: 40px; /* Garante espaço para o ícone */
+}
+
+
+
+
+
+/* ======================================= */
+/* endereço                                */
+/* ======================================= */
+
+/* Estilo para o formulário de grid de Endereço */
+.form-conta-grid {
+    display: grid;
+    gap: 20px;
+    /* Define as áreas do grid */
+    grid-template-areas: 
+        "rua rua numero"
+        "bairro cep cep"
+        "complemento complemento complemento"
+        "botoes botoes botoes";
+}
+
+/* Responsivo: Em telas menores, tudo vira uma coluna só */
+@media (max-width: 768px) {
+    .form-conta-grid {
+        grid-template-areas: 
+            "rua"
+            "numero"
+            "bairro"
+            "cep"
+            "complemento"
+            "botoes";
+    }
+}
+
+.form-botoes-endereco {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-cancelar-conta {
+    background-color: var(--cinza);
+    color: var(--branco);
+    border: none;
+    padding: 14px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.btn-cancelar-conta:hover {
+    background-color: #999; /* Um cinza mais escuro */
+}
+
+/* Lista de Endereços */
+.lista-enderecos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.item-endereco {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: var(--branco);
+    border: 1px solid var(--bege);
+    border-radius: 8px;
+    gap: 15px;
+}
+
+.endereco-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.endereco-info strong {
+    font-size: 1.1rem;
+    color: var(--preto);
+}
+.endereco-info span {
+    font-size: 0.9rem;
+    color: var(--cinza);
+}
+
+.endereco-acoes {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-acao-editar, .btn-acao-remover {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-acao-editar {
+    color: var(--azul); /* Precisa definir --azul no :root */
+    background-color: var(--azul-claro); /* Precisa definir --azul-claro no :root */
+}
+.btn-acao-editar:hover {
+    background-color: var(--azul);
+    color: var(--branco);
+}
+
+.btn-acao-remover {
+    color: var(--vermelho);
+    background-color: var(--vermelho-claro); /* Precisa definir --vermelho-claro no :root */
+}
+.btn-acao-remover:hover {
+    background-color: var(--vermelho);
+    color: var(--branco);
+}
+
+
+
+/* ======================================= */
+/* cartão                                  */
+/* ======================================= */
+
+
+.aviso-seguranca {
+    background-color: var(--amarelo-claro); /* Defina esta cor no :root */
+    border: 1px solid var(--amarelo); /* Defina esta cor no :root */
+    color: var(--preto);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Estilo para o formulário de grid de Pagamento */
+.form-conta-grid-pagamento {
+    display: grid;
+    gap: 20px;
+    /* Define as áreas do grid */
+    grid-template-areas: 
+        "nome nome"
+        "numero numero"
+        "validade cvv"
+        "botoes botoes";
+}
+
+@media (max-width: 768px) {
+    .form-conta-grid-pagamento {
+        grid-template-areas: 
+            "nome"
+            "numero"
+            "validade"
+            "cvv"
+            "botoes";
+    }
+}
+
+/* Lista de Cartões Salvos */
+.lista-cartoes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.item-cartao {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: var(--branco);
+    border: 1px solid var(--bege);
+    border-radius: 8px;
+    gap: 15px;
+}
+
+.cartao-icone-bandeira {
+    width: 40px;
+    height: auto;
+}
+
+.cartao-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1; /* Ocupa o espaço do meio */
+}
+.cartao-info strong {
+    font-size: 1.1rem;
+    color: var(--preto);
+}
+.cartao-info span {
+    font-size: 0.9rem;
+    color: var(--cinza);
+}
+
+.cartao-acoes {
+    display: flex;
+    gap: 10px;
+}
+
+
+/* ======================================= */
+/* pedidos                                 */
+/* ======================================= */
+
+
+/* Lista de Pedidos */
+.lista-pedidos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.item-pedido {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: var(--branco);
+    border: 1px solid var(--bege);
+    border-radius: 8px;
+    gap: 15px;
+}
+
+.pedido-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--bege);
+    padding-bottom: 15px;
+}
+
+.pedido-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.pedido-info strong {
+    font-size: 1.2rem;
+    color: var(--preto);
+}
+.pedido-info span {
+    font-size: 0.9rem;
+    color: var(--cinza);
+}
+
+.pedido-status {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.pedido-status strong {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--verde); /* Status do pedido em verde */
+}
+.pedido-status span {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--preto);
+}
+
+.pedido-lista-itens {
+    list-style: disc; /* Adiciona bolinhas */
+    padding-left: 20px;
+    margin: 0;
+}
+.pedido-lista-itens li {
+    font-size: 0.95rem;
+    color: var(--cinza);
+    margin-bottom: 5px;
+}

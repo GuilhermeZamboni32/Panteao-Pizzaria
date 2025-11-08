@@ -132,7 +132,7 @@ function Cardapio({ adicionarAoCarrinho }) {
 
         {/* --- Cabeçalho e Filtros --- */}
         <div className="cardapio-controles">
-          <h1 className="cardapio-titulo">Nosso Cardápio</h1>
+         
           {/* Container opcional para agrupar visualmente */}
           <div className="filtros-container">
             <div className="filtros">

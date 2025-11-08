@@ -1,50 +1,107 @@
-:root{
---vermelho: #BC4749;
---bege: #E7C8A7;
---branco: #F2E8CF ; 
---verde: #6A994E ;
---preto: #000000 ;
+:root {
+    --vermelho: #BC4749;
+    --bege: #E7C8A7;
+    --branco: #F2E8CF ; 
+    --verde: #6A994E ;
+    --preto: #000000 ;
 }
 
 .container-header {
-  width: 100%;
-  height: 80px;
-  background-color: var(--bege);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 80px;
+    background-color: var(--bege);
+    display: flex;
+    justify-content: space-between; /* Mantém o logo à esquerda e o restante à direita */
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
-  display: flex;
-  align-items: center;
- 
+    display: flex;
+    align-items: center;
 }
 .espaco-logo {
-  height: 60px;
-  width: 60px;
+    height: 60px;
+    width: 60px;
 }
 .Logo-Preto-P{
-  height: 60px;
-  width: 70px;
- 
+    height: 60px;
+    width: 70px;
 }
 .texto-logo{
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--preto);
-  margin-left: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--preto);
+    margin-left: 20px;
 }
 
-.texto-header{
+/* ======================================= */
+/* MUDANÇAS E CORREÇÕES CRÍTICAS ABAIXO    */
+/* ======================================= */
+
+/* MODIFICADO: .header-links agora é um container flex para seus próprios elementos internos */
+.header-links {
+    display: flex;
+    align-items: center;
+    /* Remove o flex: 1, pois o .container-header já gerencia o espaço */
+    /* justify-content: space-between; */ /* Não queremos isso aqui para não separar os links de nav */
+    gap: 15px; /* Adiciona um gap padrão entre TODOS os elementos de links */
+}
+
+.texto-header {
     font-size: 18px;
     color: var(--preto);
     text-decoration: none;
-    margin: 0 15px;
+    /* Removido margin: 0 15px; para usar gap no .header-links */
 }
-
-.texto-header:hover{
+.texto-header:hover {
     color: var(--vermelho);
 }
+
+/* NOVO: A div que agrupa os links do utilizador (login/cadastro ou perfil/sair) */
+.header-user-actions {
+    /* Esta é a linha mais importante para empurrar para a direita dentro do .header-links */
+    margin-left: auto; 
+    
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaço entre os ícones (perfil e sair) */
+}
+
+
+/* Estilo para os links de ícone (Perfil, Sair) */
+.header-icon-link {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    /* Removido margin-left: 0; */
+}
+
+.header-icon {
+    width: 24px;  
+    height: 24px;
+    
+    /* Reativei o filtro, pois o fundo é bege e o ícone preto não apareceria bem */
+    
+    
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    opacity: 0.9;
+}
+
+.header-icon-link:hover .header-icon {
+    
+    opacity: 1;
+}
+
+/* NOVO: Ajuste para os ícones no estado logado/deslogado */
+/* Se os ícones deveriam ser brancos (filter: invert(1);), e o fundo bege, vamos remover o filter */
+.header-icon {
+  filter: none; /* Remove o filtro padrão, esperando que os ícones sejam pretos */
+  color: var(--preto); /* Tenta forçar a cor do ícone SVG para preto se for SVG */
+}
+
