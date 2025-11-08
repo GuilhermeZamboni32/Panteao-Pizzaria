@@ -1,13 +1,12 @@
 /* ======================================= */
-/* VARIÁVEIS DE COR                        */
+/* SUA NOVA PALETA DE CORES                */
 /* ======================================= */
 :root {
   --vermelho: #BC4749;
   --bege: #E7C8A7;
-  --branco: #F2E8CF;
+  --branco: #F2E8CF ;
   --verde: #6A994E;
   --preto: #000000;
-
   --cinza: #555555;
   --azul: #096DD9;
   --azul-claro: #1175e788;
@@ -18,306 +17,360 @@
 }
 
 /* ======================================= */
-/* ESTRUTURA DA PÁGINA                     */
+/* ESTRUTURA PRINCIPAL (LAYOUT)            */
 /* ======================================= */
 .pagina-estoque {
-  background-color: var(--branco);
+  /* Fundo da página usa o 'bege' */
+  background-color: var(--branco); 
   min-height: 100vh;
-}
-
-.container-estoque {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 1.5rem;
-  background-color: var(--bege);
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--bege);
-  display: flex;
-  flex-direction: column;
-  gap: 2rem; /* Espaço entre as seções (Resumo, Reposição, Lista) */
-}
-
-.container-estoque h1 {
-  text-align: center;
   color: var(--preto);
-  margin-bottom: 0.5rem; /* Margem menor */
-  font-size: 2rem;
+}
+
+.container-gestao {
+  display: flex;
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 0 20px;
+  gap: 20px;
+}
+
+/* ======================================= */
+/* NAVEGAÇÃO LATERAL (Menu)                */
+/* ======================================= */
+.gestao-nav {
+  flex: 0 0 240px; 
+  /* Menu lateral usa 'preto' */
+  background-color: var(--bege); 
+  color: var(--preto);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--preto);
+  padding: 20px 0;
+  align-self: flex-start;
+}
+
+.gestao-nav h1 {
+  /* Texto do menu em 'branco' */
+  color: var(--preto); 
+  font-size: 1.5rem;
+  padding: 0 25px 15px 25px;
+  margin-bottom: 10px;
+  /* Borda do título em 'cinza' */
+  border-bottom: 1px solid var(--cinza); 
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 18px 25px;
+  background-color: transparent;
+  border: none;
+  /* Texto do item (apagado) usa 'bege' */
+  color: var(--preto); 
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 4px solid transparent;
+}
+
+.nav-item:hover {
+  /* Hover usa 'cinza' */
+  background-color: var(--branco); 
+  color: var(--preto);
+}
+
+.nav-item.active {
+  /* Ativo usa 'cinza' e borda 'verde' */
+  background-color: var(--branco); 
+  color: var(--preto);
   font-weight: 600;
+  border-left-color: var(--verde); 
 }
 
-.btn-voltar-estoque {
-    display: block;
-    width: fit-content;
-    margin: 0 auto 1rem auto; /* Centraliza */
-    padding: 0.8rem 1.5rem;
-    background-color: var(--cinza);
-    color: var(--branco);
-    border: none;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+/* Estilo para os novos ícones do menu */
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    
 }
 
-.btn-voltar-estoque:hover {
-    background-color: var(--preto);
+/* Faz o ícone ficar totalmente branco no hover/active */
+.nav-item:hover .nav-icon,
+.nav-item.active .nav-icon {
+    opacity: 1;
+}
+
+/* ======================================= */
+/* CONTEÚDO (Lado Direito)                 */
+/* ======================================= */
+.gestao-conteudo {
+  flex: 1; 
 }
 
 .mensagem-erro-geral {
-    text-align: center;
-    color: var(--preto);
-    background-color: var(--vermelho-claro);
-    padding: 0.8rem;
-    border: 1px solid var(--vermelho);
-    border-radius: 6px;
-    margin: -1rem 0 1rem 0; /* Posição se houver erro */
-}
-
-/* Título comum para as seções */
-.titulo-secao-estoque {
-    font-size: 1.3rem;
-    color: var(--preto);
-    margin-top: 0;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--bege);
-}
-
-/* ======================================= */
-/* 1. SEÇÃO RESUMO (Prateleiras)           */
-/* ======================================= */
-.prateleiras {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem; /* Espaço menor entre itens */
-  padding: 1.5rem;
+  /* Cores de erro da sua paleta */
+  background-color: var(--vermelho); 
+  color: var(--preto);
+  padding: 15px;
   border-radius: 8px;
-  background-color: var(--branco);
+  border: 1px solid var(--preto);
+  margin: 10px;
+}
+
+/* ======================================= */
+/* VIEW: DISPONIBILIDADE (Imagem 2)        */
+/* ======================================= */
+.resumo-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.resumo-card,
+.grafico-card,
+.form-card,
+.lista-card {
+  /* Todos os cards usam o seu 'branco' */
+  background-color: var(--bege); 
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.resumo-card h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  color: var(--preto);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--branco); /* Borda sutil */
+}
+
+/* Cores dos cards */
+.resumo-card.cor-preto h3 { border-bottom-color: var(--cinza); }
+.resumo-card.cor-vermelho h3 { border-bottom-color: var(--vermelho); }
+.resumo-card.cor-azul h3 { border-bottom-color: var(--azul); }
+
+.card-conteudo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.card-valor {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--preto);
+}
+
+.graficos-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.grafico-card {
+  padding: 20px;
+  text-align: center;
+}
+.grafico-card h3 {
+  margin: 0 0 15px 0;
+  text-align: center;
+  font-size: 1.2rem;
+}
+.grafico-card h3 i { font-style: normal; margin-right: 8px; }
+
+
+.grafico-donut {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 20px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Simulação de Donut Chart com CSS */
+.donut-chart {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  /* Gráfico usa 'azul' e 'bege' (fundo da página) */
+  background: conic-gradient(
+    var(--azul) var(--percent, 0%), 
+    var(--branco) var(--percent, 0%) 100% 
+  );
+  mask: radial-gradient(transparent 55%, black 56%); 
   border: 1px solid var(--preto);
 }
 
-.secao-estoque {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
-}
-
-.item-info {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.item-icone {
-  width: 40px; /* Ícone menor */
-  height: 40px;
-  flex-shrink: 0;
-  border-radius: 6px;
-}
-
-.item-icone.cor-massa { color: var(--preto); }
-.item-icone.cor-molho-salgado { color: var(--vermelho); }
-.item-icone.cor-molho-doce { color: var(--azul); }
-
-.item-titulo { /* Agora é h3 */
-  font-size: 1.1rem;
+.grafico-percentual {
+  font-size: 2rem;
+  font-weight: 600;
   color: var(--preto);
-  margin: 0;
-  font-weight: 500;
 }
 
-.item-quantidade {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  text-align: right;
-  min-width: 80px;
-}
-
-.item-quantidade .quantidade-valor {
-  font-size: 1.6rem;
-  font-weight: bold;
-  color: var(--verde);
-  line-height: 1;
-}
-
-.item-quantidade .quantidade-carregando,
-.item-quantidade .quantidade-erro {
+.grafico-total {
   font-size: 0.9rem;
-  font-style: italic;
   color: var(--cinza);
-  line-height: 1;
-}
-.item-quantidade .quantidade-erro{
-    color: var(--vermelho);
-    font-weight: bold;
-    font-style: normal;
-}
-
-.item-quantidade span:last-child {
-  font-size: 0.75rem;
-  color: var(--cinza);
-  text-transform: uppercase;
-  margin-top: 0.2rem;
+  margin-top: 10px;
 }
 
 /* ======================================= */
-/* 2. NOVA SEÇÃO: REPOSIÇÃO (Formulário)   */
+/* VIEW: ADICIONAR (Imagem 3)              */
 /* ======================================= */
-.reposicao-container {
-    padding: 1.5rem;
-    border: 1px solid var(--branco);
-    border-radius: 8px;
+.form-card {
+  padding: 30px;
 }
+.form-card h3 {
+  text-align: left;
+  margin-top: 0;
+}
+.form-card h3 i { font-style: normal; margin-right: 8px; }
 
 .reposicao-form {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Layout responsivo */
-    gap: 1rem;
-    align-items: flex-end; /* Alinha labels e inputs */
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
 }
 
 .form-grupo-reposicao {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .form-grupo-reposicao label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--cinza);
+  font-weight: 500;
+  color: var(--preto);
 }
 
 .form-grupo-reposicao input,
 .form-grupo-reposicao select {
-    padding: 0.7rem;
-    font-size: 1rem;
-    border: 1px solid var(--branco);
-    border-radius: 6px;
-    background-color: #fff;
-    color: var(--preto);
+  padding: 12px;
+  /* Borda usa 'bege', fundo usa 'branco' */
+  border: 1px solid var(--bege); 
+  background-color: var(--branco);
+  border-radius: 6px;
+  font-size: 1rem;
+  color: var(--preto);
+}
+/* Garante que o fundo do input não seja transparente */
+.form-grupo-reposicao input:focus,
+.form-grupo-reposicao select:focus {
+    background-color: var(--branco);
 }
 
+
 .btn-salvar-posicao {
-    background-color: var(--verde);
-    color: var(--branco);
-    border: none;
-    border-radius: 6px;
-    padding: 0.7rem;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    height: fit-content; /* Alinha com os inputs */
+  /* Botão principal usa 'verde' */
+  background-color: var(--verde); 
+  color: var(--branco);
+  border: none;
+  padding: 14px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  grid-column: 1 / -1; 
+  margin-top: 10px;
 }
+
 .btn-salvar-posicao:hover {
-    background-color: #5a8a42;
+  /* Hover usa 'verde-claro' */
+  background-color: var(--verde-claro); 
 }
 
 .mensagem-form-estoque {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--verde);
-    margin-top: 1rem;
-    text-align: center;
+  margin-top: 15px;
+  font-weight: 500;
+  color: var(--verde); /* Mensagem de sucesso em verde */
 }
 
+
 /* ======================================= */
-/* 3. NOVA SEÇÃO: LISTA DETALHADA          */
+/* VIEW: REMOVER (Imagem 1)                */
 /* ======================================= */
-.lista-detalhada-container {
-    padding: 1.5rem;
-    border: 1px solid var(--branco);
-    border-radius: 8px;
+.lista-card {
+  padding: 30px;
+}
+.lista-card h3 {
+  text-align: left;
+  margin-top: 0;
+}
+
+.tabela-container {
+  width: 100%;
+}
+
+.lista-header, .slot-item {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr 100px; 
+  gap: 15px;
+  align-items: center;
+  padding: 15px;
+}
+
+.lista-header {
+  font-weight: 600;
+  color: var(--preto);
+  /* Fundo do header da tabela em 'bege' */
+  background-color: var(--bege); 
+  border-bottom: 2px solid var(--cinza);
+  border-radius: 6px 6px 0 0;
 }
 
 .lista-detalhada-slots {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--bege);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
 }
 
 .slot-item {
-    display: grid;
-    grid-template-columns: 1fr 1fr 2fr auto; /* Layout da linha */
-    align-items: center;
-    gap: 1rem;
-    padding: 0.8rem;
-    background-color: var(--branco);
-    border: 1px solid var(--branco);
-    border-radius: 6px;
-    font-size: 0.9rem;
+  /* Fundo do item da lista em 'branco' */
+  background-color: var(--branco); 
+  border-bottom: 1px solid var(--bege);
+}
+.slot-item:last-child {
+  border-bottom: none;
 }
 
-.slot-item strong {
-    color: var(--preto);
-    font-weight: 600;
+.slot-item span {
+  word-break: break-all;
+  color: var(--preto);
 }
-
-.slot-pos { color: var(--cinza); }
-.slot-cor { color: var(--cinza); }
-.slot-op { color: var(--cinza); }
 
 .btn-liberar-slot {
-    background-color: var(--vermelho);
-    color: var(--branco);
-    border: none;
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    font-size: 1.5rem;
-    font-weight: bold;
-    line-height: 1;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.btn-liberar-slot:hover {
-    background-color: #a13c3e; /* Vermelho mais escuro */
+  /* Botão de remoção usa 'vermelho' */
+  background-color: var(--vermelho); 
+  color: var(--branco);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-/* ======================================= */
-/* RESPONSIVIDADE (Ajustes)                */
-/* ======================================= */
-@media (max-width: 600px) {
-  .container-estoque h1 {
-    font-size: 1.6rem;
-  }
-  .prateleiras, .reposicao-container, .lista-detalhada-container {
-      padding: 1rem;
-  }
-  .secao-estoque {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-  .item-quantidade {
-    align-items: flex-start;
-  }
-  .reposicao-form {
-      grid-template-columns: 1fr; /* Empilha o formulário */
-  }
-  .slot-item {
-      grid-template-columns: 1fr 1fr; /* 2 colunas no mobile */
-      gap: 0.5rem;
-  }
-  .slot-op {
-      grid-column: 1 / span 2; /* Ocupa a linha inteira de baixo */
-      font-size: 0.8rem;
-  }
-  .btn-liberar-slot {
-      grid-row: 1; /* Move o botão para o canto superior direito */
-      grid-column: 2;
-      justify-self: flex-end;
-  }
+.btn-liberar-slot:hover {
+  /* Hover da remoção usa 'vermelho-claro' */
+  background-color: var(--vermelho-claro); 
+}
+
+.lista-vazia {
+  padding: 20px;
+  text-align: center;
+  color: var(--cinza);
+  background-color: var(--branco);
 }

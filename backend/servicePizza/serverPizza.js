@@ -260,6 +260,17 @@ app.get('/api/pedidos/status/:machineId', async (req, res) => {
     }
 });
 
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
 // --- ROTA GET /api/estoque (Resumo) ---
 app.get('/api/estoque', async (req, res) => {
     console.log(`[PROXY ESTOQUE] Recebida consulta de estoque...`);
@@ -312,13 +323,38 @@ app.get('/api/estoque', async (req, res) => {
 });
 
 
-// --- ROTA PUT PARA ATUALIZAR ITEM NO ESTOQUE ---
+/// --- ROTA PUT PARA ATUALIZAR ITEM NO ESTOQUE (CORRIGIDA) ---
 app.put('/api/estoque/:id', async (req, res) => {
     const { id } = req.params;
-    const bodyDaRequisicao = req.body; // Dados do formulário (ex: { cor: 'preto' })
+    const bodyRecebidoDoReact = req.body; 
 
     console.log(`[PROXY ESTOQUE PUT] Recebida atualização para Posição ID: ${id}`);
-    console.log(`   -> Dados enviados:`, bodyDaRequisicao);
+    console.log(`   -> Dados do React:`, bodyRecebidoDoReact);
+
+    // =================================================================
+    // !!! INÍCIO DA CORREÇÃO !!!
+    // Traduz o nome da cor (string) do React para o ID (número) da Máquina
+    // =================================================================
+    const tradutorCorParaNumero = {
+        'preto': 1,     // 1 = Massa
+        'vermelho': 2,  // 2 = Molho Salgado
+        'azul': 3       // 3 = Molho Doce
+    };
+
+    // Se a cor recebida for uma string (preto, vermelho, azul), traduza.
+    // Se já for um número (ou outra coisa), mantenha como está.
+    const corTraduzida = tradutorCorParaNumero[bodyRecebidoDoReact.cor] || bodyRecebidoDoReact.cor;
+
+    // Este é o payload que a MÁQUINA REAL vai receber
+    const payloadParaMaquinaReal = {
+        ...bodyRecebidoDoReact, // Inclui 'op' e outros campos
+        cor: corTraduzida       // Usa a cor traduzida (ex: 1)
+    };
+    
+    console.log(`   -> Dados Traduzidos (Enviando para Máquina Real):`, payloadParaMaquinaReal);
+    // =================================================================
+    // !!! FIM DA CORREÇÃO !!!
+    // =================================================================
 
     // Define a URL e os headers para a máquina principal
     const urlAlvo = `${URL_ESTOQUE_PRINCIPAL}/${id}`;
@@ -332,12 +368,14 @@ app.put('/api/estoque/:id', async (req, res) => {
         const response = await fetch(urlAlvo, {
             method: 'PUT',
             headers: headers,
-            body: JSON.stringify(bodyDaRequisicao)
+            // Envia o payload traduzido
+            body: JSON.stringify(payloadParaMaquinaReal) 
         });
 
         if (!response.ok) {
             // Se a máquina real falhar, joga um erro
-            throw new Error(`Máquina real falhou (PUT): ${response.status} ${response.statusText}`);
+            const errorText = await response.text();
+            throw new Error(`Máquina real falhou (PUT): ${response.status} ${response.statusText} - ${errorText}`);
         }
 
         const data = await response.json(); // Lê a resposta JSON da máquina
