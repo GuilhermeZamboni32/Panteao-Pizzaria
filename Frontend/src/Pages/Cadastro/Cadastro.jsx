@@ -5,13 +5,12 @@ import './Cadastro.css';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 function Cadastro() {
-    // Estado simplificado, sem dados de pagamento
+    // Estado simplificado, SEM 'endereco'
     const [form, setForm] = useState({
         nome: '',
         email: '',
         senha: '',
-        telefone: '',
-        endereco: ''
+        telefone: ''
     });
     const [mensagem, setMensagem] = useState('');
     const navigate = useNavigate();
@@ -25,13 +24,10 @@ function Cadastro() {
         e.preventDefault();
         setMensagem('');
         
-        // Regex de validação (sem cartão)
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const senhaRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
         const telefoneRegex = /^\d{10,11}$/;
-        const enderecoRegex = /^.{5,}$/;
 
-        // Validação (sem cartão)
         if (!form.nome || form.nome.length < 3) {
             setMensagem('Nome inválido (mínimo 3 caracteres).');
             return;
@@ -44,21 +40,16 @@ function Cadastro() {
             setMensagem('O telefone deve ter 10 ou 11 dígitos.');
             return;
         }
-        if (!enderecoRegex.test(form.endereco)) {
-            setMensagem('O endereço deve ter pelo menos 5 caracteres.');
-            return;
-        }
         if (!senhaRegex.test(form.senha)) {
             setMensagem('A senha deve ter pelo menos 8 caracteres, letras e números.');
             return;
         }
 
         try {
-            // Envia o formulário simplificado para o backend
             const response = await fetch('http://localhost:3001/api/users', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form) // Envia apenas nome, email, senha, tel, endereco
+                body: JSON.stringify(form) // Envia apenas nome, email, senha, tel
             });
 
             const data = await response.json();
@@ -78,12 +69,9 @@ function Cadastro() {
     };
 
     return (
-        // Layout de fundo de ecrã inteiro
         <div className='pagina-cadastro'>
             <Header />
-            {/* Container com gradiente */}
             <main className='container-cadastro'>
-                {/* Card do formulário */}
                 <div className='form-container'>
                     <h1 className='titulo-form'>Cadastro</h1>
 
@@ -100,13 +88,9 @@ function Cadastro() {
                             <label htmlFor="telefone">Telefone:</label>
                             <input type="tel" id="telefone" value={form.telefone} onChange={handleChange} placeholder="Telefone (só números)" required />
                         </div>
-                        <div className='form-group'>
-                            <label htmlFor="endereco">Endereço:</label>
-                            <input type="text" id="endereco" value={form.endereco} onChange={handleChange} placeholder="Rua, Número, Bairro" required />
-                        </div>
+                        
                         <div className='form-group senha-group'>
                           <label htmlFor="senha">Senha:</label>
-                          
                           <div className="input-com-icone">
                             <input 
                               type={showPassword ? "text" : "password"} 
@@ -128,14 +112,12 @@ function Cadastro() {
                         <button className='botao-form' type="submit">Cadastrar</button>
                     </form>
 
-                    {/* Mensagem de status */}
                     {mensagem && (
                         <p className={mensagem.includes('sucesso') ? 'mensagem-form-sucesso' : 'mensagem-form-erro'}>
                             {mensagem}
                         </p>
                     )}
 
-                    {/* Link para Login */}
                     <p className="auth-link">
                         Já tem uma conta?{' '}
                         <Link to="/login">Faça Login</Link>
@@ -147,4 +129,3 @@ function Cadastro() {
 }
 
 export default Cadastro;
-

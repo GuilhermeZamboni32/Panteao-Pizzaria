@@ -5,7 +5,7 @@ import Header from '../../components/pastaheader/Header';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 // ==========================================================
-// COMPONENTE ViewDados (Completo)
+// COMPONENTE ViewDados (Corrigido)
 // ==========================================================
 const ViewDados = () => {
     const [formData, setFormData] = useState({ id: '', nome: '', email: '', telefone: '' });
@@ -21,7 +21,9 @@ const ViewDados = () => {
         if (usuarioStorage) {
             const usuario = JSON.parse(usuarioStorage);
             setFormData({
-                id: usuario.id || '',
+                // --- CORREÇÃO AQUI ---
+                id: usuario.cliente_id || '', // Busca 'cliente_id' ao invés de 'id'
+                // ---------------------
                 nome: usuario.nome || '',
                 email: usuario.email || '',
                 telefone: usuario.telefone || ''
@@ -127,7 +129,7 @@ const ViewDados = () => {
 };
 
 // ==========================================================
-// COMPONENTE ViewEnderecos (Completo)
+// COMPONENTE ViewEnderecos
 // ==========================================================
 const ViewEnderecos = () => {
     const [enderecos, setEnderecos] = useState([]);
@@ -163,8 +165,8 @@ const ViewEnderecos = () => {
         const usuarioStorage = localStorage.getItem('usuarioLogado');
         if (usuarioStorage) {
             const usuario = JSON.parse(usuarioStorage);
-            setUsuarioId(usuario.id);
-            buscarEnderecos(usuario.id);
+            setUsuarioId(usuario.cliente_id); // CORREÇÃO AQUI
+            buscarEnderecos(usuario.cliente_id); // CORREÇÃO AQUI
         } else {
             setIsLoading(false);
             setErro("Utilizador não encontrado. Faça login novamente.");
@@ -286,7 +288,7 @@ const ViewEnderecos = () => {
 };
 
 // ==========================================================
-// COMPONENTE ViewPagamentos (Completo)
+// COMPONENTE ViewPagamentos
 // ==========================================================
 const ViewPagamentos = () => {
     const [cartoes, setCartoes] = useState([]);
@@ -316,8 +318,8 @@ const ViewPagamentos = () => {
         const usuarioStorage = localStorage.getItem('usuarioLogado');
         if (usuarioStorage) {
             const usuario = JSON.parse(usuarioStorage);
-            setUsuarioId(usuario.id);
-            buscarCartoes(usuario.id);
+            setUsuarioId(usuario.cliente_id); 
+            buscarCartoes(usuario.cliente_id); 
         } else {
             setIsLoading(false);
             setErro("Utilizador não encontrado. Faça login novamente.");
@@ -425,7 +427,7 @@ const ViewPagamentos = () => {
 };
 
 // ==========================================================
-// INÍCIO: O NOVO COMPONENTE ViewPedidos
+// COMPONENTE ViewPedidos
 // ==========================================================
 const ViewPedidos = () => {
     const [pedidos, setPedidos] = useState([]);
@@ -433,13 +435,13 @@ const ViewPedidos = () => {
     const [erro, setErro] = useState(null);
     const [usuarioId, setUsuarioId] = useState(null);
 
-    // Função para buscar os pedidos
+    // Dentro de MinhaConta.jsx -> ViewPedidos
+
     const buscarPedidos = async (idDoUsuario) => {
         if (!idDoUsuario) return;
         setIsLoading(true);
         try {
-            // Esta é a mesma rota da sua página de Histórico
-            const response = await fetch(`http://localhost:3001/api/pedidos/cliente/${idDoUsuario}`);
+            const response = await fetch(`http://localhost:3002/api/pedidos/cliente/${idDoUsuario}`);
             if (!response.ok) throw new Error('Falha ao buscar histórico de pedidos.');
             const data = await response.json();
             setPedidos(data);
@@ -452,26 +454,23 @@ const ViewPedidos = () => {
         }
     };
 
-    // Carrega o ID do usuário e busca os pedidos ao montar
     useEffect(() => {
         const usuarioStorage = localStorage.getItem('usuarioLogado');
         if (usuarioStorage) {
             const usuario = JSON.parse(usuarioStorage);
-            setUsuarioId(usuario.id);
-            buscarPedidos(usuario.id);
+            setUsuarioId(usuario.cliente_id); 
+            buscarPedidos(usuario.cliente_id);
         } else {
             setIsLoading(false);
             setErro("Utilizador não encontrado. Faça login novamente.");
         }
     }, []);
 
-    // Função para formatar a data (ex: 08/11/2025)
     const formatarData = (dataString) => {
         const data = new Date(dataString);
         return data.toLocaleDateString('pt-BR');
     };
 
-    // Função para formatar o valor (ex: R$ 45,00)
     const formatarValor = (valor) => {
         return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     };
@@ -512,13 +511,10 @@ const ViewPedidos = () => {
     );
 };
 // ==========================================================
-// FIM: O NOVO COMPONENTE ViewPedidos
+// COMPONENTE PRINCIPAL (MinhaConta)
 // ==========================================================
-
-
-// --- Componente Principal (sem alterações) ---
 function MinhaConta() {
-    const [view, setView] = useState('dados'); // dados, enderecos, pagamentos, pedidos
+    const [view, setView] = useState('dados');
     const navigate = useNavigate();
 
     const renderView = () => {
@@ -530,7 +526,7 @@ function MinhaConta() {
             case 'pagamentos':
                 return <ViewPagamentos />;
             case 'pedidos':
-                return <ViewPedidos />; // Agora chama o componente real
+                return <ViewPedidos />;
             default:
                 return <ViewDados />;
         }
