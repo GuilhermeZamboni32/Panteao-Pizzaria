@@ -307,3 +307,75 @@
     width: 16px;
     height: 16px;
 }
+
+/* ======================================= */
+/* CARD DE RECOMENDAÇÃO IA (NOVO)          */
+/* ======================================= */
+.card-recomendacao-ia {
+    background: linear-gradient(135deg, var(--verde-claro) 0%, #e8fdf1 100%);
+    border: 1px solid var(--verde);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 2rem;
+    text-align: left;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.card-recomendacao-ia:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.icon-dionisio {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 2px solid var(--verde);
+    background-color: white;
+    padding: 4px;
+}
+
+.card-recomendacao-ia strong {
+    display: block;
+    color: var(--preto);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.card-recomendacao-ia p {
+    font-style: italic;
+    color: var(--preto);
+    margin: 0;
+    line-height: 1.4;
+    font-size: 0.95rem;
+    background: var(--verde-claro);
+    padding: 10px 14px;
+    border-radius: 8px;
+    border-left: 4px solid var(--verde);
+    position: relative;
+}
+
+/* Efeito de aspas decorativas */
+.card-recomendacao-ia p::before {
+    content: "“";
+    font-size: 2rem;
+    color: var(--verde);
+    position: absolute;
+    left: 8px;
+    top: -8px;
+}
+
+.card-recomendacao-ia p::after {
+    content: "”";
+    font-size: 2rem;
+    color: var(--verde);
+    position: absolute;
+    right: 8px;
+    bottom: -16px;
+}

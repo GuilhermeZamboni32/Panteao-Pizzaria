@@ -15,49 +15,91 @@ const URL_ESTOQUE_PRINCIPAL = "http://52.1.197.112:3000/estoque";
 const URL_MAQUINA_VIRTUAL = "http://localhost:3000/queue/items";
 const URL_ESTOQUE_VIRTUAL = "http://localhost:3000/estoque"; // Para testes
 
+// <-- 1. ADICIONE A URL DO SERVIÇO DE IA
+const URL_SERVICO_IA = 'http://localhost:5003/api/ai'; // O servidor do seu colega
+
 const TIMEOUT_MAQUINA_MS = 3000;
-// !!! IMPORTANTE: Substitua 'CHAVE_SECRETA_DA_API' pela sua chave real ou defina em .env
 const API_KEY_MAQUINA_REAL = process.env.MACHINE_API_KEY || 'CHAVE_SECRETA_DA_API';
 
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
 
+// (Aqui devem estar suas funções 'precos' e 'contarEstoque', etc.)
+// ...
 const precos = { Broto: 25, Média: 30, Grande: 45 };
 
-/**
- * Função auxiliar para contar os itens de estoque disponíveis
- * (op: null significa que a peça está disponível)
- */
 function contarEstoque(estoqueDaMaquina) {
+    // ... (sua função de contarEstoque)
     let massas = 0;
-    let molhoSalgado = 0;
-    let molhoDoce = 0;
+    let molhoSalgado = 0;
+    let molhoDoce = 0;
 
-    if (!Array.isArray(estoqueDaMaquina)) {
-        return { massas, molhoSalgado, molhoDoce };
-    }
+    if (!Array.isArray(estoqueDaMaquina)) {
+        return { massas, molhoSalgado, molhoDoce };
+    }
 
-    for (const item of estoqueDaMaquina) {
-        // Verifica se a peça está disponível (não está vinculada a um pedido 'op')
-        if (item.op === null) {
-            
-            // --- CORREÇÃO APLICADA ---
-            // A API retorna 'cor' como string (ex: "1" ou "preto").
-            // Usamos '==' para coerção de tipo (ex: "1" == 1)
-            // e verificamos explicitamente a string "preto".
-            
-            if (item.cor == 1 || item.cor === 'preto') { // 1 = Massa
-                massas++;
-            } else if (item.cor == 2) { // 2 = Molho Salgado
-                molhoSalgado++;
-            } else if (item.cor == 3) { // 3 = Molho Doce
-                molhoDoce++;
-            }
-        }
-    }
-
-    return { massas, molhoSalgado, molhoDoce };
+    for (const item of estoqueDaMaquina) {
+        if (item.op === null) {
+            if (item.cor == 1 || item.cor === 'preto') {
+                massas++;
+            } else if (item.cor == 2) { 
+                molhoSalgado++;
+            } else if (item.cor == 3) { 
+                molhoDoce++;
+            }
+        }
+    }
+    return { massas, molhoSalgado, molhoDoce };
 }
+
+
+// <-- 2. ADICIONE A FUNÇÃO QUE CHAMA A IA
+/**
+ * Pega a lista de itens e gera uma recomendação de acompanhamento
+ * USANDO O MICROSERVIÇO DE IA (porta 5003)
+ */
+async function getRecomendacaoIA(itensDoPedido) {
+    try {
+        // Cria uma lista de nomes de pizza para a IA
+        const listaItens = itensDoPedido.map(item => 
+            item.nome_item || `Pizza ${item.tamanho}`
+        ).join(', ');
+
+        // Cria o prompt
+        const prompt = `
+            Você é um sommelier da Panteão Pizzaria.
+            Seu objetivo é sugerir UMA bebida (vinho, cerveja artesanal ou refrigerante) 
+            para acompanhar o pedido do cliente.
+            
+            Seja muito breve (uma frase) e amigável.
+            Se não tiver certeza, apenas agradeça pela compra.
+            O pedido do cliente é: [${listaItens}]
+
+            Sua recomendação:
+        `;
+
+        // Chama o SEU SERVIÇO DE IA (porta 5003)
+        const responseIA = await fetch(URL_SERVICO_IA, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: prompt }) // Envia o prompt como 'message'
+        });
+
+        if (!responseIA.ok) {
+            throw new Error('O microserviço de IA (porta 5003) falhou.');
+        }
+
+        const data = await responseIA.json();
+        
+        // O servidor do seu colega retorna { reply: "..." }
+        return data.reply; 
+
+    } catch (err) {
+        console.error("Erro ao chamar o microserviço de IA:", err.message);
+        return null; // Retorna null se a IA falhar
+    }
+}
+
 
 // --- ROTA POST /api/pedidos ---
 app.post('/api/pedidos', async (req, res) => {
@@ -147,8 +189,19 @@ app.post('/api/pedidos', async (req, res) => {
         await client.query('COMMIT');
         console.log("   ✅ Transação banco concluída (COMMIT).");
 
+        
+        console.log("IA: Gerando recomendação de acompanhamento...");
+        const recomendacao = await getRecomendacaoIA(pedido.itens); 
+
         const idsValidosDaMaquina = respostasDaMaquina.filter(r => r && r.id).map(r => r.id);
-        res.status(201).json({ message: "Pedido salvo!", pedido: pedidoSalvo, idsDaMaquina: idsValidosDaMaquina });
+        
+        // Adiciona a 'recomendacao' à resposta JSON
+        res.status(201).json({ 
+            message: "Pedido salvo!", 
+            pedido: pedidoSalvo, 
+            idsDaMaquina: idsValidosDaMaquina,
+            recomendacao: recomendacao // <-- Nova chave adicionada
+        });
 
     } catch (err) {
         await client.query('ROLLBACK');
@@ -159,7 +212,6 @@ app.post('/api/pedidos', async (req, res) => {
         console.log("\n--- ✅ PROCESSAMENTO PEDIDO CONCLUÍDO ✅ ---\n");
     }
 });
-
 // --- ROTA GET /api/pedidos/cliente/:clienteId ---
 app.get('/api/pedidos/cliente/:clienteId', async (req, res) => {
     const { clienteId } = req.params;

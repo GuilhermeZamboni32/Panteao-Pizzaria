@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./PedidosEmAndamento.css";
 import Header from "../../components/pastaheader/Header";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const icons = {
   sucesso: <img src="/icons/sucesso-preto.png" alt="Pronto" className="icone-status"/>,
@@ -30,11 +30,15 @@ const gerarNomePedido = (pedido) => {
 // ----------------------------------------------------
 
 function PedidosEmAndamento() {
-    const [pedidos, setPedidos] = useState([]); // Guarda { id, status, slot, nome }
-    const intervalRef = useRef(null);
-    const navigate = useNavigate();
-    const removalTimersRef = useRef(new Map());
-    const [carregamentoInicialCompleto, setCarregamentoInicialCompleto] = useState(false);
+    const [pedidos, setPedidos] = useState([]); // Guarda { id, status, slot, nome }
+    const intervalRef = useRef(null);
+    const navigate = useNavigate();
+    const removalTimersRef = useRef(new Map());
+    const [carregamentoInicialCompleto, setCarregamentoInicialCompleto] = useState(false);
+
+
+    const location = useLocation();
+    const recomendacaoIA = location.state?.recomendacao;
 
     // Determina classe CSS e ícone baseado no status
     const getStatusInfo = (status) => {
@@ -205,6 +209,16 @@ function PedidosEmAndamento() {
                         Voltar ao Cardápio
                     </button>
                     <h1 className="titulo-pedidos">Pedidos em Andamento</h1>
+                    {recomendacaoIA && (
+                        <div className="card-recomendacao-ia">
+                            <img src="/icons/dionisio-2.png" className="icon-dionisio" alt="Ícone do Dionísio" />
+                            <div className="texto-recomendacao">
+                            <strong>Sugestão do Dionísio:</strong>
+                            <p>{recomendacaoIA}</p>
+                            </div>
+                        </div>
+                    )}
+
 
                     {pedidos.length === 0 && carregamentoInicialCompleto ? (
                        <div className="sem-pedidos">
