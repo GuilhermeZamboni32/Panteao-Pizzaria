@@ -51,8 +51,8 @@ CREATE TABLE cartoes_salvos (
     cliente_id UUID NOT NULL REFERENCES clientes(cliente_id) ON DELETE CASCADE,
     gateway_token VARCHAR(255) NOT NULL, -- O 'tok_...' que o gateway (Stripe, etc.) lhe deu
     bandeira VARCHAR(50) NOT NULL,       -- Ex: "Visa"
-    ultimos_4_digitos VARCHAR(4) NOT NULL -- Ex: "1S234"
-    validade_cartao VARCHAR(7);
+    ultimos_4_digitos VARCHAR(4) NOT NULL ,-- Ex: "1S234"
+    validade_cartao VARCHAR(7)
 );
 
 ````
