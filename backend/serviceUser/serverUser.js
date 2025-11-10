@@ -1,4 +1,4 @@
-// IMPORTANTE: Adicione esta linha no TOPO do arquivo para carregar as variáveis de ambiente
+
 import 'dotenv/config';
 
 import express from 'express';
@@ -13,8 +13,9 @@ const PORT = process.env.PORT || 3001;
 app.use(cors({ origin: 'http://localhost:5173' })); 
 app.use(express.json());
 
-// --- ROTAS DE AUTENTICAÇÃO ---
 
+
+// --- ROTAS DE AUTENTICAÇÃO ---
 // ROTA DE LOGIN
 app.post('/api/login', async (req, res) => {
     const { email, senha } = req.body;

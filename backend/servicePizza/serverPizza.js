@@ -478,7 +478,6 @@ app.delete('/api/estoque/:id', async (req, res) => {
     }
 });
 
-
 // --- ROTA GET /api/estoque/detalhes (Lista Completa) ---
 app.get('/api/estoque/detalhes', async (req, res) => {
     console.log(`[PROXY ESTOQUE DETALHES] Recebida consulta de detalhes...`); // Log diferente
@@ -526,8 +525,6 @@ app.get('/api/estoque/detalhes', async (req, res) => {
         }
     }
 });
-
-
 // Inicializa o servidor
 app.listen(PORT, () => {
     console.log(`✅ Servidor Pizzaria rodando na porta ${PORT}`);

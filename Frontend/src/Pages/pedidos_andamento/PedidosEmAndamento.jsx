@@ -27,10 +27,10 @@ const gerarNomePedido = (pedido) => {
     }
     return `Combo com ${pedido.itens.length} pizzas`;
 };
-// ----------------------------------------------------
+
 
 function PedidosEmAndamento() {
-    const [pedidos, setPedidos] = useState([]); // Guarda { id, status, slot, nome }
+    const [pedidos, setPedidos] = useState([]);
     const intervalRef = useRef(null);
     const navigate = useNavigate();
     const removalTimersRef = useRef(new Map());
@@ -40,7 +40,6 @@ function PedidosEmAndamento() {
     const location = useLocation();
     const recomendacaoIA = location.state?.recomendacao;
 
-    // Determina classe CSS e ícone baseado no status
     const getStatusInfo = (status) => {
         if (typeof status !== 'string') {
              console.warn("getStatusInfo recebeu status inválido:", status);
