@@ -214,7 +214,7 @@ function Contato() {
             <Header />
 
             <section className="secao-equipe">
-                <h1 className="titulo-secao">Sobre a nossa Equipe</h1>
+                
                 <div className="carrossel-container">
                     <button className="seta" onClick={anterior}>&lt;</button>
                     <div className="carrossel-cards">
