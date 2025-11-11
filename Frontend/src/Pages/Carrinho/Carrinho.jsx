@@ -301,8 +301,8 @@ function Carrinho() {
                                         </div>
                                         <div className="controle-produto">
                                             <div className="seletor-quantidade">
-                                                <button onClick={() => removerItem(pizza.id)}>Remover</button>
-                                                <button onClick={() => clonarItem(pizza)}>+</button>
+                                                <button className="btn-remover-pizza" onClick={() => removerItem(pizza.id)}>Remover</button>
+                                                <button className="btn-adicionar-pizza" onClick={() => clonarItem(pizza)}>+</button>
                                             </div>
                                             <p className="preco-produto">
                                                 R$ {(pizza.origem === 'historico' ? pizza.preco : (precos[pizza.tamanho] || 0)).toFixed(2)}
