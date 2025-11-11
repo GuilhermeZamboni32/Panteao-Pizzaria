@@ -3,195 +3,278 @@
 /////////////////////////////////////////////////////////////////////*/
 
 :root {
-  /* Cores principais */
+  /* Paleta principal */
   --vermelho: #BC4749;
   --bege: #E7C8A7;
-  --branco: #F2E8CF; 
+  --branco: #F2E8CF;
   --verde: #6A994E;
   --preto: #000000;
 
-  /* Cores para detalhes */
+  /* Cores de apoio */
   --cinza: #555555;
   --azul: #096DD9;
-  --azul-claro: #1175e788;
   --amarelo: #d4b506;
   --amarelo-claro: #d8c86c;
   --vermelho-claro: #cc7071;
   --verde-claro: #91c075;
+  --sombra-suave: rgba(0, 0, 0, 0.1);
 }
 
 /*/////////////////////////////////////////////////////////////////////
-                        Estrutura base
+                        Estrutura geral
 /////////////////////////////////////////////////////////////////////*/
 
+.pagina-cria-pizza {
+  background-color: var(--branco);
+  min-height: 100vh;
+}
+
 .container-cria-pizza {
-  max-width: 1300px;
+  max-width: 1200px;
   margin: 30px auto;
-  padding: 0 30px;
+  padding: 0 20px 60px;
   display: flex;
   flex-direction: column;
   gap: 40px;
 }
 
-.container-cria-pizza-topo,
-.container-cria-pizza-meio,
-.container-cria-pizza-baixo {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
-  justify-content: center;
-}
-
-.secao-tamanho,
-.secao-molho,
-.secao-categorias,
-.secao-ingredientes-especificos,
-.resumo-pizza {
+.secao {
   background-color: var(--bege);
   border-radius: 12px;
-  box-shadow: 0 4px 10px var(--sombra-suave, rgba(0, 0, 0, 0.08));
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 10px var(--sombra-suave);
+  padding: 20px;
+  transition: all 0.3s ease;
 }
 
-.secao-tamanho:hover,
-.secao-molho:hover,
-.secao-categorias:hover,
-.secao-ingredientes-especificos:hover,
-.resumo-pizza:hover {
-  box-shadow: 0 6px 14px var(--sombra-suave, rgba(0, 0, 0, 0.12));
+.secao:hover {
   transform: translateY(-3px);
+  box-shadow: 0 6px 15px var(--sombra-suave);
+}
+
+.secao h2, .secao h3 {
+  margin-bottom: 16px;
+  color: var(--preto);
+  border-bottom: 2px solid var(--verde);
+  display: inline-block;
 }
 
 /*/////////////////////////////////////////////////////////////////////
-                                Cartões com efeito
-//////////////////////////////////////////////////////////////////////*/
+                        Barra de progresso
+/////////////////////////////////////////////////////////////////////*/
+
+.barra-progresso {
+  width: 100%;
+  height: 12px;
+  background-color: var(--branco);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
+}
+
+.barra-progresso-preenchida {
+  height: 100%;
+  background: linear-gradient(90deg, var(--verde), var(--verde-claro));
+  transition: width 0.4s ease;
+}
+
+/*/////////////////////////////////////////////////////////////////////
+                        Cartões e botões
+/////////////////////////////////////////////////////////////////////*/
 
 .card-tamanho,
 .card-molho,
-.card-categoria,
-.card-ingrediente {
-  transition: all 0.2s ease;
-}
-
-.card-tamanho:active,
-.card-molho:active,
-.card-categoria:active,
-.card-ingrediente:active {
-  transform: scale(0.97);
-}
-
-/*/////////////////////////////////////////////////////////////////////
-                                Ingredientes
-//////////////////////////////////////////////////////////////////////*/
-
-.card-ingrediente {
-  position: relative;
+.card-categoria {
   background-color: var(--branco);
   border: 2px solid transparent;
   border-radius: 10px;
+  padding: 16px;
   cursor: pointer;
+  text-align: center;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.card-tamanho:hover,
+.card-molho:hover,
+.card-categoria:hover {
+  background-color: var(--verde-claro);
+}
+
+.card-tamanho.selecionado,
+.card-molho.selecionado,
+.card-categoria.selecionado {
+  border-color: var(--verde);
+  background-color: var(--verde-claro);
+}
+
+
+.card-tamanho p {
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+  color: var(--cinza);
+}
+
+.opcoes {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+/*/////////////////////////////////////////////////////////////////////
+                        Categorias e Ingredientes
+/////////////////////////////////////////////////////////////////////*/
+
+.opcoes-categorias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.icone-categoria {
+  width: 35px;
+  height: 35px;
+  display: block;
+  margin: 0 auto 8px;
+}
+
+.opcoes-ingredientes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  width: 100%;
+}
+
+/*/////////////////////////////////////////////////////////////////////
+                        Card de Ingrediente
+/////////////////////////////////////////////////////////////////////*/
+
+.card-ingrediente {
+  display: flex;
   align-items: center;
-  padding: 14px 16px;
-  min-height: 90px;
-  overflow: hidden;
+  justify-content: space-between;
+  background-color: var(--branco);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  padding: 10px 16px;
+  min-height: 80px;
+  transition: all 0.25s ease;
 }
 
 .card-ingrediente.selecionado {
-  background-color: var(--verde-claro);
   border-color: var(--verde);
+  background-color: var(--branco);
+}
+
+.card-ingrediente:hover {
+  border-color: var(--verde);
+  background-color: var(--verde-claro);
 }
 
 .info-ingrediente {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 500;
   color: var(--preto);
+  font-weight: 500;
 }
 
 .icone-ingrediente {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
 }
 
-.botao-remover-ingrediente {
-  background-color: var(--vermelho-claro);
-  color: var(--branco);
-  font-size: 18px;
-  font-weight: bold;
-  border: none;
-  border-radius: 50%;
-  width: 26px;
-  height: 26px;
+.controles-ingrediente {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+}
+
+.botao-controle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--verde);
+  color: var(--branco);
+  font-weight: bold;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.botao-remover-ingrediente:hover {
-  background-color: var(--vermelho);
+.botao-controle:hover:not(:disabled) {
+  background-color: var(--verde-claro);
   transform: scale(1.1);
 }
 
+.botao-controle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.contagem-ingrediente {
+  font-weight: bold;
+  color: var(--preto);
+  min-width: 20px;
+  text-align: center;
+}
+
 /*/////////////////////////////////////////////////////////////////////
-                        Seção Resumo da Pizza
-//////////////////////////////////////////////////////////////////////*/
+                        Resumo da Pizza
+/////////////////////////////////////////////////////////////////////*/
 
 .resumo-pizza {
-  background-color: var(--bege);
   border: 2px solid var(--amarelo-claro);
+  background-color: var(--bege);
   box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
-  border-radius: 10px;
-  padding: 16px;
 }
 
-.resumo-pizza h3 {
-  text-align: left;
-  border-bottom: 2px solid var(--verde);
-  padding-bottom: 5px;
-  color: var(--preto);
-}
-
-.lista-ingredientes {
+.resumo-pizza ul {
   background-color: var(--branco);
-  border: 1px solid var(--bege);
-  padding: 8px;
+  padding: 10px;
   border-radius: 8px;
-  max-height: 220px;
+  list-style: none;
+  max-height: 240px;
   overflow-y: auto;
+  margin-top: 10px;
+}
+
+.resumo-pizza li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
   color: var(--cinza);
+  font-size: 0.95rem;
 }
 
 .icone-ingrediente-resumo {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  margin-right: 8px;
+  width: 22px;
+  height: 22px;
+  margin-right: 10px;
 }
 
 /*/////////////////////////////////////////////////////////////////////
-                     Botão de pagamento
-//////////////////////////////////////////////////////////////////////*/
+                        Botão de Pagamento
+/////////////////////////////////////////////////////////////////////*/
 
 .botao-pagamento {
-  flex: 1;
+  margin-top: 16px;
+  width: 100%;
   background: linear-gradient(135deg, var(--verde), var(--verde-claro));
   color: var(--branco);
   border: none;
   border-radius: 12px;
-  padding: 18px;
+  padding: 16px;
   cursor: pointer;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  letter-spacing: 0.5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 12px;
   transition: all 0.3s ease;
 }
 
@@ -210,21 +293,59 @@
 }
 
 /*/////////////////////////////////////////////////////////////////////
-                    Responsividade
-//////////////////////////////////////////////////////////////////////*/
+                        Navegação entre Etapas
+/////////////////////////////////////////////////////////////////////*/
+
+.navegacao-etapas {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.botao-voltar,
+.botao-proximo {
+  flex: 1;
+  background-color: var(--vermelho);
+  color: var(--branco);
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.botao-proximo {
+  background-color: var(--verde);
+}
+
+.botao-voltar:hover {
+  background-color: var(--vermelho-claro);
+  transform: translateY(-1px);
+}
+
+.botao-proximo:hover {
+  background-color: var(--verde-claro);
+  transform: translateY(-1px);
+}
+
+/*/////////////////////////////////////////////////////////////////////
+                        Responsividade
+/////////////////////////////////////////////////////////////////////*/
 
 @media (max-width: 900px) {
-  .container-cria-pizza-topo,
-  .container-cria-pizza-meio,
-  .container-cria-pizza-baixo {
-    flex-direction: column;
+  .opcoes-ingredientes {
+    grid-template-columns: repeat(1, 1fr);
   }
 
   .opcoes-categorias {
-    grid-template-columns: repeat(2, 1fr);
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
-  .opcoes-ingredientes {
-    grid-template-columns: repeat(1, 1fr);
+  .card-categoria {
+    width: 45%;
   }
 }
