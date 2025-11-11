@@ -7,7 +7,6 @@ import pool from './db.js';
 import bcrypt from 'bcryptjs';
 
 
-
 const app = express();
 // Usa a porta do ambiente ou 3001 como padrão
 const PORT = process.env.PORT || 3001;

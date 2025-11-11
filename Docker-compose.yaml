@@ -1,19 +1,4 @@
 services:
-  register-service:
-    build:
-      context: ./backend
-      dockerfile: serviceUser/Dockerfile
-    ports:
-      - "3001:3001"
-    restart: always
-    depends_on:
-      - postgres
-    environment:
-      DB_HOST: postgres
-      DB_USER: senai
-      DB_PASSWORD: senai
-      DB_NAME: Panteao-Pizzaria
-
   pizza-service:
     build:
       context: ./backend
@@ -38,10 +23,10 @@ services:
       - "3004:3004"
     restart: always
 
-  login-service:
+  user-service:
     build:
       context: ./backend
-      dockerfile: serviceLogin/Dockerfile
+      dockerfile: serviceuser/Dockerfile
     ports:
       - "3003:3003"
     restart: always
