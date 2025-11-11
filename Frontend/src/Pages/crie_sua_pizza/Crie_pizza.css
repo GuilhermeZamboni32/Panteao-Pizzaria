@@ -1,454 +1,230 @@
-.crie-pizza-container {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  padding: 20px;
-  background-color: #f5f1e1;
-  color: #222;
+/*/////////////////////////////////////////////////////////////////////
+                        Layout Crie Sua Pizza
+/////////////////////////////////////////////////////////////////////*/
+
+:root {
+  /* Cores principais */
+  --vermelho: #BC4749;
+  --bege: #E7C8A7;
+  --branco: #F2E8CF; 
+  --verde: #6A994E;
+  --preto: #000000;
+
+  /* Cores para detalhes */
+  --cinza: #555555;
+  --azul: #096DD9;
+  --azul-claro: #1175e788;
+  --amarelo: #d4b506;
+  --amarelo-claro: #d8c86c;
+  --vermelho-claro: #cc7071;
+  --verde-claro: #91c075;
 }
 
-.coluna-esquerda, 
-.coluna-direita {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+/*/////////////////////////////////////////////////////////////////////
+                        Estrutura base
+/////////////////////////////////////////////////////////////////////*/
 
-.secao-container {
-  background: #e8cdb5;
-  padding: 15px;
-  border-radius: 6px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.secao-titulo {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 12px;
-}
-
-.opcoes-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.card-opcao {
-  background: #f6f1e3;
-  border: 1px solid #d4c5b3;
-  border-radius: 6px;
-  padding: 10px 14px;
-  text-align: center;
-  flex: 1;
-  min-width: 90px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.card-opcao:hover {
-  background: #efe6d9;
-}
-
-.card-opcao.selecionado {
-  background: #f7bfb3;
-  border: 2px solid #b44434;
-}
-
-.categorias .card-opcao {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  justify-content: center;
-}
-
-.icone-categoria {
-  width: 22px;
-  height: 22px;
-}
-
-.ingredientes .card-opcao {
-  flex: 1 1 40%;
-  font-weight: 500;
-}
-
-.resumo-e-pagamento-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.resumo-container {
-  background: #f7efe1;
-  border-radius: 6px;
-  padding: 15px;
-}
-
-.lista-ingredientes {
-  background-color: var(--branco);
-  max-height: 200px;
-  overflow-y: auto;
-  margin-top: 8px;
-  border-radius: 5px;
-}
-
-.resumo-detalhes ul {
-  list-style: none;
-  margin-top: 8px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 4px;
-}
-
-.resumo-detalhes li {
-  background: #e8cdb5;
-  padding: 4px 6px;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.pagamento-container {
-  background: #4caf50;
-  color: white;
-  padding: 15px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s;
-}
-
-.pagamento-container:hover {
-  background: #43a047;
-}
-
-.pagamento-icone {
-  width: 28px;
-  height: 28px;
-}
-
-.item-ingrediente-resumo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 5px;
-  border-bottom: 1px solid #f0f0f0;
-  font-size: 15px;
-}
-
-.item-ingrediente-resumo:last-child {
-  border-bottom: none;
-}
-
-.botao-remover-ingrediente {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-color: #ffe3e3;
-  color: #c0392b;
-  font-size: 20px;
-  font-weight: bold;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
-  margin-left: 10px;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  flex-shrink: 0; /* Impede que o botão diminua de tamanho */
-}
-
-.botao-remover-ingrediente:hover {
-  background-color: #f8caca;
-  color: #a12b1e;
-}
-
-.botao-remover-ingrediente:active {
-  transform: scale(0.92);
-}
-
-.icone-ingrediente {
-  width: 22px;
-  height: 22px;
-  margin-right: 6px;
-}
-
-.icone-ingrediente-resumo {
-  width: 18px;
-  height: 18px;
-  margin-right: 6px;
-  vertical-align: middle;
-}
-
-/* Cor de fundo da página inteira */
-.pagina-cria-pizza {
-  background-color: var(--branco);
-  padding-bottom: 50px;
-}
-
-/* Container principal que centraliza o conteúdo */
 .container-cria-pizza {
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 0 20px;
+  max-width: 1300px;
+  margin: 30px auto;
+  padding: 0 30px;
   display: flex;
   flex-direction: column;
-  gap: 30px; /* Espaço entre as seções topo, meio e baixo */
+  gap: 40px;
 }
 
-/* Títulos das seções */
-h3 {
-  font-size: 1.5rem;
-  color: var(--preto);
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-/* ======================================= */
-/* CONTAINERS PRINCIPAIS (FLEXBOX)     */
-/* ======================================= */
-
-/* Containers que organizam os elementos lado a lado */
 .container-cria-pizza-topo,
 .container-cria-pizza-meio,
 .container-cria-pizza-baixo {
   display: flex;
-  gap: 30px; /* Espaço entre os cards dentro de cada seção */
-  width: 100%;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
 }
-
-/* ======================================= */
-/* SEÇÃO TOPO: TAMANHO E MOLHO       */
-/* ======================================= */
 
 .secao-tamanho,
-.secao-molho {
-  background-color: var(--bege);
-  padding: 20px;
-  border-radius: 12px;
-  flex: 1; /* Faz com que ambos ocupem o mesmo espaço */
-}
-
-.opcoes {
-  display: flex;
-  gap: 15px;
-}
-
-/* Card de Tamanho */
-.card-tamanho {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 15px;
-  background-color: var(--branco);
-  border: 2px solid transparent; /* Borda transparente para não "pular" ao selecionar */
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.tamanho-cm {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.tamanho-nome {
-  font-size: 1.1rem;
-  margin: 5px 0;
-}
-
-.tamanho-limite {
-  font-size: 0.8rem;
-  color: #555;
-  text-align: center;
-}
-
-/* Card de Molho */
-.card-molho {
-  flex: 1;
-  padding: 20px;
-  font-size: 1rem;
-  font-weight: bold;
-  background-color: var(--branco);
-  border: 2px solid transparent;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.tipo-molho {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: normal;
-  color: #555;
-  margin-top: 5px;
-}
-
-/* ======================================= */
-/* SEÇÃO MEIO: INGREDIENTES       */
-/* ======================================= */
-
+.secao-molho,
 .secao-categorias,
-.secao-ingredientes-especificos {
+.secao-ingredientes-especificos,
+.resumo-pizza {
   background-color: var(--bege);
-  padding: 20px;
   border-radius: 12px;
+  box-shadow: 0 4px 10px var(--sombra-suave, rgba(0, 0, 0, 0.08));
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.secao-categorias {
-  flex: 2; /* Mais espaço para as categorias */
-}
-.secao-ingredientes-especificos {
-  flex: 1.5; /* Menos espaço para os ingredientes */
-}
-
-.opcoes-categorias,
-.opcoes-ingredientes {
-  display: grid; /* Grid para organizar os botões */
-  gap: 15px;
+.secao-tamanho:hover,
+.secao-molho:hover,
+.secao-categorias:hover,
+.secao-ingredientes-especificos:hover,
+.resumo-pizza:hover {
+  box-shadow: 0 6px 14px var(--sombra-suave, rgba(0, 0, 0, 0.12));
+  transform: translateY(-3px);
 }
 
-.opcoes-categorias {
-  grid-template-columns: repeat(3, 1fr); /* 3 colunas */
-}
-.opcoes-ingredientes {
-  grid-template-columns: repeat(2, 1fr); /* 2 colunas */
-}
+/*/////////////////////////////////////////////////////////////////////
+                                Cartões com efeito
+//////////////////////////////////////////////////////////////////////*/
 
-/* Card de Categoria */
-.card-categoria {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 15px;
-  background-color: var(--branco);
-  border: 2px solid transparent;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  font-size: 1rem;
-}
-
-.icone-categoria {
-  width: 40px;
-  height: 40px;
-}
-
-/* =======================================
-  == INÍCIO DAS REGRAS MODIFICADAS/NOVAS ==
-  =======================================
-*/
-
-/* Card de Ingrediente (MODIFICADO) */
+.card-tamanho,
+.card-molho,
+.card-categoria,
 .card-ingrediente {
-  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.card-tamanho:active,
+.card-molho:active,
+.card-categoria:active,
+.card-ingrediente:active {
+  transform: scale(0.97);
+}
+
+/*/////////////////////////////////////////////////////////////////////
+                                Ingredientes
+//////////////////////////////////////////////////////////////////////*/
+
+.card-ingrediente {
+  position: relative;
   background-color: var(--branco);
   border: 2px solid transparent;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  height: 100px;
-
-  
-  /* ADICIONADO: Para alinhar o nome e o botão de remover */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px; /* Padding ajustado */
+  padding: 14px 16px;
+  min-height: 90px;
+  overflow: hidden;
 }
 
-/* (NOVA REGRA) */
-/* Agrupa o ícone e o nome do ingrediente */
+.card-ingrediente.selecionado {
+  background-color: var(--verde-claro);
+  border-color: var(--verde);
+}
+
 .info-ingrediente {
   display: flex;
   align-items: center;
-  gap: 8px; /* Espaço entre o ícone e o texto */
-  /* Impede que o texto quebre e vá para baixo do ícone */
-  white-space: nowrap; 
-  overflow: hidden;
-  text-overflow: ellipsis;
+  gap: 10px;
+  font-weight: 500;
+  color: var(--preto);
 }
 
-/* =======================================
-  == FIM DAS REGRAS MODIFICADAS/NOVAS ==
-  =======================================
-*/
-
-
-/* ======================================= */
-/* SEÇÃO BAIXO: RESUMO           */
-/* ======================================= */
-
-.resumo-pizza {
-  flex: 3; /* Ocupa 3/4 do espaço */
-  background-color: var(--bege);
-  padding: 20px 30px;
-  border-radius: 12px;
+.icone-ingrediente {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
 }
 
-.resumo-pizza p {
-  margin-bottom: 8px;
-  font-size: 1.1rem;
-}
-
-.resumo-pizza ul {
-  list-style-type: none; /* Remove as bolinhas da lista */
-  padding-left: 15px;
-}
-
-.resumo-pizza li {
-  font-size: 1rem;
-  color: #333;
-}
-
-.botao-pagamento {
-  flex: 1; /* Ocupa 1/4 do espaço */
+.botao-remover-ingrediente {
+  background-color: var(--vermelho-claro);
+  color: var(--branco);
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  background-color: var(--verde);
+  transition: all 0.2s ease;
+}
+
+.botao-remover-ingrediente:hover {
+  background-color: var(--vermelho);
+  transform: scale(1.1);
+}
+
+/*/////////////////////////////////////////////////////////////////////
+                        Seção Resumo da Pizza
+//////////////////////////////////////////////////////////////////////*/
+
+.resumo-pizza {
+  background-color: var(--bege);
+  border: 2px solid var(--amarelo-claro);
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.resumo-pizza h3 {
+  text-align: left;
+  border-bottom: 2px solid var(--verde);
+  padding-bottom: 5px;
+  color: var(--preto);
+}
+
+.lista-ingredientes {
+  background-color: var(--branco);
+  border: 1px solid var(--bege);
+  padding: 8px;
+  border-radius: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  color: var(--cinza);
+}
+
+.icone-ingrediente-resumo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  margin-right: 8px;
+}
+
+/*/////////////////////////////////////////////////////////////////////
+                     Botão de pagamento
+//////////////////////////////////////////////////////////////////////*/
+
+.botao-pagamento {
+  flex: 1;
+  background: linear-gradient(135deg, var(--verde), var(--verde-claro));
   color: var(--branco);
   border: none;
   border-radius: 12px;
+  padding: 18px;
   cursor: pointer;
   font-size: 1.3rem;
-  font-weight: bold;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.pagamento-icone {
-  width: 60px;
-  filter: invert(1); /* Deixa o ícone preto ficar branco */
-}
-
-
-/* ======================================= */
-/* ESTADOS DE HOVER E SELEÇÃO   */
-/* ======================================= */
-
-/* Efeito de hover (passar o mouse) para todos os botões */
-.card-tamanho:hover,
-.card-molho:hover,
-.card-categoria:hover,
-.card-ingrediente:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  transition: all 0.3s ease;
 }
 
 .botao-pagamento:hover {
-  background-color: #588340; /* Um verde um pouco mais escuro */
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, var(--verde-claro), var(--verde));
 }
 
-/* Estilo para QUALQUER botão que esteja selecionado */
-.selecionado {
-  border-color: var(--verde);
-  background-color: #dff0d8; /* Um branco levemente esverdeado */
+.pagamento-icone {
+  width: 30px;
+  transition: transform 0.3s ease;
+}
+
+.botao-pagamento:hover .pagamento-icone {
+  transform: rotate(10deg);
+}
+
+/*/////////////////////////////////////////////////////////////////////
+                    Responsividade
+//////////////////////////////////////////////////////////////////////*/
+
+@media (max-width: 900px) {
+  .container-cria-pizza-topo,
+  .container-cria-pizza-meio,
+  .container-cria-pizza-baixo {
+    flex-direction: column;
+  }
+
+  .opcoes-categorias {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .opcoes-ingredientes {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
