@@ -1,10 +1,8 @@
 import 'dotenv/config';
-
 import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
 import pool from '../serviceDatabase/db.js';
-import traduzirPizzaParaCaixinha from './traduzirPizzaParaCaixinha.js';
 
 const app = express();
 const PORT = 3002;
@@ -145,7 +143,19 @@ app.post('/api/pedidos', async (req, res) => {
         console.log("\n[PASSO 4/4] 🚀 Enviando para produção...");
         const promessasDeEnvio = pedido.itens.map(async (item, index) => {
             const itemSalvo = itensSalvos[index];
-            const payloadTraduzido = traduzirPizzaParaCaixinha(item);
+
+            // Chama o microserviço de tradução
+            const tradutorResponse = await fetch('http://localhost:3004/api/traduzir', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(item)
+            });
+
+            if (!tradutorResponse.ok) {
+                throw new Error('Falha no microserviço de tradução');
+            }
+
+            const payloadTraduzido = await tradutorResponse.json();
             payloadTraduzido.payload.orderId = pedidoSalvo.pedido_id;
             payloadTraduzido.payload.itemId = itemSalvo.item_id;
             payloadTraduzido.payload.nomeItem = itemSalvo.nome_item;

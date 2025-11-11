@@ -16,7 +16,7 @@ function traduzirPizzaParaCaixinha(pizza) {
         "Molho de Tomate": 2,
         "Molho Doce": 3
     };
-    
+
     const categoriaMap = {
         Carnes: 1,
         Frutas: 2,
@@ -25,7 +25,7 @@ function traduzirPizzaParaCaixinha(pizza) {
         Complementos: 5,
         Chocolates: 6
     };
-    
+
     const padraoMap = {
         Carnes: { "Bacon": "0", "Frango": "1", "Calabresa": "2", "Camarão": "3" },
         Frutas: { "Uva": "0", "Morango": "1", "Banana": "2", "Cereja": "3" },

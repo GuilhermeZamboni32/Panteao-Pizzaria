@@ -1,0 +1,18 @@
+
+FROM node:18-alpine
+
+
+WORKDIR /app
+
+
+COPY . .
+
+
+WORKDIR /app/serviceTranslator
+
+
+RUN npm install
+
+EXPOSE 3004
+
+CMD ["node", "servertranslator.js"]

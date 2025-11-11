@@ -10,10 +10,10 @@ COPY . .
 RUN npm ci
 
 
-WORKDIR /app/serviceDatabase
+WORKDIR /app/servicebot.ia
 
 
 EXPOSE 5003
 
 
-CMD ["node", "db"] 
+CMD ["node", "serverai"] 
