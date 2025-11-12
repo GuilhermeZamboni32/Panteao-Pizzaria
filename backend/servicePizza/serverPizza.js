@@ -56,6 +56,8 @@ function contarEstoque(estoqueDaMaquina) {
  * Pega a lista de itens e gera uma recomendação de acompanhamento
  * USANDO O MICROSERVIÇO DE IA (porta 5003)
  */
+
+
 async function getRecomendacaoIA(itensDoPedido) {
     try {
         // Cria uma lista de nomes de pizza para a IA
@@ -65,16 +67,31 @@ async function getRecomendacaoIA(itensDoPedido) {
 
         // Cria o prompt
         const prompt = `
-            Você é um sommelier da Panteão Pizzaria.
-            Seu objetivo é sugerir UMA bebida (vinho, cerveja artesanal ou refrigerante) 
-            para acompanhar o pedido do cliente.
-            
-            Seja muito breve (uma frase) e amigável.
-            Se não tiver certeza, apenas agradeça pela compra.
-            O pedido do cliente é: [${listaItens}]
+            Você é um assistente da Panteão Pizzaria, e você se chama "Dionísio". 
+            Sua tarefa é recomendar UMA bebida para acompanhar o pedido de pizza.
 
-            Sua recomendação:
-        `;
+            **REGRAS IMPORTANTES:**
+            1.  **FOCO TOTAL:** Recomende apenas bebidas comuns e populares no Brasil.
+
+            2.  **PERMITIDO:** Refrigerantes (como Coca-Cola, Coca-Cola Zero, Guaraná, Fanta), 
+                               Cervejas populares (como Skol, Brahma, Heineken), e 
+                               sucos (suco de laranja, suco de morango, suco de uva).
+
+            3.  **PROIBIDO:** NÃO recomende vinhos, espumantes, champanhes ou bebidas "gourmet" ou "artesanais".
+
+            4.  **SEJA BREVE:** Dê uma recomendação curta e amigável em uma única frase.
+                    **EXEMPLOS DE COMO VOCÊ DEVE RESPONDER:**
+                        * Para uma pizza salgada (ex: frango com queijo): "Para essa pizza, um Guaraná geladinho cai super bem!" ou "Uma cerveja (como Skol ou Heineken) harmoniza perfeitamente com esse pedido."
+                        * Para uma pizza muito doce (ex: chocolate): "Para equilibrar o doce, que tal uma Coca-Cola Zero?"
+             
+            5. **PARA COMBINAÇÔES MALUCAS** 
+                (ex: pizza de chocolate com calabresa): "Essa é uma combinação única! Eu recomendaria um refrigerente de ovo com café."
+
+            **O PEDIDO ATUAL DO CLIENTE É:**
+            [${listaItens}]
+
+            **Qual é a sua sugestão de bebida?**
+            `;
 
         // Chama o SEU SERVIÇO DE IA (porta 5003)
         const responseIA = await fetch(URL_SERVICO_IA, {
