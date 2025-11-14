@@ -27,29 +27,41 @@ app.use(express.json());
 const precos = { Broto: 25, Média: 30, Grande: 45 };
 
 function contarEstoque(estoqueDaMaquina) {
-    // ... (sua função de contarEstoque)
-    let massas = 0;
+    let massas = 0;
     let molhoSalgado = 0;
     let molhoDoce = 0;
 
+    // Log 1: O que a função recebeu?
+    console.log("[contarEstoque] Dados recebidos para contagem:", JSON.stringify(estoqueDaMaquina));
+
     if (!Array.isArray(estoqueDaMaquina)) {
+        console.error("[contarEstoque] ERRO: A entrada não era um array. Retornando 0.");
         return { massas, molhoSalgado, molhoDoce };
     }
 
     for (const item of estoqueDaMaquina) {
-        if (item.op === null) {
-            if (item.cor == 1 || item.cor === 'preto') {
-                massas++;
-            } else if (item.cor == 2) { 
-                molhoSalgado++;
-            } else if (item.cor == 3) { 
-                molhoDoce++;
-            }
+        
+        // A mágica acontece aqui:
+        // 'item.cor == 1' checa tanto o número 1 quanto a string "1"
+        // 'item.cor === 'preto'' checa a string "preto"
+
+        if (item.cor == 1 || item.cor === 'preto') {
+            massas++;
+        
+        } else if (item.cor == 2 || item.cor === 'vermelho') { 
+            molhoSalgado++;
+
+        } else if (item.cor == 3 || item.cor === 'azul') { 
+            molhoDoce++;
         }
     }
-    return { massas, molhoSalgado, molhoDoce };
-}
 
+    // Log 2: O que a função calculou?
+    const resultado = { massas, molhoSalgado, molhoDoce };
+    console.log("[contarEstoque] Resultado final da contagem:", resultado);
+
+    return resultado;
+}
 
 // <-- 2. ADICIONE A FUNÇÃO QUE CHAMA A IA
 /**
@@ -350,125 +362,121 @@ app.get('/api/pedidos/status/:machineId', async (req, res) => {
 
 
 
-// --- ROTA GET /api/estoque (Resumo) ---
+// --- ROTA GET /api/estoque 
 app.get('/api/estoque', async (req, res) => {
-    console.log(`[PROXY ESTOQUE] Recebida consulta de estoque...`);
+    console.log(`[PROXY ESTOQUE] Recebida consulta de estoque...`);
 
-    let urlEstoque = URL_ESTOQUE_PRINCIPAL;
-    let headers = { 'Authorization': API_KEY_MAQUINA_REAL };
+    let urlEstoque = URL_ESTOQUE_PRINCIPAL;
+    let headers = { 'Authorization': API_KEY_MAQUINA_REAL };
 
-    try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), TIMEOUT_MAQUINA_MS);
+    try {
+        // Tenta buscar da MÁQUINA PRINCIPAL
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), TIMEOUT_MAQUINA_MS);
 
-        let response = await fetch(urlEstoque, {
-            method: 'GET',
-            headers: headers,
-            signal: controller.signal
-        });
-        clearTimeout(timeout);
+        let response = await fetch(urlEstoque, {
+            method: 'GET',
+            headers: headers,
+            signal: controller.signal
+        });
+        clearTimeout(timeout);
 
-        if (!response.ok) {
-            throw new Error(`Máquina real falhou: ${response.status}`);
-        }
+        if (!response.ok) {
+            throw new Error(`Máquina real falhou: ${response.status}`);
+        }
 
-        const estoqueCompleto = await response.json();
-        console.log(`[PROXY ESTOQUE] Sucesso na Máquina Principal. Itens recebidos: ${estoqueCompleto.length}`);
+        // A MÁQUINA PRINCIPAL RETORNA A LISTA LONGA (Array)
+        const estoqueCompleto = await response.json(); 
+        console.log(`[PROXY ESTOQUE] Sucesso na Máquina Principal. Itens: ${estoqueCompleto.length}`);
 
-        const contagem = contarEstoque(estoqueCompleto);
-        res.json(contagem);
+        // Por isso, precisamos contá-la
+        const contagem = contarEstoque(estoqueCompleto);
+        res.json(contagem);
 
-    } catch (err) {
-        console.warn(`[PROXY ESTOQUE] Falha na Máquina Principal (${err.message}). Tentando Máquina Virtual...`);
+    } catch (err) {
+        // A MÁQUINA PRINCIPAL FALHOU, VAMOS PARA A VIRTUAL
+        console.warn(`[PROXY ESTOQUE] Falha na Máquina Principal (${err.message}). Tentando Máquina Virtual...`);
+        
         try {
-            const vmResponse = await fetch(URL_ESTOQUE_VIRTUAL, { method: 'GET' }); // Sem auth para VM
-            if (!vmResponse.ok) {
-                throw new Error(`Máquina virtual também falhou: ${vmResponse.status}`);
-            }
-            const estoqueVM = await vmResponse.json();
-            console.log(`[PROXY ESTOQUE] Sucesso na Máquina Virtual.`);
-            // --- CORREÇÃO --- Aplicar contagem na VM também
-            const contagemVM = contarEstoque(estoqueVM);
-            res.json(contagemVM); 
+            const vmResponse = await fetch(URL_ESTOQUE_VIRTUAL, { method: 'GET' }); 
+            if (!vmResponse.ok) {
+                throw new Error(`Máquina virtual também falhou: ${vmResponse.status}`);
+            }
 
-        } catch (vmErr) {
-            // --- LOG DE ERRO MELHORADO ---
-            console.error(`[PROXY ESTOQUE] FALHA CRÍTICA: Ambas as máquinas falharam.`);
-            console.error(`   > Erro Máquina Principal: ${err.message}`);
-            console.error(`   > Erro Máquina Virtual: ${vmErr.message}`);
-            res.status(500).json({ error: "Erro ao consultar o estoque em ambas as máquinas." });
-        }
-    }
+            // =================================================================
+            // !!! INÍCIO DA CORREÇÃO !!!
+            // A MÁQUINA VIRTUAL RETORNA O RESUMO PRONTO (Objeto)
+            // =================================================================
+            const estoqueVM = await vmResponse.json(); 
+            console.log(`[PROXY ESTOQUE] Sucesso na Máquina Virtual. Resposta da VM:`, estoqueVM);
+            
+            // NÃO DEVEMOS CHAMAR contarEstoque(estoqueVM)
+            // Apenas repassamos a resposta da VM direto para o React
+            res.json(estoqueVM); 
+            // =================================================================
+            // !!! FIM DA CORREÇÃO !!!
+            // =================================================================
+
+        } catch (vmErr) {
+            console.error(`[PROXY ESTOQUE] FALHA CRÍTICA: Ambas as máquinas falharam.`);
+            console.error(`   > Erro Máquina Principal: ${err.message}`);
+            console.error(`   > Erro Máquina Virtual: ${vmErr.message}`);
+            res.status(500).json({ error: "Erro ao consultar o estoque em ambas as máquinas." });
+        }
+    }
 });
 
 
-/// --- ROTA PUT PARA ATUALIZAR ITEM NO ESTOQUE (CORRIGIDA) ---
+/// --- ROTA PUT PARA ATUALIZAR ITEM NO ESTOQUE
 app.put('/api/estoque/:id', async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params;
+    
+    // Este é o body que vem do React. (ex: { cor: 'preto', op: null })
     const bodyRecebidoDoReact = req.body; 
 
-    console.log(`[PROXY ESTOQUE PUT] Recebida atualização para Posição ID: ${id}`);
-    console.log(`   -> Dados do React:`, bodyRecebidoDoReact);
-
-    // =================================================================
-    // !!! INÍCIO DA CORREÇÃO !!!
-    // Traduz o nome da cor (string) do React para o ID (número) da Máquina
-    // =================================================================
-    const tradutorCorParaNumero = {
-        'preto': 1,     // 1 = Massa
-        'vermelho': 2,  // 2 = Molho Salgado
-        'azul': 3       // 3 = Molho Doce
-    };
-
-    // Se a cor recebida for uma string (preto, vermelho, azul), traduza.
-    // Se já for um número (ou outra coisa), mantenha como está.
-    const corTraduzida = tradutorCorParaNumero[bodyRecebidoDoReact.cor] || bodyRecebidoDoReact.cor;
-
-    // Este é o payload que a MÁQUINA REAL vai receber
-    const payloadParaMaquinaReal = {
-        ...bodyRecebidoDoReact, // Inclui 'op' e outros campos
-        cor: corTraduzida       // Usa a cor traduzida (ex: 1)
-    };
+    console.log(`[PROXY ESTOQUE PUT] Recebida atualização para Posição ID: ${id}`);
+    console.log(`   -> Dados do React:`, bodyRecebidoDoReact);
+   
+    const payloadParaMaquinaReal = bodyRecebidoDoReact;
     
-    console.log(`   -> Dados Traduzidos (Enviando para Máquina Real):`, payloadParaMaquinaReal);
-    // =================================================================
-    // !!! FIM DA CORREÇÃO !!!
-    // =================================================================
+    // O log abaixo agora deve mostrar a string, ex: { cor: 'preto', op: null }
+    console.log(`   -> Dados (Enviando para Máquina Real):`, payloadParaMaquinaReal);
 
-    // Define a URL e os headers para a máquina principal
-    const urlAlvo = `${URL_ESTOQUE_PRINCIPAL}/${id}`;
-    const headers = {
-        'Authorization': API_KEY_MAQUINA_REAL,
-        'Content-Type': 'application/json'
-    };
+    // Define a URL e os headers para a máquina principal
+    const urlAlvo = `${URL_ESTOQUE_PRINCIPAL}/${id}`;
+    const headers = {
+        'Authorization': API_KEY_MAQUINA_REAL,
+        'Content-Type': 'application/json'
+    };
 
-    try {
-        // Tenta enviar o PUT para a Máquina Principal
-        const response = await fetch(urlAlvo, {
-            method: 'PUT',
-            headers: headers,
-            // Envia o payload traduzido
-            body: JSON.stringify(payloadParaMaquinaReal) 
-        });
+    try {
+        // Tenta enviar o PUT para a Máquina Principal
+        const response = await fetch(urlAlvo, {
+            method: 'PUT',
+            headers: headers,
+            // Envia o payload original (sem tradução)
+            body: JSON.stringify(payloadParaMaquinaReal) 
+        });
 
-        if (!response.ok) {
-            // Se a máquina real falhar, joga um erro
-            const errorText = await response.text();
-            throw new Error(`Máquina real falhou (PUT): ${response.status} ${response.statusText} - ${errorText}`);
-        }
+        if (!response.ok) {
+            const errorText = await response.text();
+            // Tenta extrair o JSON do erro, se possível
+            let errorJson = {};
+            try { errorJson = JSON.parse(errorText); } catch (e) {}
+            
+            console.error(`[PROXY ESTOQUE PUT] Erro ${response.status} da Máquina Real: ${errorText}`);
+            throw new Error(errorJson.error || `Máquina real falhou (PUT): ${response.status}`);
+        }
 
-        const data = await response.json(); // Lê a resposta JSON da máquina
-        console.log(`[PROXY ESTOQUE PUT] Sucesso na Máquina Principal.`);
-        res.json(data); // Envia a resposta de sucesso de volta para o React
+        const data = await response.json(); 
+        console.log(`[PROXY ESTOQUE PUT] Sucesso na Máquina Principal.`);
+        res.json(data); // Envia a resposta de sucesso de volta para o React
 
-    } catch (err) {
-        console.warn(`[PROXY ESTOQUE PUT] Falha na Máquina Principal (${err.message}).`);
-        // (Aqui você pode adicionar um fallback para a VM se necessário)
-        res.status(500).json({ error: "Erro ao atualizar item no estoque.", details: err.message });
-    }
+    } catch (err) {
+        console.warn(`[PROXY ESTOQUE PUT] Falha na Máquina Principal (${err.message}).`);
+        res.status(500).json({ error: "Erro ao atualizar item no estoque.", details: err.message });
+    }
 });
-
-// --- NOVA ROTA DELETE ADICIONADA ---
 // --- ROTA DELETE PARA LIBERAR ITEM DO ESTOQUE ---
 app.delete('/api/estoque/:id', async (req, res) => {
     const { id } = req.params;
@@ -506,11 +514,19 @@ app.delete('/api/estoque/:id', async (req, res) => {
 });
 
 // --- ROTA GET /api/estoque/detalhes (Lista Completa) ---
+// O tradutor inverso (Número -> String)
+const tradutorNumeroParaString = {
+    1: 'preto',
+    2: 'vermelho',
+    3: 'azul'
+};
+
+// --- ROTA GET /api/estoque/detalhes (CORRIGIDA COM DEFESA) ---
 app.get('/api/estoque/detalhes', async (req, res) => {
-    console.log(`[PROXY ESTOQUE DETALHES] Recebida consulta de detalhes...`); // Log diferente
+    console.log(`[PROXY ESTOQUE DETALHES] Recebida consulta de detalhes...`); 
 
     let urlEstoque = URL_ESTOQUE_PRINCIPAL;
-    let headers = { 'Authorization': API_KEY_MAQUINA_REAL }; // Headers corretos
+    let headers = { 'Authorization': API_KEY_MAQUINA_REAL };
 
     try {
         const controller = new AbortController();
@@ -528,9 +544,29 @@ app.get('/api/estoque/detalhes', async (req, res) => {
         }
 
         const estoqueCompleto = await response.json();
-        console.log(`[PROXY ESTOQUE DETALHES] Sucesso na Máquina Principal. Itens: ${estoqueCompleto.length}`);
+        console.log(`[PROXY ESTOQUE DETALHES] Sucesso. Itens recebidos: ${estoqueCompleto?.length ?? 0}`);
 
-        res.json(estoqueCompleto); // Retorna a lista completa
+        // =================================================================
+        // !!! INÍCIO DA CORREÇÃO !!!
+        // Adiciona uma verificação para garantir que a resposta é um array
+        // =================================================================
+        let estoqueTraduzido = []; // Define um array vazio como padrão
+
+        if (Array.isArray(estoqueCompleto)) { // <--- SÓ EXECUTA O MAP SE FOR UM ARRAY
+            estoqueTraduzido = estoqueCompleto.map(slot => {
+                return {
+                    ...slot, // Mantém 'pos', 'op', etc.
+                    cor: tradutorNumeroParaString[slot.cor] || slot.cor 
+                };
+            });
+        } else {
+             console.warn(`[PROXY ESTOQUE DETALHES] A Máquina Real não retornou um array. Retornou:`, estoqueCompleto);
+        }
+        // =================================================================
+        // !!! FIM DA CORREÇÃO !!!
+        // =================================================================
+
+        res.json(estoqueTraduzido); // Retorna a lista (agora segura)
 
     } catch (err) {
         console.warn(`[PROXY ESTOQUE DETALHES] Falha na Máquina Principal (${err.message}). Tentando VM...`);
@@ -542,7 +578,18 @@ app.get('/api/estoque/detalhes', async (req, res) => {
             const estoqueVM = await vmResponse.json();
             console.log(`[PROXY ESTOQUE DETALHES] Sucesso na Máquina Virtual.`);
 
-            res.json(estoqueVM); // Retorna a lista completa da VM
+            // --- APLICA A MESMA DEFESA NA VM ---
+            let estoqueVMTraduzido = [];
+            if (Array.isArray(estoqueVM)) { // <--- VERIFICA A VM TAMBÉM
+                estoqueVMTraduzido = estoqueVM.map(slot => ({
+                    ...slot,
+                    cor: tradutorNumeroParaString[slot.cor] || slot.cor
+                }));
+            } else {
+                 console.warn(`[PROXY ESTOQUE DETALHES] A Máquina Virtual não retornou um array.`);
+            }
+
+            res.json(estoqueVMTraduzido); // Retorna a lista segura da VM
 
         } catch (vmErr) {
             console.error(`[PROXY ESTOQUE DETALHES] FALHA CRÍTICA: Ambas as máquinas falharam.`);
