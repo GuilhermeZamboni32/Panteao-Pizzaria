@@ -22,7 +22,7 @@ const router = createBrowserRouter([
     { path: "/PedidosEmAndamento", element: <PedidosEmAndamento/> },
     { path: "/Contato", element: <Contato/> },
     { path: "/Gestao_estoque", element: <Gestao_Estoque/> },
-    { path: "/minha-conta", element: <MinhaConta/> }
+    { path: "/minhaconta", element: <MinhaConta/> }
 ]);
 
 export default router;

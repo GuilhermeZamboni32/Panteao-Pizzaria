@@ -25,6 +25,26 @@ function GestaoEstoque() {
     const [mensagemForm, setMensagemForm] = useState('');
     const navigate = useNavigate();
 
+
+        // Supondo que você tenha os dados de estoque
+    const { massas, molhoSalgado, molhoDoce } = estoqueResumo; // Ex: { massas: 10, molhoSalgado: 5, molhoDoce: 3 }
+    
+    const percMassa = (massas / TOTAL_SLOTS_MAQUINA) * 100;
+    const percMolhoSalgado = (molhoSalgado / TOTAL_SLOTS_MAQUINA) * 100;
+    const percMolhoDoce = (molhoDoce / TOTAL_SLOTS_MAQUINA) * 100;
+
+    // Percentuais ACUMULADOS
+    const p1_end = percMassa;
+    const p2_end = percMassa + percMolhoSalgado;
+    const p3_end = percMassa + percMolhoSalgado + percMolhoDoce;
+
+    // Objeto de estilo para o gráfico de ESTOQUE
+    const estiloGraficoEstoque = {
+    '--percent-massa': `${p1_end}%`,
+    '--percent-molhoSalgado': `${p2_end}%`,
+    '--percent-molhoDoce': `${p3_end}%`
+    };
+    
     const buscarEstoqueResumo = async () => {
         setCarregandoResumo(true);
         try {
@@ -176,7 +196,7 @@ function GestaoEstoque() {
                         <h3><i className="icone-truck"></i>Expedição</h3>
                         <div className="grafico-donut">
                             <span className="grafico-percentual">{percentualExpedicao.toFixed(0)}%</span>
-                             <div className="donut-chart" style={{'--percent': percentualExpedicao}}></div>
+                             <div className="donut-chart" style={estiloGraficoEstoque}></div>
                         </div>
                         <span className="grafico-total">Total Ocupado: {totalExpedicao} / ???</span>
                     </div>

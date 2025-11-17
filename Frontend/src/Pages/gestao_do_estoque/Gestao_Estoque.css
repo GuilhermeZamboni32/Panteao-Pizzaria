@@ -138,6 +138,7 @@
   background-color: var(--bege); 
   border-radius: 12px;
   padding: 20px;
+ 
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -201,7 +202,6 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  /* Gráfico usa 'azul' e 'bege' (fundo da página) */
   background: conic-gradient(
     var(--azul) var(--percent, 0%), 
     var(--branco) var(--percent, 0%) 100% 
