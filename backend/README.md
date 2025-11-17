@@ -63,3 +63,18 @@ CREATE TABLE cartoes_salvos (
 
 
 
+-- Adiciona a coluna para rastrear o status vindo da máquina
+ALTER TABLE itens_pedido
+ADD COLUMN status_maquina VARCHAR(50) DEFAULT 'Pendente';
+
+-- Adiciona a coluna para salvar o slot de entrega (ex: "Slot:05")
+ALTER TABLE itens_pedido
+ADD COLUMN slot_entrega VARCHAR(50);
+
+-- Adiciona a coluna para salvar o ID da máquina (ex: "maquina-xyz-123")
+-- Isso é VITAL para ligar o webhook ao item correto.
+ALTER TABLE itens_pedido
+ADD COLUMN machine_id VARCHAR(100);
+
+-- Opcional, mas recomendado para performance:
+CREATE INDEX IF NOT EXISTS idx_machine_id ON itens_pedido (machine_id);

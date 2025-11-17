@@ -42,7 +42,7 @@ function Header() {
                     {usuarioLogado ? (
                         // ---- Se estiver LOGADO ----
                         <>
-                            <Link className="header-icon-link" to="/minha-conta" title="Minha Conta">
+                            <Link className="header-icon-link" to="/minhaconta" title="Minha Conta">
                                 <img src="/icons/user.png" alt="Minha Conta" className="header-icon" />
                             </Link>
                             
