@@ -8,17 +8,18 @@ const app = express();
 const PORT = 3002;
 
 // --- CONSTANTES ---
-const URL_MAQUINA_PRINCIPAL = "http://52.1.197.112:3000/queue/items";
-const URL_ESTOQUE_PRINCIPAL = "http://52.1.197.112:3000/estoque";
+const BASE_URL = "http://52.1.197.112:3000"; // Base para todas as chamadas
+const URL_MAQUINA_PRINCIPAL = `${BASE_URL}/queue/items`;
+const URL_ESTOQUE_PRINCIPAL = `${BASE_URL}/estoque`;
+const URL_EXPEDICAO = `${BASE_URL}/expedicao`; // Nova constante para Expedição
+
+// Fallbacks e Virtuais
 const URL_MAQUINA_VIRTUAL = "http://localhost:3000/queue/items";
 const URL_ESTOQUE_VIRTUAL = "http://localhost:3000/estoque"; 
 const URL_SERVICO_IA = 'http://localhost:5003/api/ai';
 
-
-//  URL PÚBLICA do seu servidor 
-// A máquina precisa conseguir acessar esta URL. 'localhost' NÃO VAI FUNCIONAR.
+// URL PÚBLICA do seu servidor para o Webhook
 const MINHA_URL_DE_CALLBACK = process.env.PUBLIC_CALLBACK_URL || 'http://52.1.197.112:3002/api/webhook/status';
-
 
 const TIMEOUT_MAQUINA_MS = 3000;
 const API_KEY_MAQUINA_REAL = process.env.MACHINE_API_KEY || 'CHAVE_SECRETA_DA_API';
@@ -30,24 +31,23 @@ app.use(express.json());
 const precos = { Broto: 25, Média: 30, Grande: 45 };
 
 function contarEstoque(estoqueDaMaquina) {
-    let massas = 0;
-    let molhoSalgado = 0;
-    let molhoDoce = 0;
-    if (!Array.isArray(estoqueDaMaquina)) {
-        console.error("[contarEstoque] ERRO: A entrada não era um array. Retornando 0.");
-        return { massas, molhoSalgado, molhoDoce };
-    }
-    for (const item of estoqueDaMaquina) {
-        if (item.cor == 1 || item.cor === 'preto') {
-            massas++;
-        } else if (item.cor == 2 || item.cor === 'vermelho') { 
-            molhoSalgado++;
-        } else if (item.cor == 3 || item.cor === 'azul') { 
-            molhoDoce++;
-        }
-    }
-    const resultado = { massas, molhoSalgado, molhoDoce };
-    return resultado;
+    let massas = 0;
+    let molhoSalgado = 0;
+    let molhoDoce = 0;
+    if (!Array.isArray(estoqueDaMaquina)) {
+        console.error("[contarEstoque] ERRO: A entrada não era um array. Retornando 0.");
+        return { massas, molhoSalgado, molhoDoce };
+    }
+    for (const item of estoqueDaMaquina) {
+        if (item.cor == 1 || item.cor === 'preto') {
+            massas++;
+        } else if (item.cor == 2 || item.cor === 'vermelho') { 
+            molhoSalgado++;
+        } else if (item.cor == 3 || item.cor === 'azul') { 
+            molhoDoce++;
+        }
+    }
+    return { massas, molhoSalgado, molhoDoce };
 }
 
 async function getRecomendacaoIA(itensDoPedido) {
@@ -103,146 +103,228 @@ async function getRecomendacaoIA(itensDoPedido) {
 
 // --- ROTA POST /api/pedidos (MODIFICADA) ---
 app.post('/api/pedidos', async (req, res) => {
-    const pedido = req.body;
-    const client = await pool.connect();
+    const pedido = req.body;
+    const client = await pool.connect();
 
-    console.log(`\n\n--- 🍕 NOVO PEDIDO RECEBIDO [${new Date().toLocaleTimeString()}] 🍕 ---`);
+    console.log(`\n\n--- 🍕 NOVO PEDIDO RECEBIDO [${new Date().toLocaleTimeString()}] 🍕 ---`);
 
-    try {
-        // Validações...
-        if (!pedido.itens || pedido.itens.length === 0) {
-            return res.status(400).json({ error: "Pedido sem itens" });
-        }
-        if (!pedido.usuario || !pedido.usuario.id) {
-            return res.status(400).json({ error: "Pedido sem usuário válido" });
-        }
+    try {
+        if (!pedido.itens || pedido.itens.length === 0) return res.status(400).json({ error: "Pedido sem itens" });
+        if (!pedido.usuario || !pedido.usuario.id) return res.status(400).json({ error: "Pedido sem usuário válido" });
 
-        await client.query('BEGIN');
-        console.log("\n[PASSO 1/5] 💾 Iniciando transação...");
+        await client.query('BEGIN');
 
-        // Salva pedido principal
-        console.log("[PASSO 2/5] 💾 Inserindo pedido principal...");
-        const clienteId = pedido.usuario.id;
-        const valorTotalCalculado = pedido.itens.reduce((soma, item) => soma + (precos[item.tamanho] || 0), 0) + 5; // + frete
+        // 1. Salva Pedido Principal
+        const valorTotal = pedido.itens.reduce((soma, item) => soma + (precos[item.tamanho] || 0), 0) + 5;
+        const pedidoQuery = `INSERT INTO pedidos (cliente_id, valor_total, status) VALUES ($1, $2, $3) RETURNING *`;
+        const novoPedidoResult = await client.query(pedidoQuery, [pedido.usuario.id, valorTotal, 'Recebido']);
+        const pedidoSalvo = novoPedidoResult.rows[0];
 
-        const pedidoQuery = `INSERT INTO pedidos (cliente_id, valor_total, status) VALUES ($1, $2, $3) RETURNING *`;
-        const novoPedidoResult = await client.query(pedidoQuery, [clienteId, valorTotalCalculado, 'Recebido']);
-        const pedidoSalvo = novoPedidoResult.rows[0];
-        console.log(`   ✅ Pedido principal salvo (ID BD: ${pedidoSalvo.pedido_id})`);
-
-        // Salva os itens do pedido
-        console.log("[PASSO 3/5] 💾 Inserindo itens...");
-        const itensSalvos = [];
-        for (const item of pedido.itens) {
-            const nomeDoItem = item.nome_item || `Pizza ${item.tamanho} (${(item.ingredientes || []).map(i => i.nome).join(', ')})`;
-            const valorUnitario = (item.origem === 'historico' ? item.preco : (precos[item.tamanho] || 0));
+        // 2. Prepara e Salva Itens
+        const idsDaMaquinaParaCliente = [];
+        
+        for (const item of pedido.itens) {
+            const nomeDoItem = item.nome_item || `Pizza ${item.tamanho}`;
+            const valorUnitario = precos[item.tamanho] || 0;
             
-            // Adiciona status_maquina inicial
-            const itemQuery = `
+            // Insere no BD Local
+            const itemQuery = `
                 INSERT INTO itens_pedido (pedido_id, nome_item, quantidade, valor_unitario, status_maquina) 
                 VALUES ($1, $2, $3, $4, $5) 
                 RETURNING item_id, nome_item`;
-            const itemResult = await client.query(itemQuery, [pedidoSalvo.pedido_id, nomeDoItem, 1, valorUnitario, 'Enviando...']);
-            itensSalvos.push(itemResult.rows[0]);
-        }
-        console.log(`   ✅ ${itensSalvos.length} itens salvos no banco.`);
+            const itemResult = await client.query(itemQuery, [pedidoSalvo.pedido_id, nomeDoItem, 1, valorUnitario, 'Enviando...']);
+            const itemSalvo = itemResult.rows[0];
 
-        // Envia cada item (pizza) para a máquina
-        console.log("\n[PASSO 4/5] 🚀 Enviando para produção...");
-        const respostasDaMaquina = [];
-        const idsDaMaquinaParaCliente = [];
+            // Tradução e Envio para Middleware
+            try {
+                // Chama tradutor (Opcional, dependendo da sua arquitetura)
+                const tradutorResponse = await fetch('http://localhost:3004/api/traduzir', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(item)
+                });
+                const payloadTraduzido = tradutorResponse.ok ? await tradutorResponse.json() : { payload: { sku: "PADRAO", cor: "vermelho" } };
 
-        for (let i = 0; i < pedido.itens.length; i++) {
-            const item = pedido.itens[i];
-            const itemSalvo = itensSalvos[i]; // item_id, nome_item
+                // Monta Payload Oficial para o Middleware
+                const payloadMiddleware = {
+                    payload: {
+                        ...payloadTraduzido.payload,
+                        orderId: pedidoSalvo.pedido_id,
+                        itemId: itemSalvo.item_id, // ID do nosso BD para rastreio
+                        nomeItem: itemSalvo.nome_item
+                    },
+                    callbackUrl: MINHA_URL_DE_CALLBACK, // <--- O SEGREDO DO WEBHOOK
+                    estoquePos: null // null = busca automática
+                };
 
-            // Chama o microserviço de tradução
-            const tradutorResponse = await fetch('http://localhost:3004/api/traduzir', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(item)
-            });
-            if (!tradutorResponse.ok) throw new Error('Falha no microserviço de tradução');
+                // Envia para a Máquina
+                const responseMaquina = await fetch(URL_MAQUINA_PRINCIPAL, {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": API_KEY_MAQUINA_REAL
+                    },
+                    body: JSON.stringify(payloadMiddleware)
+                });
 
-            const payloadTraduzido = await tradutorResponse.json();
-            
-            // Adiciona nossos IDs e a URL DE CALLBACK ao payload
-            payloadTraduzido.payload.orderId = pedidoSalvo.pedido_id;
-            payloadTraduzido.payload.itemId = itemSalvo.item_id; // Nosso ID interno do BD
-            payloadTraduzido.payload.nomeItem = itemSalvo.nome_item;
-            // --- SPRINT 03: ADICIONA O CALLBACK URL ---
-            payloadTraduzido.payload.callbackUrl = MINHA_URL_DE_CALLBACK;
-            // --- FIM SPRINT 03 ---
+                if (responseMaquina.ok) {
+                    const dadosMaquina = await responseMaquina.json();
+                    const machineId = dadosMaquina.id; // ID gerado pelo Middleware
 
-            const fetchOptions = {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payloadTraduzido)
-            };
+                    // Atualiza nosso BD com o ID da Máquina
+                    await client.query(
+                        `UPDATE itens_pedido SET machine_id = $1 WHERE item_id = $2`,
+                        [machineId, itemSalvo.item_id]
+                    );
+                    idsDaMaquinaParaCliente.push(machineId);
+                } else {
+                    console.error(`Erro ao enviar item para máquina: ${responseMaquina.status}`);
+                }
 
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), TIMEOUT_MAQUINA_MS);
-            
-            let respostaMaquina;
-            try { // Tenta Máquina Principal
-                fetchOptions.headers['Authorization'] = API_KEY_MAQUINA_REAL;
-                const response = await fetch(URL_MAQUINA_PRINCIPAL, { ...fetchOptions, signal: controller.signal });
-                clearTimeout(timeout);
-                if (!response.ok) throw new Error(`Máquina principal falhou: ${response.status}`);
-                respostaMaquina = await response.json();
-            } catch (err) { // Falha na Principal -> Tenta Virtual
-                clearTimeout(timeout);
-                console.warn(`   ⚠️ MÁQUINA PRINCIPAL FALHOU. Redirecionando p/ VM...`);
-                // (Lógica de fallback para VM)
-                try { 
-                    delete fetchOptions.headers['Authorization'];
-                    const vmResponse = await fetch(URL_MAQUINA_VIRTUAL, fetchOptions);
-                    if (!vmResponse.ok) throw new Error(`Máquina virtual falhou: ${vmResponse.status}`);
-                    respostaMaquina = await vmResponse.json();
-                } catch (vmErr) {
-                    throw vmErr;
-                }
-            }
-            
-            // Resposta da máquina (ex: { id: 'maquina-xyz-123', ... })
-            respostasDaMaquina.push(respostaMaquina);
-            
-            const machineId = respostaMaquina?.id;
-            if (machineId) {
-                // --- SPRINT 03: SALVA O ID DA MÁQUINA NO BANCO ---
-                // Isso associa nosso item_id com o machine_id
-                console.log(`[PASSO 4.5/5] 🔗 Associando item BD ${itemSalvo.item_id} com Machine ID ${machineId}`);
-                await client.query(
-                    `UPDATE itens_pedido SET machine_id = $1 WHERE item_id = $2`,
-                    [machineId, itemSalvo.item_id]
-                );
-                idsDaMaquinaParaCliente.push(machineId); // Envia o ID da máquina para o cliente
+            } catch (erroEnvio) {
+                console.error(`Falha no envio do item ${itemSalvo.item_id}:`, erroEnvio.message);
             }
-        }
-        // Fim do loop for
+        }
 
-        await client.query('COMMIT');
-        console.log("   ✅ Transação banco concluída (COMMIT).");
+        await client.query('COMMIT');
+        
+        // IA (Assíncrono, não bloqueia resposta se falhar)
+        const recomendacao = await getRecomendacaoIA(pedido.itens); 
 
-        console.log("\n[PASSO 5/5] 🤖 Gerando recomendação de IA...");
-        const recomendacao = await getRecomendacaoIA(pedido.itens); 
+        res.status(201).json({ 
+            message: "Pedido salvo e enviado para produção!", 
+            pedido: pedidoSalvo, 
+            idsDaMaquina: idsDaMaquinaParaCliente,
+            recomendacao
+        });
 
-        // Responde ao cliente com os IDs da MÁQUINA
-        res.status(201).json({ 
-            message: "Pedido salvo!", 
-            pedido: pedidoSalvo, 
-            idsDaMaquina: idsDaMaquinaParaCliente, // Ex: ['maquina-xyz-123', 'maquina-xyz-456']
-            recomendacao: recomendacao
-        });
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error("Erro ao processar pedido:", err);
+        res.status(500).json({ error: "Erro interno" });
+    } finally {
+        client.release();
+    }
+});
 
-    } catch (err) {
-        await client.query('ROLLBACK');
-        console.error("\n❌ ERRO GERAL PEDIDO (ROLLBACK):", err.message);
-        res.status(500).json({ error: "Erro interno", details: err.message });
-    } finally {
-        client.release();
-        console.log("\n--- ✅ PROCESSAMENTO PEDIDO CONCLUÍDO ✅ ---\n");
-    }
+
+// --- ROTA WEBHOOK DO MIDDLEWARE
+app.post('/api/webhook/status', async (req, res) => {
+    console.log(`\n🔔 [WEBHOOK] Recebido:`, JSON.stringify(req.body));
+
+    const body = req.body;
+    const machineId = body._id || body.machineId || body.id;
+    const rawStatus = body.stage || body.status;
+    const estoquePos = body.estoquePos; 
+
+    if (!machineId) {
+        console.warn("⚠️ Webhook ignorado: ID não identificado.");
+        return res.status(400).send('ID missing');
+    }
+
+    // Formatação para o Frontend
+    let statusParaBD = rawStatus;
+    let slotParaBD = estoquePos ? `Slot:${String(estoquePos).padStart(2, '0')}` : null;
+
+    // Se chegou na EXPEDICAO, garante que temos o slot salvo////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    if (rawStatus === 'EXPEDICAO' && !slotParaBD) {
+        const numeroSlotMock = Math.floor(Math.random() * 12) + 1;
+        slotParaBD = `Slot:${String(numeroSlotMock).padStart(2, '0')}`;
+        console.log(`➡️ Status 'EXPEDICAO' sem slot. Gerando slot mockado: ${slotParaBD}`);
+    }
+
+    try {
+        const updateQuery = `
+            UPDATE itens_pedido 
+            SET status_maquina = $1, 
+                slot_entrega = COALESCE($2, slot_entrega), -- Só atualiza slot se vier valor novo
+                updated_at = NOW()
+            WHERE machine_id = $3
+            RETURNING item_id, status_maquina`;
+        
+        const result = await pool.query(updateQuery, [statusParaBD, slotParaBD, machineId]);
+
+        if (result.rowCount > 0) {
+            console.log(`✅ [WEBHOOK] Item atualizado: ${machineId} -> ${statusParaBD} (${slotParaBD || 'Sem slot'})`);
+            res.status(200).send('OK');
+        } else {
+            console.warn(`⚠️ [WEBHOOK] Item ${machineId} não encontrado no banco local.`);
+            res.status(404).send('Item not found');
+        }
+    } catch (err) {
+        console.error("❌ [WEBHOOK] Erro de banco:", err.message);
+        res.status(500).send('Internal Error');
+    }
+});
+
+
+// --- ROTA DE STATUS 
+app.get('/api/pedidos/status/:machineId', async (req, res) => {
+    const { machineId } = req.params;
+    try {
+        const query = `SELECT nome_item, status_maquina, slot_entrega FROM itens_pedido WHERE machine_id = $1`;
+        const result = await pool.query(query, [machineId]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Item não encontrado.' });
+        }
+
+        const item = result.rows[0];
+        res.json({
+            status: item.status_maquina,
+            slot: item.slot_entrega,
+            nomeItem: item.nome_item
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Erro ao consultar status local.' });
+    }
+});
+
+
+// --- ROTA CONFIRMAR ENTREGA E LIBERAR ESTOQUE 
+app.post('/api/pedidos/confirmar_entrega', async (req, res) => {
+    const { machine_id } = req.body;
+
+    if (!machine_id) return res.status(400).json({ error: 'machine_id obrigatório.' });
+
+    console.log(`\n🏁 [ENTREGA] Iniciando baixa do item: ${machine_id}`);
+
+    try {
+        const checkQuery = `SELECT status_maquina, slot_entrega FROM itens_pedido WHERE machine_id = $1`;
+        const checkResult = await pool.query(checkQuery, [machine_id]);
+        
+        if (checkResult.rows.length === 0) return res.status(404).json({ error: 'Item não encontrado.' });
+        
+        const itemLocal = checkResult.rows[0];
+        const urlLiberaExpedicao = `${URL_EXPEDICAO}/${machine_id}`;
+        
+        console.log(`➡️ Solicitando liberação ao Middleware: DELETE ${urlLiberaExpedicao}`);
+        
+        const responseMiddleware = await fetch(urlLiberaExpedicao, {
+            method: 'DELETE',
+            headers: { 'Authorization': API_KEY_MAQUINA_REAL }
+        });
+
+        if (responseMiddleware.ok || responseMiddleware.status === 404) {
+            await pool.query(
+                `UPDATE itens_pedido SET status_maquina = 'Entregue', slot_entrega = NULL WHERE machine_id = $1`,
+                [machine_id]
+            );
+            
+            console.log(`✅ [ENTREGA] Sucesso! Item ${machine_id} finalizado.`);
+            res.json({ message: "Entrega confirmada e estoque liberado." });
+
+        } else {
+            
+            const erroTexto = await responseMiddleware.text();
+            console.error(`❌ [ENTREGA] Middleware recusou: ${erroTexto}`);
+            res.status(400).json({ error: "Falha ao liberar item no middleware", details: erroTexto });
+        }
+
+    } catch (err) {
+        console.error(`❌ [ENTREGA] Erro crítico:`, err.message);
+        res.status(500).json({ error: 'Erro interno ao confirmar entrega.' });
+    }
 });
 
 // --- ROTA DE HISTÓRICO  ---
