@@ -7,11 +7,17 @@ import pool from '../serviceDatabase/db.js';
 const app = express();
 const PORT = 3002;
 
-// --- CONSTANTES ---
+            /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
+             * ##                                                                                        ##
+             * ##                                 ROTAS BLOBAIS                                          ##
+             * ##                                                                                        ##
+             * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
+
+//  CONSTANTES 
 const BASE_URL = "http://52.1.197.112:3000"; // Base para todas as chamadas
 const URL_MAQUINA_PRINCIPAL = `${BASE_URL}/queue/items`;
 const URL_ESTOQUE_PRINCIPAL = `${BASE_URL}/estoque`;
-const URL_EXPEDICAO = `${BASE_URL}/expedicao`; // Nova constante para Expedição
+const URL_EXPEDICAO = `${BASE_URL}/expedicao`; 
 
 // Fallbacks e Virtuais
 const URL_MAQUINA_VIRTUAL = "http://localhost:3000/queue/items";
@@ -30,7 +36,7 @@ app.use(express.json());
 
 const precos = { Broto: 25, Média: 30, Grande: 45 };
 
-function contarEstoque(estoqueDaMaquina) {
+function contarEstoque(estoqueDaMaquina) {// conta quantos itens de cada tipo existem no estoque
     let massas = 0;
     let molhoSalgado = 0;
     let molhoDoce = 0;
@@ -50,7 +56,7 @@ function contarEstoque(estoqueDaMaquina) {
     return { massas, molhoSalgado, molhoDoce };
 }
 
-async function getRecomendacaoIA(itensDoPedido) {
+async function getRecomendacaoIA(itensDoPedido) {// Chama o microserviço de IA para obter recomendação de bebida
     try {
         const listaItens = itensDoPedido.map(item => 
             item.nome_item || `Pizza ${item.tamanho}`
@@ -101,7 +107,17 @@ async function getRecomendacaoIA(itensDoPedido) {
 }
 
 
-// --- ROTA POST /api/pedidos (MODIFICADA) ---
+
+
+
+            /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
+             * ##                                                                                        ##
+             * ##                             ROTAS DE CRIAÇÃO DE PEDIDOS                                ##
+             * ##                                                                                        ##
+             * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
+
+
+
 app.post('/api/pedidos', async (req, res) => {
     const pedido = req.body;
     const client = await pool.connect();
@@ -150,11 +166,11 @@ app.post('/api/pedidos', async (req, res) => {
                     payload: {
                         ...payloadTraduzido.payload,
                         orderId: pedidoSalvo.pedido_id,
-                        itemId: itemSalvo.item_id, // ID do nosso BD para rastreio
+                        itemId: itemSalvo.item_id, 
                         nomeItem: itemSalvo.nome_item
                     },
-                    callbackUrl: MINHA_URL_DE_CALLBACK, // <--- O SEGREDO DO WEBHOOK
-                    estoquePos: null // null = busca automática
+                    callbackUrl: MINHA_URL_DE_CALLBACK, 
+                    estoquePos: null 
                 };
 
                 // Envia para a Máquina
@@ -169,7 +185,7 @@ app.post('/api/pedidos', async (req, res) => {
 
                 if (responseMaquina.ok) {
                     const dadosMaquina = await responseMaquina.json();
-                    const machineId = dadosMaquina.id; // ID gerado pelo Middleware
+                    const machineId = dadosMaquina.id; 
 
                     // Atualiza nosso BD com o ID da Máquina
                     await client.query(
@@ -188,7 +204,7 @@ app.post('/api/pedidos', async (req, res) => {
 
         await client.query('COMMIT');
         
-        // IA (Assíncrono, não bloqueia resposta se falhar)
+        // IA  não bloqueia resposta se falhar
         const recomendacao = await getRecomendacaoIA(pedido.itens); 
 
         res.status(201).json({ 
@@ -208,54 +224,98 @@ app.post('/api/pedidos', async (req, res) => {
 });
 
 
-// --- ROTA WEBHOOK DO MIDDLEWARE
+
+
+
+            /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
+             * ##                                                                                        ##
+             * ##                                ROTAS DE CALLBAKURL                                     ##
+             * ##                                                                                        ##
+             * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
+
+
+
 app.post('/api/webhook/status', async (req, res) => {
-    console.log(`\n🔔 [WEBHOOK] Recebido:`, JSON.stringify(req.body));
+    console.log(`\n--- 🔔 WEBHOOK RECEBIDO 🔔 ---`);
+    console.log(`➡️ Body Bruto:`, JSON.stringify(req.body, null, 2));
 
     const body = req.body;
-    const machineId = body._id || body.machineId || body.id;
-    const rawStatus = body.stage || body.status;
-    const estoquePos = body.estoquePos; 
-
-    if (!machineId) {
-        console.warn("⚠️ Webhook ignorado: ID não identificado.");
-        return res.status(400).send('ID missing');
+    // 1. TENTATIVA DE RESGATE DE STATUS
+    let idIdentificado = null;
+    if (body.payload && body.payload.orderId) {
+        idIdentificado = body.payload.orderId;
+    } else if (body.machineId) {
+        idIdentificado = body.machineId;
+    } else if (body.id) { 
+        idIdentificado = body.id;
+    } else if (body._id) {
+        idIdentificado = body._id;
     }
 
-    // Formatação para o Frontend
-    let statusParaBD = rawStatus;
-    let slotParaBD = estoquePos ? `Slot:${String(estoquePos).padStart(2, '0')}` : null;
+    // 2. TENTATIVA DE RESGATE DE STATUS
+    const statusRecebido = body.status || body.stage;
 
-    // Se chegou na EXPEDICAO, garante que temos o slot salvo////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    if (rawStatus === 'EXPEDICAO' && !slotParaBD) {
+    // 3. TENTATIVA DE RESGATE DE SLOT 
+    const estoquePos = body.estoquePos || body.slot;
+
+    if (!idIdentificado) {
+        console.warn("⚠️ Webhook ignorado: Nenhum ID (orderId, machineId, id) identificado no JSON.");
+        return res.status(400).json({ error: 'ID missing' });
+    }
+
+    // --- LÓGICA DE TRATAMENTO DE DADOS ---
+    let statusParaBD = statusRecebido;
+    let slotParaBD = estoquePos ? String(estoquePos) : null;
+    
+    // Verifica se precisa formatar o Slot
+    if (slotParaBD && !slotParaBD.includes('Slot:')) {
+        slotParaBD = `Slot:${slotParaBD.padStart(2, '0')}`;
+    }
+
+    // Se concluiu mas a máquina não mandou slot, inventamos um mockado
+    if ((statusRecebido === 'COMPLETED' || statusRecebido === 'EXPEDICAO' || statusRecebido === 'Pronto') && !slotParaBD) {
         const numeroSlotMock = Math.floor(Math.random() * 12) + 1;
         slotParaBD = `Slot:${String(numeroSlotMock).padStart(2, '0')}`;
-        console.log(`➡️ Status 'EXPEDICAO' sem slot. Gerando slot mockado: ${slotParaBD}`);
+        console.log(`➡️ Status '${statusRecebido}' sem slot. Gerando slot mockado: ${slotParaBD}`);
     }
+
+    console.log(`🛠️ Processando update para ID: ${idIdentificado} | Status: ${statusParaBD} | Slot: ${slotParaBD}`);
 
     try {
         const updateQuery = `
             UPDATE itens_pedido 
             SET status_maquina = $1, 
-                slot_entrega = COALESCE($2, slot_entrega), -- Só atualiza slot se vier valor novo
+                slot_entrega = COALESCE($2, slot_entrega),
                 updated_at = NOW()
-            WHERE machine_id = $3
-            RETURNING item_id, status_maquina`;
+            WHERE machine_id = $3 OR item_id::text = $3 
+            RETURNING item_id, status_maquina, slot_entrega`;
         
-        const result = await pool.query(updateQuery, [statusParaBD, slotParaBD, machineId]);
+        const result = await pool.query(updateQuery, [statusParaBD, slotParaBD, idIdentificado]);
 
         if (result.rowCount > 0) {
-            console.log(`✅ [WEBHOOK] Item atualizado: ${machineId} -> ${statusParaBD} (${slotParaBD || 'Sem slot'})`);
-            res.status(200).send('OK');
+            console.log(`✅ SUCESSO: Item atualizado no BD. (Item ID: ${result.rows[0].item_id})`);
+            return res.status(200).send('OK');
         } else {
-            console.warn(`⚠️ [WEBHOOK] Item ${machineId} não encontrado no banco local.`);
-            res.status(404).send('Item not found');
+            console.warn(`⚠️ AVISO: O ID '${idIdentificado}' chegou no webhook, mas não foi encontrado na tabela 'itens_pedido'.`);
+            // Retornamos 200 para a máquina não ficar tentando reenviar infinitamente, mesmo que não tenhamos achado
+            return res.status(200).json({ warning: 'Item not found locally' });
         }
     } catch (err) {
-        console.error("❌ [WEBHOOK] Erro de banco:", err.message);
-        res.status(500).send('Internal Error');
+        console.error("❌ ERRO DE BANCO:", err.message);
+        return res.status(500).send('Internal Server Error');
     }
 });
+
+
+
+
+            /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
+             * ##                                                                                        ##
+             * ##                           ROTAS DE Status do pedido                                    ##
+             * ##                                                                                        ##
+             * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
+
+
 
 
 // --- ROTA DE STATUS 
@@ -327,6 +387,19 @@ app.post('/api/pedidos/confirmar_entrega', async (req, res) => {
     }
 });
 
+
+
+
+
+            /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
+             * ##                                                                                        ##
+             * ##                               ROTAS DE HISTÓRICO                                       ##
+             * ##                                                                                        ##
+             * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
+
+
+
+
 // --- ROTA DE HISTÓRICO  ---
 app.get('/api/pedidos/cliente/:clienteId', async (req, res) => {
     const { clienteId } = req.params;
@@ -371,60 +444,6 @@ app.get('/api/pedidos/cliente/:clienteId', async (req, res) => {
     }
 });
 
-
-
-
-// Esta rota é chamada PELA MÁQUINA, não pelo nosso frontend
-app.post('/api/webhook/status', async (req, res) => {
-    // O body esperado da máquina (ex: { itemId: 101, status: 'COMPLETED', slot: 'Slot:05', machineId: 'maquina-xyz-123' })
-    const { itemId, status, slot, machineId } = req.body;
-console.log(`Webhook recebido com body:`, req.body);
-    console.log(`\n--- 🔔 WEBHOOK RECEBIDO 🔔 ---`);
-    console.log(`   ➡️ Body:`, req.body);
-
-    // Precisamos de um ID para atualizar o banco
-    const idParaBusca = itemId || (machineId ? machineId : null);
-    const tipoDeId = itemId ? 'item_id' : (machineId ? 'machine_id' : null);
-
-    if (!idParaBusca || !tipoDeId) {
-        console.warn(`   ⚠️ Webhook recebido sem 'itemId' ou 'machineId'. Impossível processar.`);
-        return res.status(400).json({ error: "Missing itemId or machineId" });
-    }
-    
-    // O slot simulado (caso a máquina não envie, mas o status seja 'COMPLETED')
-    let slotFinal = slot;
-    if ((status === 'COMPLETED' || status === 'Pronto') && !slot) {
-        const numeroSlot = Math.floor(Math.random() * 12) + 1;
-        const numeroFormatado = String(numeroSlot).padStart(2, '0');
-        slotFinal = `Slot:${numeroFormatado}`;
-        console.log(`   ➡️ Status 'COMPLETED' sem slot. Gerando slot mockado: ${slotFinal}`);
-    }
-
-    try {
-        const query = `
-            UPDATE itens_pedido 
-            SET status_maquina = $1, slot_entrega = $2 
-            WHERE ${tipoDeId} = $3
-            RETURNING pedido_id, item_id, nome_item, status_maquina, slot_entrega;`;
-        const result = await pool.query(query, [status, slotFinal, idParaBusca]);
-
-        if (result.rowCount > 0) {
-            console.log(`   ✅ SUCESSO: Item ${result.rows[0].item_id} (${result.rows[0].nome_item}) atualizado para '${status}' no slot '${slotFinal}'`);
-            
-            // TODO Opcional: Verificar se todos os itens do pedido_id estão prontos
-            // e atualizar a tabela 'pedidos' principal.
-
-            res.status(200).json({ message: "Atualização recebida com sucesso." });
-        } else {
-            console.warn(`   ⚠️ AVISO: Webhook recebido para ${tipoDeId} '${idParaBusca}', mas nenhum item foi encontrado no BD.`);
-            res.status(404).json({ error: "Item not found in database" });
-        }
-    } catch (err) {
-        console.error(`   ❌ ERRO AO PROCESSAR WEBHOOK para ${tipoDeId} '${idParaBusca}':`, err.message);
-        res.status(500).json({ error: "Erro interno no servidor ao processar webhook" });
-    }
-    console.log(`--- 🔔 FIM WEBHOOK 🔔 ---\n`);
-});
 
 
 app.get('/api/pedidos/status/:machineId', async (req, res) => {
@@ -543,7 +562,18 @@ app.post('/api/pedidos/confirmar_entrega', async (req, res) => {
 });
 
 
-// --- ROTAS DE ESTOQUE (Sem alterações) ---
+
+
+
+
+            /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
+             * ##                                                                                        ##
+             * ##                                 ROTAS DE ESTOQUE                                       ##
+             * ##                                                                                        ##
+             * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
+
+
+
 
 // GET /api/estoque (Resumo)
 app.get('/api/estoque', async (req, res) => {
@@ -668,14 +698,22 @@ app.get('/api/estoque/detalhes', async (req, res) => {
 });
 
 
-// --- Inicializa o servidor ---
+
+
+            /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
+             * ##                                                                                        ##
+             * ##                                   ROTAS DE ENDPOINT                                    ##
+             * ##                                                                                        ##
+             * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
+
+
+
 app.listen(PORT, () => {
     console.log(` ✅ Servidor Pizzaria rodando na porta ${PORT}`);
     console.log(` 📞 Endpoint de Pedidos: http://localhost:${PORT}/api/pedidos`);
-    console.log(` 📊 Endpoint de Status (Agora lê o BD): http://localhost:${PORT}/api/pedidos/status/:machineId`);
-    console.log(` 🔔 Endpoint de Webhook (A Máquina chama aqui): http://localhost:${PORT}/api/webhook/status`);
+    console.log(` 📊 Endpoint de Status: http://localhost:${PORT}/api/pedidos/status/:machineId`);
+    console.log(` 🔔 Endpoint de Webhook: http://localhost:${PORT}/api/webhook/status`);
     console.log(` 🏁 Endpoint de Confirmação: http://localhost:${PORT}/api/pedidos/confirmar_entrega`) ; 
     console.log(` 📜 Endpoint de Histórico: http://localhost:${PORT}/api/pedidos/cliente/:clienteId`);
     console.log(` 📦 Endpoints de Estoque: /api/estoque, /api/estoque/detalhes, etc.`);
-    console.log(`\n ⚠️ Lembre-se: O callback URL (MINHA_URL_DE_CALLBACK) deve ser um IP PÚBLICO para a máquina funcionar!`);
 });
