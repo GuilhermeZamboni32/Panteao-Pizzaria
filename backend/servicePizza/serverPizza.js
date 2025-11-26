@@ -14,7 +14,7 @@ const PORT = 3002;
              * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
 
 //  CONSTANTES 
-const BASE_URL = "http://52.1.197.112:3000"; // Base para todas as chamadas
+const BASE_URL = "http://52.72.137.244:3000"; // Base para todas as chamadas
 const URL_MAQUINA_PRINCIPAL = `${BASE_URL}/queue/items`;
 const URL_ESTOQUE_PRINCIPAL = `${BASE_URL}/estoque`;
 const URL_EXPEDICAO = `${BASE_URL}/expedicao`; 
@@ -25,7 +25,7 @@ const URL_ESTOQUE_VIRTUAL = "http://localhost:3000/estoque";
 const URL_SERVICO_IA = 'http://localhost:5003/api/ai';
 
 // URL PÚBLICA do seu servidor para o Webhook
-const MINHA_URL_DE_CALLBACK = process.env.PUBLIC_CALLBACK_URL || 'http://52.1.197.112:3002/api/webhook/status';
+const MINHA_URL_DE_CALLBACK = process.env.PUBLIC_CALLBACK_URL || 'http://52.72.137.244:3000/api/webhook/status';
 
 const TIMEOUT_MAQUINA_MS = 3000;
 const API_KEY_MAQUINA_REAL = process.env.MACHINE_API_KEY || 'CHAVE_SECRETA_DA_API';
@@ -321,25 +321,62 @@ app.post('/api/webhook/status', async (req, res) => {
 // --- ROTA DE STATUS 
 app.get('/api/pedidos/status/:machineId', async (req, res) => {
     const { machineId } = req.params;
-    try {
-        const query = `SELECT nome_item, status_maquina, slot_entrega FROM itens_pedido WHERE machine_id = $1`;
-        const result = await pool.query(query, [machineId]);
+    const client = await pool.connect();
 
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Item não encontrado.' });
+    console.log(`🔍 Verificando status para ID da máquina: ${machineId}`);
+
+    try {
+        // CORREÇÃO AQUI: Mudamos de /orders para /items conforme seu teste no Swagger
+        const urlExterna = `http://52.72.137.244:3000/queue/items/${machineId}`;
+        const responseMaquina = await fetch(urlExterna);
+        
+        let statusExterno = 'Desconhecido';
+        let dadosExternos = {};
+
+        if (responseMaquina.ok) {
+            dadosExternos = await responseMaquina.json();
+            // O JSON que você mostrou tem o campo "status" na raiz: { "status": "PENDING", ... }
+            statusExterno = dadosExternos.status; 
+            console.log(`✅ Resposta da Máquina: ${statusExterno}`);
+        } else {
+            console.error(`❌ Erro ao consultar máquina: ${responseMaquina.statusText}`);
         }
 
-        const item = result.rows[0];
+        // Atualiza nosso Banco de Dados Local para ficar sincronizado
+        // IMPORTANTE: Buscamos pela coluna machine_id (VARCHAR) que criamos
+        const updateQuery = `
+            UPDATE itens_pedido 
+            SET status_maquina = $1 
+            WHERE machine_id = $2 
+            RETURNING *
+        `;
+        const result = await client.query(updateQuery, [statusExterno, machineId]);
+
+        if (result.rows.length === 0) {
+            // Se não achou pelo machine_id, tenta atualizar pelo item_id caso o parametro seja um UUID nosso
+            // Isso é uma segurança extra
+             console.warn("⚠️ Item não encontrado por machine_id, verifique se o ID está salvo na tabela.");
+             return res.json({ 
+                 status_local: "Não encontrado", 
+                 status_externo: statusExterno,
+                 aviso: "ID da máquina não vinculado a nenhum item no banco local"
+             });
+        }
+
         res.json({
-            status: item.status_maquina,
-            slot: item.slot_entrega,
-            nomeItem: item.nome_item
+            status_local: result.rows[0].status_maquina,
+            status_externo: statusExterno,
+            progresso: dadosExternos.progress || 0, // Adicionei o progresso que vi no seu JSON
+            item: result.rows[0]
         });
+
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao consultar status local.' });
+        console.error("Erro CRÍTICO na rota de status:", err);
+        res.status(500).json({ error: err.message });
+    } finally {
+        client.release();
     }
 });
-
 
 // --- ROTA CONFIRMAR ENTREGA E LIBERAR ESTOQUE 
 app.post('/api/pedidos/confirmar_entrega', async (req, res) => {

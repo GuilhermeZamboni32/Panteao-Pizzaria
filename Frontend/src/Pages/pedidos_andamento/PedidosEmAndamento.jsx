@@ -11,8 +11,7 @@ const icons = {
 };
 
 // --- HELPERS DE STATUS ---
-// Centraliza a lógica para saber se o pedido acabou (seja sucesso ou erro)
-// Se retornar TRUE, o polling (busca automática) pode parar para este item.
+// Centraliza a lógica para saber se o pedido acabou
 const verificarSeFinalizado = (status) => {
     if (typeof status !== 'string') return false;
     const s = status.toLowerCase();
@@ -21,11 +20,12 @@ const verificarSeFinalizado = (status) => {
         s.includes("erro") || 
         s.includes("falha") || 
         s.includes("não encontrado") ||
-        s.includes("cancelado")
+        s.includes("cancelado") ||
+        s.includes("delivered") // Adicionado inglês
     );
 };
 
-// Verifica se o pedido está pronto para retirada (mas ainda não foi entregue ao cliente)
+// Verifica se o pedido está pronto para retirada
 const verificarSeProntoParaRetirada = (status) => {
     if (typeof status !== 'string') return false;
     const s = status.toLowerCase();
@@ -35,7 +35,7 @@ const verificarSeProntoParaRetirada = (status) => {
         s.includes("conclu") ||   
         s.includes("finaliz") ||  
         s.includes("sucesso") ||
-        s.includes("expedicao") // Adicionado status comum de middleware
+        s.includes("expedicao")
     );
 };
 
@@ -78,36 +78,41 @@ function PedidosEmAndamento() {
         const lowerStatus = status.toLowerCase();
 
         if (verificarSeErro(status)) {
-            return { className: "status-erro", icon: icons.erro, texto: status };
+            return { className: "status-erro", icon: icons.erro, texto: "Erro no Pedido" };
         }
-        // Se estiver enviando ou carregando
-        if (lowerStatus.includes("carregando") || lowerStatus.includes("enviando") || lowerStatus.includes("recebido")) {
-             return { className: "status-carregando", icon: icons.carregando, texto: "Enviando..." };
+        // Status de carregamento/processamento
+        if (lowerStatus.includes("carregando") || lowerStatus.includes("enviando") || lowerStatus.includes("recebido") || lowerStatus.includes("pending") || lowerStatus.includes("na_fila") || lowerStatus.includes("produzindo")) {
+             // Tradução visual amigável
+             let texto = "Preparando...";
+             if (lowerStatus.includes("enviando")) texto = "Enviando para Cozinha...";
+             if (lowerStatus.includes("na_fila")) texto = "Na Fila...";
+             if (lowerStatus.includes("produzindo")) texto = "No Forno...";
+             
+             return { className: "status-carregando", icon: icons.carregando, texto: texto };
         }
         // Se estiver pronto (Sucesso)
         if (verificarSeProntoParaRetirada(status)) {
             return { className: "status-sucesso", icon: icons.sucesso, texto: "Pronto para Retirar!" };
         }
         // Se já foi entregue (Finalizado)
-        if (lowerStatus.includes("entregue")) {
+        if (lowerStatus.includes("entregue") || lowerStatus.includes("delivered")) {
              return { className: "status-sucesso", icon: icons.sucesso, texto: "Entregue" };
         }
 
-        // Default (Em produção/Andamento)
+        // Default
         return { className: "status-ok", icon: icons.ok, texto: status };
     };
 
-    // 1. Carregar IDs do LocalStorage (Roda apenas uma vez na montagem)
+    // 1. Carregar IDs do LocalStorage
     useEffect(() => {
         try {
             const pedidosSalvos = JSON.parse(localStorage.getItem("pedidosEmAndamento")) || [];
-            // Garante que pegamos apenas entradas válidas
             const pedidosValidos = pedidosSalvos.filter(p => p && p.id && p.nome); 
             
             if (pedidosValidos.length > 0) {
               setPedidos(pedidosValidos.map(p => ({ 
                   id: p.id, 
-                  status: "Carregando...", // Estado inicial visual
+                  status: "Carregando...", 
                   slot: null, 
                   nome: p.nome 
               })));
@@ -122,12 +127,10 @@ function PedidosEmAndamento() {
     useEffect(() => {
         if (pedidos.length === 0) return;
 
-        // Função de atualização
         const fetchStatus = async () => {
             let houveAlteracao = false;
             
             const novosPedidos = await Promise.all(pedidos.map(async (pedido) => {
-                // Se já está entregue/erro, não busca mais para economizar rede
                 if (verificarSeFinalizado(pedido.status)) {
                     return pedido;
                 }
@@ -136,24 +139,26 @@ function PedidosEmAndamento() {
                     const res = await fetch(`http://localhost:3002/api/pedidos/status/${pedido.id}`);
                     if (res.ok) {
                         const data = await res.json();
-                        const novoStatus = data.status || "Status Desconhecido";
-                        const novoSlot = data.slot || null;
                         
-                        // Só atualiza se mudou algo
-                        if (novoStatus !== pedido.status || novoSlot !== pedido.slot) {
+                        // --- AQUI ESTÁ A CORREÇÃO PRINCIPAL ---
+                        // Verifica todos os campos possíveis que o backend pode mandar
+                        const statusBruto = data.status || data.status_externo || data.status_maquina || "Status Desconhecido";
+                        
+                        // Pega o slot se existir no payload
+                        const novoSlot = data.slot || data.item?.slot || null;
+                        
+                        if (statusBruto !== pedido.status || novoSlot !== pedido.slot) {
                             houveAlteracao = true;
-                            console.log(`Atualização detectada: ${pedido.id} -> ${novoStatus}`);
-                            return { ...pedido, status: novoStatus, slot: novoSlot };
+                            console.log(`Atualização: ${pedido.id} -> ${statusBruto}`);
+                            return { ...pedido, status: statusBruto, slot: novoSlot };
                         }
                     } else if (res.status === 404) {
                         houveAlteracao = true;
                         return { ...pedido, status: "Pedido não encontrado", slot: null };
-                    } else {
-                        // Erro temporário do servidor, mantém o antigo ou mostra erro
-                        return pedido; 
                     }
                 } catch (err) {
-                    return pedido; // Falha na conexão, tenta na próxima
+                    // Erro de rede silencioso, mantém o estado atual
+                    return pedido;
                 }
                 return pedido;
             }));
@@ -163,23 +168,19 @@ function PedidosEmAndamento() {
             }
         };
 
-        // Lógica do Intervalo: Só roda se existir algum pedido NÃO finalizado (ou seja, não entregue e não erro)
         const existemPedidosAtivos = pedidos.some(p => !verificarSeFinalizado(p.status));
         let intervalId = null;
 
         if (existemPedidosAtivos) {
             fetchStatus(); // Busca imediata
-            intervalId = setInterval(fetchStatus, 5000); // Busca a cada 5s
+            intervalId = setInterval(fetchStatus, 3000); // Polling a cada 3s (mais rápido)
         }
 
-        // Configura Timers de Remoção APENAS para pedidos "Entregues" ou com Erro Crítico
-        // Pedidos "Prontos" (Completed/Expedicao) NÃO são removidos automaticamente, pois o usuário precisa ver o slot.
+        // Configura Timers de Remoção
         pedidos.forEach(pedido => {
             if (verificarSeFinalizado(pedido.status)) {
-                // Se finalizado e ainda não tem timer agendado
                 if (!removalTimersRef.current.has(pedido.id)) {
-                    // Remove rápido se for erro (10s), demora mais se for sucesso (entregue) (20s)
-                    const tempoRemocao = verificarSeErro(pedido.status) ? 10000 : 20000;
+                    const tempoRemocao = verificarSeErro(pedido.status) ? 10000 : 30000;
                     
                     const timerId = setTimeout(() => {
                         setPedidos(currentPedidos => {
@@ -200,7 +201,6 @@ function PedidosEmAndamento() {
 
         return () => {
             if (intervalId) clearInterval(intervalId);
-            // Não limpamos os timers de remoção aqui para persistirem durante re-renders
         };
     }, [pedidos]);
 
@@ -251,15 +251,13 @@ function PedidosEmAndamento() {
                                         <div className="pedido-status-container">
                                             <div className={`status-badge ${statusInfo.className}`}>
                                                 <span className="status-icone">{statusInfo.icon}</span>
-                                                {/* Exibe o texto amigável do helper */}
                                                 {statusInfo.texto} 
                                             </div>
                                             
-                                            {/* Se estiver pronto, mostra o Slot e talvez um botão de confirmar retirada (opcional) */}
                                             {mostrarSlot && (
                                                 <div className="pedido-slot-destaque">
                                                    <div className="slot-label">
-                                                       <img src="/icons/local-preto.png" className="icone-local" alt="Ícone de local" />
+                                                       <img src="/icons/local-preto.png" className="icone-local" alt="Local" />
                                                        Retirar no:
                                                    </div>
                                                    <div className="slot-valor">{pedido.slot}</div>
