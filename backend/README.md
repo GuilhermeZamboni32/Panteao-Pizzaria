@@ -78,3 +78,6 @@ ADD COLUMN machine_id VARCHAR(100);
 
 -- Opcional, mas recomendado para performance:
 CREATE INDEX IF NOT EXISTS idx_machine_id ON itens_pedido (machine_id);
+
+
+ALTER TABLE clientes ADD COLUMN is_admin BOOLEAN DEFAULT FALSE;

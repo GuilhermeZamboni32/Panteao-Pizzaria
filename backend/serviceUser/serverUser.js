@@ -15,8 +15,18 @@ app.use(express.json());
 
 
 
-// --- ROTAS DE AUTENTICAÇÃO ---
-// ROTA DE LOGIN
+
+
+
+            /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
+             * ##                                                                                        ##
+             * ##                             ROTAS DE LOGIN                                             ##
+             * ##                                                                                        ##
+             * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
+
+
+
+
 app.post('/api/login', async (req, res) => {
     const { email, senha } = req.body;
     if (!email || !senha) {
@@ -38,7 +48,15 @@ app.post('/api/login', async (req, res) => {
 
         // Remove a senha do objeto antes de enviar a resposta
         const { senha: _, ...dadosDoUsuario } = user;
-        res.status(200).json(dadosDoUsuario);
+
+        // Formata para garantir que o frontend receba 'isAdmin' (camelCase)
+        // mesmo que o banco retorne 'is_admin' (snake_case)
+        const respostaUsuario = {
+            ...dadosDoUsuario,
+            isAdmin: user.is_admin // Mapeia a coluna do banco para o padrão do frontend
+        };
+
+        res.status(200).json(respostaUsuario);
 
     } catch (err) {
         console.error('Erro no login:', err.message);
@@ -47,27 +65,42 @@ app.post('/api/login', async (req, res) => {
 });
 
 
-// ROTA PARA CRIAR UM NOVO USUÁRIO (CADASTRO) - CORRIGIDA
+            /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
+             * ##                                                                                        ##
+             * ##                             ROTAS DE CADASTRO                                          ##
+             * ##                                                                                        ##
+             * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
+
 app.post('/api/users', async (req, res) => {
-    // Agora só aceita os campos que REALMENTE existem na tabela 'clientes'
-    const { nome, email, senha, telefone } = req.body; 
+    // Agora aceita 'isAdmin' vindo do frontend
+    const { nome, email, senha, telefone, isAdmin } = req.body; 
 
     // Validação simples
     if (!nome || !email || !senha || !telefone) {
         return res.status(400).json({ error: "Todos os campos são obrigatórios." });
     }
 
+    // Define o valor padrão como false se não vier nada
+    const adminValue = isAdmin || false;
+
     try {
         const hashedPassword = await bcrypt.hash(senha, 10);
         
         const newUserResult = await pool.query(
-            // Query corrigida para a nova tabela 'clientes'
-            'INSERT INTO clientes (nome, email, senha, telefone) VALUES ($1, $2, $3, $4) RETURNING *',
-            [nome, email, hashedPassword, telefone]
+            // Query atualizada para incluir a coluna is_admin
+            'INSERT INTO clientes (nome, email, senha, telefone, is_admin) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            [nome, email, hashedPassword, telefone, adminValue]
         );
         
         const { senha: _, ...novoUsuario } = newUserResult.rows[0];
-        res.status(201).json(novoUsuario);
+
+        // Mapeia para o frontend
+        const respostaUsuario = {
+            ...novoUsuario,
+            isAdmin: novoUsuario.is_admin
+        };
+
+        res.status(201).json(respostaUsuario);
         
     } catch (err) {
         console.error('Erro ao criar usuário:', err.message);
@@ -78,9 +111,14 @@ app.post('/api/users', async (req, res) => {
     }
 });
 
-// --- ROTAS CRUD PARA GERENCIAMENTO DE USUÁRIOS ---
 
-// ROTA PARA LISTAR TODOS OS USUÁRIOS (sem dados sensíveis)
+
+            /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
+             * ##                                                                                        ##
+             * ##                       ROTA PARA LISTAR TODOS OS USUÁRIOS                               ##
+             * ##                                                                                        ##
+             * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
+
 app.get('/api/users', async (req, res) => { 
     try {
         const users = await pool.query('SELECT cliente_id, nome, email, telefone, endereco FROM clientes ORDER BY nome ASC');
@@ -127,7 +165,11 @@ app.put('/api/users/:id', async (req, res) => {
         res.status(500).json({ error: 'Erro ao atualizar usuário.' });
     } 
 });
-
+            /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
+             * ##                                                                                        ##
+             * ##                              ROTA PARA ALTERAR SENHA                                   ##
+             * ##                                                                                        ##
+             * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
 // --- ROTA PARA ALTERAR SENHA ---
 app.put('/api/users/password/:id', async (req, res) => {
     const { id } = req.params; // Isto vai receber o 'cliente_id' do frontend
@@ -168,8 +210,12 @@ app.put('/api/users/password/:id', async (req, res) => {
         res.status(500).json({ error: 'Erro interno ao alterar a senha.' });
     }
 });
+            /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
+             * ##                                                                                        ##
+             * ##                        ROTA PARA DELETAR UM USUÁRIO POR ID                             ##
+             * ##                                                                                        ##
+             * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
 
-// ROTA PARA DELETAR UM USUÁRIO POR ID
 app.delete('/api/users/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -184,10 +230,12 @@ app.delete('/api/users/:id', async (req, res) => {
     }
 });
 
-// ==========================================================
-// ROTAS DE ENDEREÇOS (para Minha Conta)
-// ==========================================================
 
+            /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
+             * ##                                                                                        ##
+             * ##                                ROTA DE  ENDEREÇO                                       ##
+             * ##                                                                                        ##
+             * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
 // GET (Buscar todos os endereços de um cliente)
 app.get('/api/enderecos/:clienteId', async (req, res) => {
     const { clienteId } = req.params;

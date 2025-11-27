@@ -34,16 +34,18 @@ function Header() {
                 <Link className="texto-header" to="/contato">Contato</Link>
                 
                 {usuarioLogado && (
-                    <>
-                        <Link className="texto-header" to="/Crie_pizza">Crie a sua pizza</Link>
-                        <Link className="texto-header" to="/gestao_estoque">Gestão de Estoque</Link>
-                    </>
+                    <Link className="texto-header" to="/Crie_pizza">Crie a sua pizza</Link>
                 )}
 
-                {/* Agrupamos a lógica de utilizador nesta div */}
+                {/* Link EXCLUSIVO para ADMINISTRADORES/FUNCIONÁRIOS */}
+                {/* Verifica se está logado E se isAdmin é verdadeiro */}
+                {usuarioLogado && usuarioLogado.isAdmin === true && (
+                    <Link className="texto-header" to="/gestao_estoque">Gestão de Estoque</Link>
+                )}
+
                 <div className="header-user-actions">
                     
-                    {/* LÓGICA DO ÍCONE DE PERFIL */}
+                    {/* Ícone de Perfil */}
                     <Link 
                         className="header-icon-link" 
                         to={usuarioLogado ? "/minhaconta" : "/Login"} 
@@ -52,7 +54,7 @@ function Header() {
                         <img src="/icons/user.png" alt="Perfil" className="header-icon" />
                     </Link>
 
-                    {/* LÓGICA DO LOGOUT */}
+                    {/* Botão de Logout */}
                     {usuarioLogado && (
                         <button className="header-icon-link" onClick={handleLogout} title="Sair">
                             <img src="/icons/sair.png" alt="Sair" className="header-icon" />

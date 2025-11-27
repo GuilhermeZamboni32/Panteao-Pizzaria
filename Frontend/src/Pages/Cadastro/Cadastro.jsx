@@ -5,7 +5,7 @@ import './Cadastro.css';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 function Cadastro() {
-    // Estado simplificado, SEM 'endereco'
+    // Estado simplificado
     const [form, setForm] = useState({
         nome: '',
         email: '',
@@ -45,11 +45,21 @@ function Cadastro() {
             return;
         }
 
+        // --- LÓGICA DE FUNCIONÁRIO ---
+        // Verifica se o email termina com o domínio de funcionário
+        const isFuncionario = form.email.endsWith('@funcionario.com');
+
+        // Prepara os dados adicionando a flag 'isAdmin' (ou 'role')
+        const dadosParaEnviar = {
+            ...form,
+            isAdmin: isFuncionario // true se for funcionário, false se não for
+        };
+
         try {
             const response = await fetch('http://localhost:3001/api/users', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form) // Envia apenas nome, email, senha, tel
+                body: JSON.stringify(dadosParaEnviar) // Envia o objeto modificado
             });
 
             const data = await response.json();
