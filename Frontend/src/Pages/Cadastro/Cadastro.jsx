@@ -45,11 +45,11 @@ function Cadastro() {
             return;
         }
 
-        // --- LÓGICA DE FUNCIONÁRIO ---
+        //  LÓGICA DE FUNCIONÁRIO 
         // Verifica se o email termina com o domínio de funcionário
-        const isFuncionario = form.email.endsWith('@funcionario.com');
+        const isFuncionario = form.email.endsWith('@funcionariopanteao.com');
 
-        // Prepara os dados adicionando a flag 'isAdmin' (ou 'role')
+        // Prepara os dados adicionando a flag 'isAdmin' 
         const dadosParaEnviar = {
             ...form,
             isAdmin: isFuncionario // true se for funcionário, false se não for

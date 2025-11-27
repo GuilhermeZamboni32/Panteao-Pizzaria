@@ -1,0 +1,106 @@
+.pagina-funcionario {
+    background-color: #f4f4f4; /* Fundo claro para contraste ou #121212 se preferir escuro */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container-funcionario {
+    flex: 1;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.painel-admin {
+    background-color: white;
+    width: 100%;
+    max-width: 1000px;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.titulo-painel {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 5px;
+    border-left: 5px solid #ff9100; /* Laranja da pizzaria */
+    padding-left: 15px;
+}
+
+.subtitulo-painel {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+/* --- TABELA --- */
+.tabela-responsiva {
+    overflow-x: auto;
+}
+
+.tabela-funcionarios {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.tabela-funcionarios th,
+.tabela-funcionarios td {
+    text-align: left;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.tabela-funcionarios th {
+    background-color: #222; /* Cabeçalho escuro */
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+.tabela-funcionarios tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Badge de status */
+.badge-admin {
+    background-color: #d1fae5;
+    color: #065f46;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border: 1px solid #34d399;
+}
+
+/* Mensagens de estado */
+.loading {
+    text-align: center;
+    color: #666;
+    font-size: 1.2rem;
+    padding: 20px;
+}
+
+.erro-msg {
+    color: #dc2626;
+    background-color: #fee2e2;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .painel-admin {
+        padding: 15px;
+    }
+    
+    .titulo-painel {
+        font-size: 1.5rem;
+    }
+}
