@@ -1,26 +1,31 @@
 :root{
-    /*Cores principais*/
-    --vermelho: #BC4749;
-    --bege: #E7C8A7;
-    --branco: #F2E8CF ; 
-    --verde: #6A994E ;
-    --preto: #000000;
-    
-    /*Cores para detalhes*/
-    --cinza: #555555;
-    --azul: #096DD9;
-    --azul-claro: #1175e788;
-    --amarelo: #d4b506;
-    --amarelo-claro: #d8c86c;
-    --vermelho-claro: #cc7071;
-    --verde-claro: #91c075;
-    }
+/*Cores principais*/
+--vermelho: #BC4749;
+--bege: #E7C8A7;
+--branco: #F2E8CF ; 
+--verde: #6A994E ;
+--preto: #000000;
+
+/*Cores para detalhes*/
+--cinza: #555555;
+--azul: #096DD9;
+--azul-claro: #1175e788;
+--amarelo: #d4b506;
+--amarelo-claro: #d8c86c;
+--vermelho-claro: #cc7071;
+--verde-claro: #91c075;
+}
+
+/* ==========================
+   LAYOUT GERAL
+========================== */
 
 .pagina-funcionario {
     background-color: var(--branco);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    padding-bottom: 40px;
 }
 
 .container-funcionario {
@@ -28,33 +33,51 @@
     padding: 40px 20px;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
 }
 
+/* ==========================
+   PAINEL PROFISSIONAL
+========================== */
+
 .painel-admin {
-    background-color: var(--branco);
     width: 100%;
-    max-width: 1000px;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px var(--cinza);
+    max-width: 1100px;
+    background: var(--branco);
+    padding: 35px;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--bege);
+    animation: fadeIn 0.3s ease;
 }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================
+   TITULOS
+========================== */
 
 .titulo-painel {
     font-size: 2rem;
     color: var(--preto);
-    margin-bottom: 5px;
-    border-left: 5px solid var(--amarelo);
-    padding-left: 15px;
+    margin-bottom: 8px;
+    border-left: 6px solid var(--verde);
+    padding-left: 18px;
+    font-weight: bold;
 }
 
 .subtitulo-painel {
     color: var(--cinza);
-    margin-bottom: 30px;
-    font-size: 1rem;
+    margin-bottom: 25px;
+    font-size: 1.1rem;
 }
 
-/* --- TABELA --- */
+/* ==========================
+   TABELA
+========================== */
+
 .tabela-responsiva {
     overflow-x: auto;
 }
@@ -62,63 +85,81 @@
 .tabela-funcionarios {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
-}
-
-.tabela-funcionarios th,
-.tabela-funcionarios td {
-    text-align: left;
-    padding: 15px;
-    border-bottom: 1px solid var(--cinza);
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .tabela-funcionarios th {
     background-color: var(--preto);
     color: var(--branco);
-    font-weight: 600;
+    padding: 14px;
+    font-size: 0.9rem;
     text-transform: uppercase;
-    font-size: 0.85rem;
     letter-spacing: 1px;
 }
 
-.tabela-funcionarios tr:hover {
+.tabela-funcionarios td {
+    padding: 14px;
+    border-bottom: 1px solid var(--bege);
+    color: var(--preto);
+}
+
+/* Linhas alternadas */
+.tabela-funcionarios tbody tr:nth-child(even) {
     background-color: var(--bege);
 }
 
-/* Badge de status */
+/* Hover */
+.tabela-funcionarios tbody tr:hover {
+    background-color: var(--amarelo-claro);
+    transition: 0.2s ease-in-out;
+}
+
+/* ==========================
+   BADGE ADMIN
+========================== */
+
 .badge-admin {
     background-color: var(--verde-claro);
-    color: var(--verde);
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 0.75rem;
+    color: var(--preto);
+    padding: 6px 14px;
+    border-radius: 25px;
+    font-size: 0.8rem;
     font-weight: bold;
     border: 1px solid var(--verde);
 }
 
-/* Mensagens de estado */
-.loading {
+/* ==========================
+   MENSAGENS
+========================== */
+
+.loading, .vazio-msg {
     text-align: center;
     color: var(--cinza);
-    font-size: 1.2rem;
-    padding: 20px;
+    padding: 20px 0;
+    font-size: 1.1rem;
 }
 
 .erro-msg {
-    color: var(--preto);
     background-color: var(--vermelho);
-    padding: 10px;
-    border-radius: 5px;
+    color: var(--branco);
+    padding: 12px;
+    border-radius: 8px;
     text-align: center;
+    margin-bottom: 15px;
+    font-weight: bold;
 }
 
-/* Responsividade */
+/* ==========================
+   RESPONSIVIDADE
+========================== */
+
 @media (max-width: 768px) {
     .painel-admin {
-        padding: 15px;
+        padding: 20px;
     }
-    
+
     .titulo-painel {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
     }
 }

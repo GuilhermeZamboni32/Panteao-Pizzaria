@@ -1,4 +1,3 @@
-
 import 'dotenv/config';
 
 import express from 'express';
@@ -14,18 +13,11 @@ app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
 
 
-
-
-
-
             /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
              * ##                                                                                        ##
              * ##                             ROTAS DE LOGIN                                             ##
              * ##                                                                                        ##
              * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
-
-
-
 
 app.post('/api/login', async (req, res) => {
     const { email, senha } = req.body;
@@ -49,11 +41,9 @@ app.post('/api/login', async (req, res) => {
         // Remove a senha do objeto antes de enviar a resposta
         const { senha: _, ...dadosDoUsuario } = user;
 
-        // Formata para garantir que o frontend receba 'isAdmin' (camelCase)
-        // mesmo que o banco retorne 'is_admin' (snake_case)
         const respostaUsuario = {
             ...dadosDoUsuario,
-            isAdmin: user.is_admin // Mapeia a coluna do banco para o padrão do frontend
+            isAdmin: user.is_admin 
         };
 
         res.status(200).json(respostaUsuario);
@@ -72,29 +62,24 @@ app.post('/api/login', async (req, res) => {
              * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
 
 app.post('/api/users', async (req, res) => {
-    // Agora aceita 'isAdmin' vindo do frontend
     const { nome, email, senha, telefone, isAdmin } = req.body; 
 
-    // Validação simples
     if (!nome || !email || !senha || !telefone) {
         return res.status(400).json({ error: "Todos os campos são obrigatórios." });
     }
 
-    // Define o valor padrão como false se não vier nada
     const adminValue = isAdmin || false;
 
     try {
         const hashedPassword = await bcrypt.hash(senha, 10);
         
         const newUserResult = await pool.query(
-            // Query atualizada para incluir a coluna is_admin
             'INSERT INTO clientes (nome, email, senha, telefone, is_admin) VALUES ($1, $2, $3, $4, $5) RETURNING *',
             [nome, email, hashedPassword, telefone, adminValue]
         );
         
         const { senha: _, ...novoUsuario } = newUserResult.rows[0];
 
-        // Mapeia para o frontend
         const respostaUsuario = {
             ...novoUsuario,
             isAdmin: novoUsuario.is_admin
@@ -119,9 +104,12 @@ app.post('/api/users', async (req, res) => {
              * ##                                                                                        ##
              * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
 
+// --- CORREÇÃO AQUI: Removido 'endereco' da query ---
 app.get('/api/users', async (req, res) => { 
     try {
-        const users = await pool.query('SELECT cliente_id, nome, email, telefone, endereco FROM clientes ORDER BY nome ASC');
+        // Selecionamos apenas os campos que existem na tabela 'clientes'
+        // 'endereco' fica na tabela 'enderecos'
+        const users = await pool.query('SELECT cliente_id, nome, email, telefone, is_admin FROM clientes ORDER BY nome ASC');
         res.json(users.rows);
     } catch (err) {
         console.error('Erro ao buscar usuários:', err.message);
@@ -129,11 +117,12 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
-// ROTA PARA BUSCAR UM USUÁRIO POR ID (sem dados sensíveis)
+// ROTA PARA BUSCAR UM USUÁRIO POR ID
+// --- CORREÇÃO AQUI: Removido 'endereco' da query ---
 app.get('/api/users/:id', async (req, res) => { 
     const { id } = req.params;
     try {
-        const userResult = await pool.query('SELECT cliente_id, nome, email, telefone, endereco FROM clientes WHERE cliente_id = $1', [id]);
+        const userResult = await pool.query('SELECT cliente_id, nome, email, telefone, is_admin FROM clientes WHERE cliente_id = $1', [id]);
         if (userResult.rows.length === 0) {
             return res.status(404).json({ error: 'Usuário não encontrado.' });
         }
@@ -145,14 +134,16 @@ app.get('/api/users/:id', async (req, res) => {
 });
 
 // ROTA PARA ATUALIZAR UM USUÁRIO POR ID
+// --- CORREÇÃO AQUI: Removido 'endereco' da atualização ---
+// Se quiser atualizar endereço, use a rota PUT /api/enderecos/:id
 app.put('/api/users/:id', async (req, res) => { 
     const { id } = req.params;
-    // Apenas alguns campos podem ser atualizados para segurança
-    const { nome, telefone, endereco } = req.body;
+    const { nome, telefone } = req.body; // Removemos 'endereco' daqui
+
     try {
         const updatedUserResult = await pool.query(
-            'UPDATE clientes SET nome = $1, telefone = $2, endereco = $3 WHERE cliente_id = $4 RETURNING *',
-            [nome, telefone, endereco, id]
+            'UPDATE clientes SET nome = $1, telefone = $2 WHERE cliente_id = $3 RETURNING *',
+            [nome, telefone, id]
         );
         if (updatedUserResult.rows.length === 0) {
             return res.status(404).json({ error: 'Usuário não encontrado para atualizar.' });
@@ -165,14 +156,15 @@ app.put('/api/users/:id', async (req, res) => {
         res.status(500).json({ error: 'Erro ao atualizar usuário.' });
     } 
 });
+
             /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
              * ##                                                                                        ##
              * ##                              ROTA PARA ALTERAR SENHA                                   ##
              * ##                                                                                        ##
              * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
-// --- ROTA PARA ALTERAR SENHA ---
+
 app.put('/api/users/password/:id', async (req, res) => {
-    const { id } = req.params; // Isto vai receber o 'cliente_id' do frontend
+    const { id } = req.params; 
     const { senhaAtual, novaSenha } = req.body;
 
     if (!senhaAtual || !novaSenha) {
@@ -180,7 +172,6 @@ app.put('/api/users/password/:id', async (req, res) => {
     }
 
     try {
-        // 1. Buscar o usuário e sua senha atual no banco
         const userResult = await pool.query('SELECT * FROM clientes WHERE cliente_id = $1', [id]);
         if (userResult.rows.length === 0) {
             return res.status(404).json({ error: 'Usuário não encontrado.' });
@@ -188,16 +179,13 @@ app.put('/api/users/password/:id', async (req, res) => {
 
         const user = userResult.rows[0];
 
-        // 2. Comparar a senha atual enviada com a senha no banco
         const senhaValida = await bcrypt.compare(senhaAtual, user.senha);
         if (!senhaValida) {
             return res.status(401).json({ error: 'A senha atual está incorreta.' });
         }
 
-        // 3. Se a senha atual estiver correta, criar o hash da nova senha
         const hashedNovaSenha = await bcrypt.hash(novaSenha, 10);
 
-        // 4. Atualizar o banco com a nova senha
         await pool.query(
             'UPDATE clientes SET senha = $1 WHERE cliente_id = $2',
             [hashedNovaSenha, id]
@@ -210,6 +198,8 @@ app.put('/api/users/password/:id', async (req, res) => {
         res.status(500).json({ error: 'Erro interno ao alterar a senha.' });
     }
 });
+
+
             /**##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##
              * ##                                                                                        ##
              * ##                        ROTA PARA DELETAR UM USUÁRIO POR ID                             ##
@@ -236,6 +226,7 @@ app.delete('/api/users/:id', async (req, res) => {
              * ##                                ROTA DE  ENDEREÇO                                       ##
              * ##                                                                                        ##
              * ##||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||##*/
+
 // GET (Buscar todos os endereços de um cliente)
 app.get('/api/enderecos/:clienteId', async (req, res) => {
     const { clienteId } = req.params;
@@ -250,7 +241,6 @@ app.get('/api/enderecos/:clienteId', async (req, res) => {
 
 // POST (Criar um novo endereço)
 app.post('/api/enderecos', async (req, res) => {
-    // 'usuario_id' é o alias para 'cliente_id' vindo do frontend
     const { rua, numero, bairro, cep, complemento, usuario_id } = req.body; 
     try {
         const newEndereco = await pool.query(
@@ -307,13 +297,11 @@ app.delete('/api/enderecos/:id', async (req, res) => {
 app.get('/api/pagamentos/:clienteId', async (req, res) => {
     const { clienteId } = req.params;
     try {
-        // Seleciona os dados seguros da tabela
         const result = await pool.query(
             'SELECT cartao_id, bandeira, ultimos_4_digitos, validade_cartao FROM cartoes_salvos WHERE cliente_id = $1', 
             [clienteId]
         );
         
-        // Renomeia as colunas para bater com o frontend (brand, last4, validade, id)
         const cartoesFormatados = result.rows.map(cartao => ({
             id: cartao.cartao_id,
             brand: cartao.bandeira,
@@ -332,8 +320,6 @@ app.get('/api/pagamentos/:clienteId', async (req, res) => {
 app.post('/api/pagamentos', async (req, res) => {
     const { nome_titular, numero_cartao, validade, cvv, usuario_id } = req.body;
 
-    // --- SIMULAÇÃO DE TOKENIZAÇÃO (NUNCA SALVE O CVV OU NÚMERO COMPLETO) ---
-    // 1. Detecta a bandeira (simulação)
     let bandeira = 'Cartão';
     if (numero_cartao.startsWith('4')) {
         bandeira = 'Visa';
@@ -341,15 +327,9 @@ app.post('/api/pagamentos', async (req, res) => {
         bandeira = 'Mastercard';
     }
     
-    // 2. Pega os últimos 4 dígitos
     const ultimos_4_digitos = numero_cartao.slice(-4);
-    
-    // 3. Simula um token de gateway
     const gateway_token = 'tok_' + Math.random().toString(36).substr(2, 10);
-    
-    // 4. Pega a validade
-    const validade_cartao = validade; // MM/AA
-    // ------------------------------------------------------------------
+    const validade_cartao = validade; 
 
     try {
         const newCartao = await pool.query(

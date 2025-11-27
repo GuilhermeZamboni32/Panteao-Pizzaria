@@ -14,14 +14,14 @@ function Funcionario() {
     const fetchFuncionarios = async () => {
         try {
             const response = await fetch('http://localhost:3001/api/users');
-            if (!response.ok) {
-                throw new Error('Erro ao buscar dados.');
-            }
+
+            if (!response.ok) throw new Error('Erro ao buscar dados.');
+
             const data = await response.json();
 
-            // Filtra para mostrar APENAS quem é admin ou tem email de funcionário
-            const listaAdmins = data.filter(user => 
-                user.is_admin === true || user.email.endsWith('@funcionario.com')
+            const listaAdmins = data.filter(user =>
+                user.is_admin === true ||
+                user.email.endsWith('@funcionario.com')
             );
 
             setFuncionarios(listaAdmins);
@@ -38,8 +38,9 @@ function Funcionario() {
             <Header />
             <main className='container-funcionario'>
                 <div className="painel-admin">
+
                     <h1 className="titulo-painel">Painel Administrativo</h1>
-                    <p className="subtitulo-painel">Lista de Funcionários Cadastrados</p>
+                    <p className="subtitulo-painel">Lista de Funcionários</p>
 
                     {loading && <p className="loading">Carregando dados...</p>}
                     {error && <p className="erro-msg">{error}</p>}
@@ -60,6 +61,7 @@ function Funcionario() {
                                         <th>Status</th>
                                     </tr>
                                 </thead>
+
                                 <tbody>
                                     {funcionarios.map((func) => (
                                         <tr key={func.cliente_id}>
@@ -73,6 +75,7 @@ function Funcionario() {
                                         </tr>
                                     ))}
                                 </tbody>
+
                             </table>
                         </div>
                     )}
