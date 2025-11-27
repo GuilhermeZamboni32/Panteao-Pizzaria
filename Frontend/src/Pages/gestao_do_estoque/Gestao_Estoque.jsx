@@ -26,7 +26,6 @@ function GestaoEstoque() {
     const navigate = useNavigate();
 
 
-        // Supondo que você tenha os dados de estoque
     const { massas, molhoSalgado, molhoDoce } = estoqueResumo; // Ex: { massas: 10, molhoSalgado: 5, molhoDoce: 3 }
     
     const percMassa = (massas / TOTAL_SLOTS_MAQUINA) * 100;

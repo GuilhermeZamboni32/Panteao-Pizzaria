@@ -379,3 +379,77 @@
     right: 8px;
     bottom: -16px;
 }
+
+/* ... (Seu CSS anterior) ... */
+
+/* ======================================= */
+/* ESTILO DO SLOT (O MOCK/REAL)            */
+/* ======================================= */
+.pedido-slot-destaque {
+    margin-top: 10px;
+    background-color: transparent;
+    border-right: 4px solid var(--preto); /* Linha de destaque lateral */
+    padding-right: 12px;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.slot-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--cinza);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 2px;
+}
+
+.slot-label svg {
+    color: var(--preto);
+}
+
+.slot-valor {
+    font-size: 1.4rem; /* Tamanho grande para leitura fácil */
+    font-weight: 800;
+    color: var(--preto);
+    line-height: 1;
+}
+
+/* ======================================= */
+/* BOTÃO DE CONFIRMAR RECEBIMENTO          */
+/* ======================================= */
+.btn-recebi-pedido {
+    margin-top: 12px;
+    background-color: var(--preto); /* Preto para contraste ou Verde para sucesso */
+    color: var(--branco);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-recebi-pedido:hover {
+    background-color: #333;
+    transform: translateY(-1px);
+}
+
+.btn-recebi-pedido:active {
+    transform: translateY(1px);
+}
+
+/* Ajuste pequeno para o texto ID */
+.pedido-texto-id {
+    font-size: 0.8rem;
+    color: #999;
+    margin-top: 4px;
+}

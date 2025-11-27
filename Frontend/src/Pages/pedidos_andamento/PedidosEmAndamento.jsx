@@ -204,6 +204,31 @@ function PedidosEmAndamento() {
         };
     }, [pedidos]);
 
+    const handleConfirmarEntrega = async (pedidoId) => {
+        // 1. Chama o Backend para liberar o slot e marcar como entregue
+        try {
+            const res = await fetch('http://localhost:3002/api/pedidos/confirmar_entrega', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ machine_id: pedidoId })
+            });
+
+            if (!res.ok) throw new Error('Falha ao confirmar entrega');
+
+            // 2. Remove visualmente da lista NA HORA (UX instantânea)
+            const novosPedidos = pedidos.filter(p => p.id !== pedidoId);
+            setPedidos(novosPedidos);
+
+            // 3. Atualiza o LocalStorage para não voltar se der F5
+            const idsParaSalvar = novosPedidos.map(p => ({ id: p.id, nome: p.nome }));
+            localStorage.setItem("pedidosEmAndamento", JSON.stringify(idsParaSalvar));
+
+        } catch (error) {
+            console.error("Erro ao confirmar:", error);
+            alert("Não foi possível confirmar a entrega. Tente novamente.");
+        }
+    };
+
     // Renderização
     return (
         <div className="pagina-pedidos">
@@ -243,30 +268,45 @@ function PedidosEmAndamento() {
                                     gerarNomePedido({ itens: [{ nome_item: pedido.nome }] }) : 
                                     "Pizza Personalizada";
 
-                                return (
-                                    <li key={pedido.id} className="pedido-item">
-                                        <div className="pedido-info">
-                                            <span className="pedido-texto-nome">{nomeDoPedido}</span>
-                                        </div>
-                                        <div className="pedido-status-container">
-                                            <div className={`status-badge ${statusInfo.className}`}>
-                                                <span className="status-icone">{statusInfo.icon}</span>
-                                                {statusInfo.texto} 
+                                    return (
+                                        <li key={pedido.id} className="pedido-item">
+                                            <div className="pedido-info">
+                                                <span className="pedido-texto-nome">{nomeDoPedido}</span>
+                                                {/* Mostramos o ID pequeno para debug/conferência se quiser */}
+                                                <span className="pedido-texto-id">#{pedido.id.slice(-4)}</span> 
                                             </div>
                                             
-                                            {mostrarSlot && (
-                                                <div className="pedido-slot-destaque">
-                                                   <div className="slot-label">
-                                                       <img src="/icons/local-preto.png" className="icone-local" alt="Local" />
-                                                       Retirar no:
-                                                   </div>
-                                                   <div className="slot-valor">{pedido.slot}</div>
+                                            <div className="pedido-status-container">
+                                                <div className={`status-badge ${statusInfo.className}`}>
+                                                    <span className="status-icone">{statusInfo.icon}</span>
+                                                    {statusInfo.texto} 
                                                 </div>
-                                            )}
-                                        </div>
-                                    </li>
-                                );
-                            })}
+                                                
+                                                {mostrarSlot && (
+                                                    <div className="pedido-slot-destaque">
+                                                        <div className="slot-label">
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                                            </svg>
+                                                            RETIRAR NO
+                                                        </div>
+                                                        <div className="slot-valor">{pedido.slot}</div>
+                                                    </div>
+                                                )}
+        
+                                                {/* NOVO BOTÃO: Só aparece quando está PRONTO */}
+                                                {isPronto && (
+                                                    <button 
+                                                        className="btn-recebi-pedido"
+                                                        onClick={() => handleConfirmarEntrega(pedido.id)}
+                                                    >
+                                                        Já retirei meu pedido
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </li>
+                                    );
+                                })}
                         </ul>
                     )}
                 </div>

@@ -10,6 +10,7 @@ import PedidosEmAndamento from "../Pages/Pedidos_andamento/PedidosEmAndamento";
 import Contato from "../Pages/Contato/Contato";
 import Gestao_Estoque from "../Pages/gestao_do_estoque/Gestao_Estoque";
 import MinhaConta from "../Pages/Conta_de_Usuario/MinhaConta";
+import Funcionario from "../Pages/funci/Funcionario";
 
 const router = createBrowserRouter([
     { path: "/", element: <Home/> },
@@ -22,7 +23,8 @@ const router = createBrowserRouter([
     { path: "/PedidosEmAndamento", element: <PedidosEmAndamento/> },
     { path: "/Contato", element: <Contato/> },
     { path: "/Gestao_estoque", element: <Gestao_Estoque/> },
-    { path: "/minhaconta", element: <MinhaConta/> }
+    { path: "/minhaconta", element: <MinhaConta/> },
+    { path: "/Funcionario", element: <Funcionario/> }
 ]);
 
 export default router;

@@ -282,11 +282,11 @@ app.post('/api/webhook/status', async (req, res) => {
     console.log(`🛠️ Processando update para ID: ${idIdentificado} | Status: ${statusParaBD} | Slot: ${slotParaBD}`);
 
     try {
+        // CORREÇÃO: Removido updated_at = NOW()
         const updateQuery = `
             UPDATE itens_pedido 
             SET status_maquina = $1, 
-                slot_entrega = COALESCE($2, slot_entrega),
-                updated_at = NOW()
+                slot_entrega = COALESCE($2, slot_entrega)
             WHERE machine_id = $3 OR item_id::text = $3 
             RETURNING item_id, status_maquina, slot_entrega`;
         
@@ -319,66 +319,99 @@ app.post('/api/webhook/status', async (req, res) => {
 
 
 // --- ROTA DE STATUS 
+// --- ROTA DE STATUS (PRIORIDADE: REAL > MOCK) ---
 app.get('/api/pedidos/status/:machineId', async (req, res) => {
     const { machineId } = req.params;
     const client = await pool.connect();
 
-    console.log(`🔍 Verificando status para ID da máquina: ${machineId}`);
+    console.log(`🔍 Status ID: ${machineId}`);
 
     try {
-        // CORREÇÃO AQUI: Mudamos de /orders para /items conforme seu teste no Swagger
-        const urlExterna = `http://52.72.137.244:3000/queue/items/${machineId}`;
-        const responseMaquina = await fetch(urlExterna);
+        // 1. Busca o que já temos no Banco de Dados (Para evitar sobrescrever)
+        const checkQuery = await client.query('SELECT slot_entrega, status_maquina FROM itens_pedido WHERE machine_id = $1', [machineId]);
         
-        let statusExterno = 'Desconhecido';
-        let dadosExternos = {};
-
-        if (responseMaquina.ok) {
-            dadosExternos = await responseMaquina.json();
-            // O JSON que você mostrou tem o campo "status" na raiz: { "status": "PENDING", ... }
-            statusExterno = dadosExternos.status; 
-            console.log(`✅ Resposta da Máquina: ${statusExterno}`);
-        } else {
-            console.error(`❌ Erro ao consultar máquina: ${responseMaquina.statusText}`);
+        if (checkQuery.rows.length === 0) {
+            return res.status(404).json({ error: "Item não encontrado no banco local" });
         }
 
-        // Atualiza nosso Banco de Dados Local para ficar sincronizado
-        // IMPORTANTE: Buscamos pela coluna machine_id (VARCHAR) que criamos
+        let itemBanco = checkQuery.rows[0];
+        let slotFinal = itemBanco.slot_entrega; // Começamos com o que já temos
+        let statusParaGravar = itemBanco.status_maquina;
+
+        // 2. Tenta consultar a Máquina Real
+        let statusExterno = null;
+        let slotExterno = null;
+
+        try {
+            const urlExterna = `http://52.72.137.244:3000/queue/items/${machineId}`;
+            const responseMaquina = await fetch(urlExterna);
+            
+            if (responseMaquina.ok) {
+                const dados = await responseMaquina.json();
+                statusExterno = dados.status;
+                statusParaGravar = statusExterno; // Atualizamos o status com o real
+
+                // Tenta achar o slot na resposta da máquina (pode vir como 'slot', 'estoquePos', etc)
+                const slotCru = dados.slot || dados.estoquePos;
+                
+                if (slotCru) {
+                    // Formata para garantir que seja "Slot:XX"
+                    slotExterno = String(slotCru).includes('Slot:') 
+                        ? slotCru 
+                        : `Slot:${String(slotCru).padStart(2, '0')}`;
+                    console.log(`📡 Máquina Real respondeu com slot: ${slotExterno}`);
+                }
+            }
+        } catch (erroRede) {
+            console.warn(`⚠️ Falha ao conectar na máquina real: ${erroRede.message}. Usando lógica de fallback.`);
+        }
+
+        // 3. DECISÃO DO SLOT (A Lógica Principal)
+        if (!slotFinal) { 
+            // Só procuramos um slot novo se o banco estiver vazio (NULL)
+            
+            if (slotExterno) {
+                // CENÁRIO A: Máquina Real mandou slot -> Usamos ele!
+                slotFinal = slotExterno;
+                console.log(`✅ Usando Slot Real: ${slotFinal}`);
+            } 
+            else if (statusParaGravar === 'COMPLETED' || statusParaGravar === 'Pronto' || statusParaGravar === 'EXPEDICAO') {
+                // CENÁRIO B: Máquina não mandou (ou falhou), mas tá pronto -> Usamos MOCK!
+                const numeroSlotMock = Math.floor(Math.random() * 12) + 1;
+                slotFinal = `Slot:${String(numeroSlotMock).padStart(2, '0')}`;
+                console.log(`🎲 Usando Slot Mock (Fallback): ${slotFinal}`);
+            }
+        }
+
+        // 4. Atualiza o Banco de Dados com a decisão
         const updateQuery = `
             UPDATE itens_pedido 
-            SET status_maquina = $1 
-            WHERE machine_id = $2 
-            RETURNING *
+            SET status_maquina = $1,
+                slot_entrega = $2
+            WHERE machine_id = $3 
+            RETURNING status_maquina, slot_entrega, nome_item
         `;
-        const result = await client.query(updateQuery, [statusExterno, machineId]);
 
-        if (result.rows.length === 0) {
-            // Se não achou pelo machine_id, tenta atualizar pelo item_id caso o parametro seja um UUID nosso
-            // Isso é uma segurança extra
-             console.warn("⚠️ Item não encontrado por machine_id, verifique se o ID está salvo na tabela.");
-             return res.json({ 
-                 status_local: "Não encontrado", 
-                 status_externo: statusExterno,
-                 aviso: "ID da máquina não vinculado a nenhum item no banco local"
-             });
-        }
+        const result = await client.query(updateQuery, [statusParaGravar, slotFinal, machineId]);
+        const itemAtualizado = result.rows[0];
 
+        // 5. Resposta para o Frontend
         res.json({
-            status_local: result.rows[0].status_maquina,
-            status_externo: statusExterno,
-            progresso: dadosExternos.progress || 0, // Adicionei o progresso que vi no seu JSON
-            item: result.rows[0]
+            status: itemAtualizado.status_maquina,
+            slot: itemAtualizado.slot_entrega,
+            nomeItem: itemAtualizado.nome_item
         });
 
     } catch (err) {
-        console.error("Erro CRÍTICO na rota de status:", err);
-        res.status(500).json({ error: err.message });
+        console.error("❌ Erro rota status:", err.message);
+        res.status(500).json({ error: "Erro interno" });
     } finally {
         client.release();
     }
 });
 
-// --- ROTA CONFIRMAR ENTREGA E LIBERAR ESTOQUE 
+
+// --- ROTA CONFIRMAR ENTREGA (VERSÃO CORRIGIDA) ---
 app.post('/api/pedidos/confirmar_entrega', async (req, res) => {
     const { machine_id } = req.body;
 
@@ -387,43 +420,39 @@ app.post('/api/pedidos/confirmar_entrega', async (req, res) => {
     console.log(`\n🏁 [ENTREGA] Iniciando baixa do item: ${machine_id}`);
 
     try {
-        const checkQuery = `SELECT status_maquina, slot_entrega FROM itens_pedido WHERE machine_id = $1`;
-        const checkResult = await pool.query(checkQuery, [machine_id]);
-        
-        if (checkResult.rows.length === 0) return res.status(404).json({ error: 'Item não encontrado.' });
-        
-        const itemLocal = checkResult.rows[0];
+        // 1. Tenta avisar a máquina real (Middleware)
         const urlLiberaExpedicao = `${URL_EXPEDICAO}/${machine_id}`;
-        
-        console.log(`➡️ Solicitando liberação ao Middleware: DELETE ${urlLiberaExpedicao}`);
-        
-        const responseMiddleware = await fetch(urlLiberaExpedicao, {
-            method: 'DELETE',
-            headers: { 'Authorization': API_KEY_MAQUINA_REAL }
-        });
-
-        if (responseMiddleware.ok || responseMiddleware.status === 404) {
-            await pool.query(
-                `UPDATE itens_pedido SET status_maquina = 'Entregue', slot_entrega = NULL WHERE machine_id = $1`,
-                [machine_id]
-            );
-            
-            console.log(`✅ [ENTREGA] Sucesso! Item ${machine_id} finalizado.`);
-            res.json({ message: "Entrega confirmada e estoque liberado." });
-
-        } else {
-            
-            const erroTexto = await responseMiddleware.text();
-            console.error(`❌ [ENTREGA] Middleware recusou: ${erroTexto}`);
-            res.status(400).json({ error: "Falha ao liberar item no middleware", details: erroTexto });
+        try {
+            const responseMiddleware = await fetch(urlLiberaExpedicao, {
+                method: 'DELETE',
+                headers: { 'Authorization': API_KEY_MAQUINA_REAL }
+            });
+            if (!responseMiddleware.ok) {
+                console.warn(`⚠️ [ENTREGA] Middleware reclamou, mas vamos seguir: ${responseMiddleware.status}`);
+            }
+        } catch (erroRede) {
+            console.warn(`⚠️ [ENTREGA] Middleware offline, seguindo localmente.`);
         }
 
+        // 2. Atualiza o banco (SEM A COLUNA updated_at)
+        const updateQuery = `
+            UPDATE itens_pedido 
+            SET status_maquina = 'Entregue', 
+                slot_entrega = NULL
+            WHERE machine_id = $1
+        `;
+        
+        await pool.query(updateQuery, [machine_id]);
+            
+        console.log(`✅ [ENTREGA] Sucesso! Item removido da tela.`);
+        res.status(200).json({ message: "Entrega confirmada." });
+
     } catch (err) {
-        console.error(`❌ [ENTREGA] Erro crítico:`, err.message);
-        res.status(500).json({ error: 'Erro interno ao confirmar entrega.' });
+        // Esse log vai aparecer no seu terminal se der erro
+        console.error(`❌ [ENTREGA] ERRO SQL:`, err.message);
+        res.status(500).json({ error: err.message });
     }
 });
-
 
 
 
@@ -641,51 +670,103 @@ app.get('/api/estoque', async (req, res) => {
     }
 });
 
+
+
 // PUT /api/estoque/:id (Atualizar)
 app.put('/api/estoque/:id', async (req, res) => {
-    const { id } = req.params;
-    const bodyRecebidoDoReact = req.body; 
-    console.log(`[PROXY ESTOQUE PUT] Recebida atualização para Posição ID: ${id}`);
-    const payloadParaMaquinaReal = bodyRecebidoDoReact;
-    const urlAlvo = `${URL_ESTOQUE_PRINCIPAL}/${id}`;
-    const headers = { 'Authorization': API_KEY_MAQUINA_REAL, 'Content-Type': 'application/json' };
-    try {
-        const response = await fetch(urlAlvo, {
-            method: 'PUT',
-            headers: headers,
-            body: JSON.stringify(payloadParaMaquinaReal) 
-        });
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Máquina real falhou (PUT): ${response.status} - ${errorText}`);
-        }
-        const data = await response.json(); 
-        res.json(data); 
-    } catch (err) {
-        console.warn(`[PROXY ESTOQUE PUT] Falha na Máquina Principal (${err.message}).`);
-        res.status(500).json({ error: "Erro ao atualizar item no estoque.", details: err.message });
-    }
+    const { id } = req.params;
+    const bodyRecebidoDoReact = req.body; 
+    console.log(`[PROXY ESTOQUE PUT] Recebida atualização para Posição ID: ${id}`);
+    
+    // --- TENTATIVA 1: MÁQUINA REAL ---
+    try {
+        const urlAlvo = `${URL_ESTOQUE_PRINCIPAL}/${id}`;
+        const headers = { 'Authorization': API_KEY_MAQUINA_REAL, 'Content-Type': 'application/json' };
+        
+        const response = await fetch(urlAlvo, {
+            method: 'PUT',
+            headers: headers,
+            body: JSON.stringify(bodyRecebidoDoReact) 
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Máquina real falhou (PUT): ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json(); 
+        res.json(data); 
+
+    } catch (err) {
+        console.warn(`[PROXY ESTOQUE PUT] Falha na Máquina Principal (${err.message}). Tentando Máquina Virtual...`);
+        
+        // --- TENTATIVA 2: MÁQUINA VIRTUAL (FALLBACK) ---
+        try {
+            // Assume que a URL da VM funciona igual: URL_BASE + /ID
+            const urlAlvoVM = `${URL_ESTOQUE_VIRTUAL}/${id}`; 
+            
+            const vmResponse = await fetch(urlAlvoVM, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' }, // VM geralmente não precisa de Auth Key específica
+                body: JSON.stringify(bodyRecebidoDoReact)
+            });
+
+            if (!vmResponse.ok) {
+                const errorTextVM = await vmResponse.text();
+                throw new Error(`Máquina virtual também falhou: ${vmResponse.status} - ${errorTextVM}`);
+            }
+
+            const dataVM = await vmResponse.json();
+            res.json(dataVM);
+
+        } catch (vmErr) {
+            console.error(`[PROXY ESTOQUE PUT] FALHA CRÍTICA: Ambas as máquinas falharam.`);
+            res.status(500).json({ error: "Erro ao atualizar item no estoque em ambas as máquinas.", details: vmErr.message });
+        }
+    }
 });
 
 // DELETE /api/estoque/:id (Liberar)
 app.delete('/api/estoque/:id', async (req, res) => {
-    const { id } = req.params;
-    console.log(`[PROXY ESTOQUE DELETE] Recebida requisição para liberar Posição ID: ${id}`);
-    const urlAlvo = `${URL_ESTOQUE_PRINCIPAL}/${id}`;
-    const headers = { 'Authorization': API_KEY_MAQUINA_REAL };
-    try {
-        const response = await fetch(urlAlvo, { method: 'DELETE', headers: headers });
-        if (!response.ok) {
-            const errorData = await response.json(); 
-            console.error(`[PROXY ESTOQUE DELETE] Erro da API: ${errorData.error || response.statusText}`);
-            throw new Error(errorData.error || `Máquina real falhou (DELETE): ${response.status}`);
-        }
-        const data = await response.json(); 
-        res.json(data);
-    } catch (err) {
-        console.warn(`[PROXY ESTOQUE DELETE] Falha na Máquina Principal (${err.message}).`);
-        res.status(500).json({ error: "Erro ao liberar posição no estoque.", details: err.message });
-    }
+    const { id } = req.params;
+    console.log(`[PROXY ESTOQUE DELETE] Recebida requisição para liberar Posição ID: ${id}`);
+    
+    // --- TENTATIVA 1: MÁQUINA REAL ---
+    try {
+        const urlAlvo = `${URL_ESTOQUE_PRINCIPAL}/${id}`;
+        const headers = { 'Authorization': API_KEY_MAQUINA_REAL };
+
+        const response = await fetch(urlAlvo, { method: 'DELETE', headers: headers });
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); 
+            throw new Error(errorData.error || `Máquina real falhou (DELETE): ${response.status}`);
+        }
+        
+        const data = await response.json(); 
+        res.json(data);
+
+    } catch (err) {
+        console.warn(`[PROXY ESTOQUE DELETE] Falha na Máquina Principal (${err.message}). Tentando Máquina Virtual...`);
+
+        // --- TENTATIVA 2: MÁQUINA VIRTUAL (FALLBACK) ---
+        try {
+            const urlAlvoVM = `${URL_ESTOQUE_VIRTUAL}/${id}`;
+            
+            const vmResponse = await fetch(urlAlvoVM, { method: 'DELETE' });
+
+            if (!vmResponse.ok) {
+                throw new Error(`Máquina virtual também falhou (DELETE): ${vmResponse.status}`);
+            }
+
+            const dataVM = await vmResponse.json();
+            res.json(dataVM);
+
+        } catch (vmErr) {
+            console.error(`[PROXY ESTOQUE DELETE] FALHA CRÍTICA: Ambas as máquinas falharam.`);
+            res.status(500).json({ error: "Erro ao liberar posição no estoque.", details: vmErr.message });
+        }
+    }
 });
 
 // GET /api/estoque/detalhes (Lista Completa)

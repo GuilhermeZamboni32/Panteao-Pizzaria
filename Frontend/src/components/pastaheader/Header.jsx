@@ -40,7 +40,8 @@ function Header() {
                 {/* Link EXCLUSIVO para ADMINISTRADORES/FUNCIONÁRIOS */}
                 {/* Verifica se está logado E se isAdmin é verdadeiro */}
                 {usuarioLogado && usuarioLogado.isAdmin === true && (
-                    <Link className="texto-header" to="/gestao_estoque">Gestão de Estoque</Link>
+                    <Link className="texto-header" to="/gestao_estoque">Gestão de Estoque</Link>,
+                    <Link className="texto-header" to="/funcionario">funcionario</Link>
                 )}
 
                 <div className="header-user-actions">

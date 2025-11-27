@@ -6,7 +6,6 @@ const PORT = 3000;
 const pedidosNaMaquina = new Map();
 
 // --- ESTOQUE FALSO (MOCK) ---
-// Simula os 26 slots
 let estoqueFalso = [
     { pos: 1, cor: "preto", op: null }, // Disponível
     { pos: 2, cor: "preto", op: null },
