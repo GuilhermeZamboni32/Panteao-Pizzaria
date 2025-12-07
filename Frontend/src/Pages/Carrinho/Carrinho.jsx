@@ -24,6 +24,22 @@ const ModalAviso = ({ onClose }) => {
 
 // --- Fim do Componente Modal ---
 
+const CardConfirmacao = ({ mensagem, onClose }) => {
+    return (
+        <div className="card-confirmacao-overlay">
+            <div className="card-confirmacao">
+                <h2>Pedido Confirmado! 🎉</h2>
+                <p>{mensagem}</p>
+
+                <button onClick={onClose} className="btn-card-ok">
+                    OK
+                </button>
+            </div>
+        </div>
+    );
+};
+
+
 
 function Carrinho() {
     const location = useLocation();
@@ -34,6 +50,10 @@ function Carrinho() {
     
     const [mostrarModalAviso, setMostrarModalAviso] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
+
+    const [mostrarCardConfirmacao, setMostrarCardConfirmacao] = useState(false);
+    const [mensagemConfirmacao, setMensagemConfirmacao] = useState('');
+
     
     const frete = 5;
     const desconto = 0;
@@ -151,59 +171,64 @@ function Carrinho() {
             total: total
         };
     
+      try {
+    const response = await fetch('http://localhost:3002/api/pedidos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pedidoPayload)
+    });
+
+    const data = await response.json(); // <-- inclui os IDs e a recomendação
+
+    if (response.ok) {
+        setMensagemConfirmacao('Seu pedido foi enviado com sucesso! Acompanhe o status.');
+        setMostrarCardConfirmacao(true);
+
+        // Pega os IDs e a recomendação da IA
+        const idsDaMaquina = data.idsDaMaquina || [];
+        const recomendacaoIA = data.recomendacao;
+
         try {
-            const response = await fetch('http://localhost:3002/api/pedidos', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(pedidoPayload)
+            const idsEmAndamento = JSON.parse(localStorage.getItem("pedidosEmAndamento")) || [];
+
+            const novosPedidosParaAndamento = idsDaMaquina.map((id, index) => {
+                const itemCorrespondente = itensComNomeFormatado[index];
+                return {
+                    id: id,
+                    nome: itemCorrespondente.nome_item
+                };
             });
-            const data = await response.json(); // <-- 'data' AGORA TEM A RECOMENDAÇÃO
-    
-            if (response.ok) {
-                alert('🍕 Pedido realizado com sucesso!');
-                
-                // Pega os IDs e a nova recomendação
-                const idsDaMaquina = data.idsDaMaquina || [];
-                const recomendacaoIA = data.recomendacao; // <-- PEGA A RECOMENDAÇÃO
 
-                try {
-                    // (Sua lógica de salvar IDs no localStorage está correta)
-                    const idsEmAndamento = JSON.parse(localStorage.getItem("pedidosEmAndamento")) || [];
-                    const novosPedidosParaAndamento = idsDaMaquina.map((id, index) => {
-                        const itemCorrespondente = itensComNomeFormatado[index];
-                        return {
-                            id: id, 
-                            nome: itemCorrespondente.nome_item
-                        };
-                    });
-                    const idsAtualizados = [...idsEmAndamento, ...novosPedidosParaAndamento];
-                    localStorage.setItem("pedidosEmAndamento", JSON.stringify(idsAtualizados));
-                } catch (error) {
-                    console.error("Falha ao salvar IDs no localStorage:", error);
-                }
-                
-                setItensCarrinho([]);
-                
-                // ==========================================================
-                // --- ALTERAÇÃO PRINCIPAL AQUI ---
-                // Navega para a próxima página E PASSA A RECOMENDAÇÃO no state
-                // ==========================================================
-                navigate('/pedidosemandamento', {
-                    state: {
-                        recomendacao: recomendacaoIA
-                        // Não precisamos passar os IDs, pois já estão no localStorage
-                    }
-                });
-                // ==========================================================
-
-            } else {
-                alert(data.error || 'Erro ao concluir o pedido.');
-            }
-        } catch (err) {
-            console.error("❌ Erro ao enviar pedido:", err);
-            alert("Erro ao conectar com o servidor de pedidos.");
+            const idsAtualizados = [...idsEmAndamento, ...novosPedidosParaAndamento];
+            localStorage.setItem("pedidosEmAndamento", JSON.stringify(idsAtualizados));
+        } catch (error) {
+            console.error("Falha ao salvar IDs no localStorage:", error);
         }
-    };
+
+        setItensCarrinho([]);
+
+        // ==========================================================
+        // AQUI ESTÁ O DELAY PARA O CARD NÃO SUMIR INSTANTEAMENTE
+        // ==========================================================
+        setTimeout(() => {
+            setMostrarCardConfirmacao(false);
+
+            navigate('/pedidosemandamento', {
+                state: {
+                    recomendacao: recomendacaoIA
+                }
+            });
+
+        }, 3000); // <-- 3 segundos
+        // ==========================================================
+
+    } else {
+        alert(data.error || 'Erro ao concluir o pedido.');
+    }
+} catch (err) {
+    console.error("❌ Erro ao enviar pedido:", err);
+    alert("Erro ao conectar com o servidor de pedidos.");
+}}
 
     // --- JSX (RENDERIZAÇÃO) ---
     // (O seu JSX permanece exatamente o mesmo)
@@ -285,13 +310,20 @@ function Carrinho() {
                 <ModalAviso
                     onClose={() => {
                         setMostrarModalAviso(false);
-                        navigate('/minhaconta');  // <- Direciona para tela de perfil
+                        navigate('/minhaconta');
                     }}
                 />
             )}
 
-        </div>
-    );
+            {mostrarCardConfirmacao && (
+                <CardConfirmacao
+                    mensagem={mensagemConfirmacao}
+                    onClose={() => setMostrarCardConfirmacao(false)}
+                />
+            )}
+        </div>
+    );
 }
+
 
 export default Carrinho;

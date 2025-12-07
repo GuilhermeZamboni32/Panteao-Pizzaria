@@ -373,3 +373,66 @@
     width: 100%;
   }
 }
+
+
+/* --- CARD DE CONFIRMAÇÃO --- */
+.card-confirmacao-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.card-confirmacao {
+    background: #fff;
+    width: 360px;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0px 8px 25px rgba(0,0,0,0.25);
+    text-align: center;
+    animation: slideUp .35s ease-out;
+}
+
+.card-confirmacao h2 {
+    color: #27ae60;
+    margin-bottom: 10px;
+}
+
+.card-confirmacao p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.btn-card-ok {
+    background-color: #27ae60;
+    color: white;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn-card-ok:hover {
+    background-color: #219150;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

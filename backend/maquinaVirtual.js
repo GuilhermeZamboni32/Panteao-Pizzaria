@@ -3,147 +3,153 @@ import cors from 'cors';
 
 const app = express();
 const PORT = 3000;
+
+// ---------------- MAQUINA VIRTUAL ---------------- //
 const pedidosNaMaquina = new Map();
 
-// --- ESTOQUE FALSO (MOCK) ---
+// Estoque inicial (Mock)
 let estoqueFalso = [
-    { pos: 1, cor: "preto", op: null }, // Disponível
+    { pos: 1, cor: "preto", op: null },
     { pos: 2, cor: "preto", op: null },
-    { pos: 3, cor: "vermelho", op: "pedido-abc" }, // Ocupado
+    { pos: 3, cor: "vermelho", op: "pedido-abc" },
     { pos: 4, cor: "azul", op: null },
     { pos: 5, cor: "vermelho", op: null },
-    { pos: 6, cor: "azul", op: "pedido-xyz" }, // Ocupado
+    { pos: 6, cor: "azul", op: "pedido-xyz" }
 ];
-// ------------------------------
 
 app.use(cors());
 app.use(express.json());
 
-console.log('🤖 Máquina Virtual Pronta para Receber Pedidos!');
-console.log('--------------------------------------------------');
+console.log("🤖 Máquina Virtual Inicializada!");
+console.log("--------------------------------");
 
-// --- ROTAS DE PEDIDO (Sem alteração) ---
+
+// =====================================================
+// 1. RECEBER PEDIDO
+// =====================================================
 app.post('/queue/items', (req, res) => {
-    const pedidoRecebidoPayload = req.body; 
-    const idDoPedidoNaMaquina = `maquina-${Date.now()}`;
-    pedidosNaMaquina.set(idDoPedidoNaMaquina, {
-        payload: pedidoRecebidoPayload, 
+    const payload = req.body;
+
+    const id = `maquina-${Date.now()}`;
+    pedidosNaMaquina.set(id, {
+        payload,
         status: "Recebido (VM)",
         slot: null
     });
-    // ... (setTimeout para status) ...
+
+    console.log(`📥 Pedido recebido na VM: ${id}`);
+
+    // Troca de status em 10 segundos
     setTimeout(() => {
-        const pedido = pedidosNaMaquina.get(idDoPedidoNaMaquina);
-        if (pedido && !pedido.status.toLowerCase().includes("pronto")) {
+        const pedido = pedidosNaMaquina.get(id);
+        if (pedido && pedido.status !== "Pronto (VM)") {
             pedido.status = "Em preparação (VM)";
         }
     }, 10000);
+
+    // Finaliza em 20 segundos
     setTimeout(() => {
-        const pedido = pedidosNaMaquina.get(idDoPedidoNaMaquina);
+        const pedido = pedidosNaMaquina.get(id);
         if (pedido) {
             pedido.status = "Pronto (VM)";
-            pedido.slot = `SLOT-VM-${Math.floor(Math.random() * 5) + 1}`;
+            pedido.slot = `SLOT-VM-${Math.floor(Math.random() * 10 + 1)}`;
         }
     }, 20000);
 
-    console.log(`✅ Pedido recebido na VM: ${idDoPedidoNaMaquina}`);
     res.status(200).json({
-        id: idDoPedidoNaMaquina,
-        status: 'Recebido (VM)',
+        id,
+        status: "Recebido (VM)",
         slot: null,
-        payload: pedidoRecebidoPayload 
+        payload
     });
 });
 
+// =====================================================
+// 2. CONSULTAR STATUS DO PEDIDO
+// =====================================================
 app.get('/queue/items/:id', (req, res) => {
     const { id } = req.params;
     const pedido = pedidosNaMaquina.get(id);
-    if (pedido) {
-        res.json({
-            id: id,
-            status: pedido.status,
-            slot: pedido.slot,
-            payload: pedido.payload
-        });
-    } else {
-        res.status(404).json({ status: 'Pedido não encontrado na VM', slot: null });
+
+    if (!pedido) {
+        return res.status(404).json({ status: "Pedido não encontrado na VM" });
     }
+
+    res.json({
+        id,
+        status: pedido.status,
+        slot: pedido.slot,
+        payload: pedido.payload
+    });
 });
 
-
-// --- ROTAS DE ESTOQUE (MOCKS ATUALIZADOS) ---
-
-// ROTA GET /estoque (Resumo)
+// =====================================================
+// 3. ESTOQUE - RESUMO
+// =====================================================
 app.get('/estoque', (req, res) => {
-    console.log(`[VM ESTOQUE] Recebida consulta de (Resumo).`);
-    // Conta o estoque falso
     let massas = 0, molhoSalgado = 0, molhoDoce = 0;
+
     for (const item of estoqueFalso) {
-        if (item.op === null) { // Apenas disponíveis
-            if (item.cor === 'preto') massas++;
-            else if (item.cor === 'vermelho') molhoSalgado++;
-            else if (item.cor === 'azul') molhoDoce++;
+        if (item.op === null) {
+            if (item.cor === "preto") massas++;
+            if (item.cor === "vermelho") molhoSalgado++;
+            if (item.cor === "azul") molhoDoce++;
         }
     }
+
     res.json({ massas, molhoSalgado, molhoDoce });
 });
 
-// NOVA ROTA: GET /estoque/detalhes (Mock)
+// =====================================================
+// 4. ESTOQUE - DETALHES
+// =====================================================
 app.get('/estoque/detalhes', (req, res) => {
-    console.log(`[VM ESTOQUE] Recebida consulta de (Detalhes).`);
-    // Retorna a lista de slots preenchidos (ignora os totalmente vazios)
-    const slotsPreenchidos = estoqueFalso.filter(slot => slot.cor !== null || slot.op !== null);
-    res.json(slotsPreenchidos);
+    const detalhes = estoqueFalso.filter(s => s.cor || s.op);
+    res.json(detalhes);
 });
 
-// NOVA ROTA: PUT /estoque/:pos (Mock)
+// =====================================================
+// 5. ATUALIZAR POSIÇÃO DO ESTOQUE
+// =====================================================
 app.put('/estoque/:pos', (req, res) => {
-    const { pos } = req.params;
+    const pos = parseInt(req.params.pos);
     const { cor, op } = req.body;
-    console.log(`[VM ESTOQUE] Recebida requisição PUT para Posição: ${pos}`, req.body);
 
-    const posNum = parseInt(pos);
-    let item = estoqueFalso.find(p => p.pos === posNum);
-    
-    if (item) { // Atualiza item existente
-        item.cor = cor;
-        item.op = op || null;
-    } else { // Adiciona novo item
-        if (posNum > 0 && posNum <= 26) {
-            item = { pos: posNum, cor, op: op || null };
-            estoqueFalso.push(item);
-        } else {
-            return res.status(400).json({ error: "Posição inválida." });
-        }
-    }
-    
-    console.log(`   Estoque atualizado:`, item);
-    res.status(200).json(item);
-});
+    let item = estoqueFalso.find(p => p.pos === pos);
 
-// NOVA ROTA: DELETE /estoque/:pos (Mock)
-app.delete('/estoque/:pos', (req, res) => {
-    const { pos } = req.params;
-    const posNum = parseInt(pos);
-    console.log(`[VM ESTOQUE] Recebida requisição DELETE para Posição: ${pos}`);
-
-    let itemIndex = estoqueFalso.findIndex(p => p.pos === posNum);
-    
-    if (itemIndex > -1) {
-        // Remove o item da lista (simulando "liberar")
-        const itemRemovido = estoqueFalso.splice(itemIndex, 1)[0];
-        console.log(`   Posição ${pos} liberada.`);
-        res.status(200).json({ message: "Posição liberada com sucesso", ...itemRemovido, cor: null, op: null });
+    if (item) {
+        item.cor = cor ?? item.cor;
+        item.op = op ?? null;
     } else {
-        console.log(`   Posição ${pos} já estava livre.`);
-        res.status(200).json({ message: "Posição já estava liberada" });
+        estoqueFalso.push({ pos, cor, op: op ?? null });
     }
+
+    console.log(`🛠️ Estoque atualizado na pos ${pos}`);
+    res.json(item);
 });
 
+// =====================================================
+// 6. DELETAR POSIÇÃO DO ESTOQUE
+// =====================================================
+app.delete('/estoque/:pos', (req, res) => {
+    const pos = parseInt(req.params.pos);
+    const i = estoqueFalso.findIndex(p => p.pos === pos);
 
+    if (i >= 0) {
+        const removido = estoqueFalso.splice(i, 1)[0];
+        console.log(`🧹 Posição ${pos} liberada.`);
+        return res.json({ message: "Posição liberada", removido });
+    }
+
+    res.json({ message: "Posição já estava livre" });
+});
+
+// =====================================================
+// 7. INICIAR VM
+// =====================================================
 app.listen(PORT, () => {
-    console.log(`🔥 Máquina Virtual (servidor simulado) rodando na porta ${PORT}`);
-    console.log(`   Endpoints de Pedido: http://localhost:${PORT}/queue/items`);
-    console.log(`   Endpoint de Estoque (Resumo): http://localhost:${PORT}/estoque`);
-    console.log(`   Endpoint de Estoque (Detalhes): http://localhost:${PORT}/estoque/detalhes`);
+    console.log(`🔥 Máquina Virtual rodando na porta ${PORT}`);
+    console.log(`   ➤ Pedidos: http://localhost:${PORT}/queue/items`);
+    console.log(`   ➤ Estoque: http://localhost:${PORT}/estoque`);
+    console.log(`   ➤ Detalhes: http://localhost:${PORT}/estoque/detalhes`);
 });
