@@ -33,9 +33,16 @@ const infoRestaurante = {
 };
 
 const RotaCardapio =() => {
-    navigate('/cardapio');
+     const user = localStorage.getItem("usuarioLogado"); // ou "token"
     
-}
+    if (!user) {
+      // Usuário não logado → manda para login
+      return navigate("/login");
+    }
+
+    // Usuário logado → manda para cardápio
+    navigate("/cardapio");
+  };
 // --- FUNÇÃO PARA VERIFICAR O STATUS DE FUNCIONAMENTO ---
 const getStatusFuncionamento = () => {
     const agora = new Date();
@@ -108,9 +115,9 @@ return (
                             para quem busca uma pizza com massa de longa fermentação, borda crocante e, claro, 
                             muito sabor.
                        </p>
-                        <a onClick={RotaCardapio} target="_blank" rel="noopener noreferrer" className="hero-botao">
+                        <button  onClick={RotaCardapio} target="_blank" rel="noopener noreferrer" className="hero-botao">
                             VER CARDÁPIO
-                        </a>
+                        </button>
                     </div>
                 </section>
 

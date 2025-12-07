@@ -19,6 +19,14 @@ function Header() {
         navigate('/'); 
     };
 
+     const handleCardapioClick = () => {
+        if (!usuarioLogado) {
+            navigate('/login');  // redireciona para login se não estiver logado
+        } else {
+            navigate('/cardapio'); // usuário logado → vai pro cardápio
+        }
+    };
+
     return (
         <div className="container-header">
             <div className="logo">
@@ -30,7 +38,19 @@ function Header() {
 
             <div className="header-links">
                 <Link className="texto-header" to="/">Home</Link>
-                <Link className="texto-header" to="/Cardapio">Cardapio</Link>
+
+                <Link
+                    className="texto-header"
+                    to={usuarioLogado ? "/cardapio" : "/login"}
+                    onClick={(e) => {
+                        if (!usuarioLogado) {
+                            e.preventDefault();
+                            navigate('/login');
+                        }
+                    }}>
+                    Cardápio
+                </Link>
+
                 <Link className="texto-header" to="/contato">Contato</Link>
                 
                 {usuarioLogado && (
