@@ -322,22 +322,38 @@ const ViewPagamentos = () => {
     const [formData, setFormData] = useState({ nome_titular: '', numero_cartao: '', validade: '', cvv: '' });
     const [usuarioId, setUsuarioId] = useState(null);
 
-    const buscarCartoes = async (idDoUsuario) => {
-        if (!idDoUsuario) return;
-        setIsLoading(true);
-        try {
-            const response = await fetch(`http://localhost:3001/api/pagamentos/${idDoUsuario}`);
-            if (!response.ok) throw new Error('Falha ao buscar cartões.');
-            const data = await response.json();
-            setCartoes(data);
-            setErro(null);
-        } catch (err) {
-            setErro(err.message);
-            setCartoes([]);
-        } finally {
-            setIsLoading(false);
+  const buscarCartoes = async (idDoUsuario) => {
+    if (!idDoUsuario) return;
+    setIsLoading(true);
+
+    try {
+        const response = await fetch(`http://localhost:3001/api/pagamentos/${idDoUsuario}`);
+        if (!response.ok) throw new Error('Falha ao buscar cartões.');
+        const data = await response.json();
+
+        const usuarioString = localStorage.getItem("usuarioLogado");
+
+        if (usuarioString) {
+            const usuario = JSON.parse(usuarioString);
+
+            usuario.possuiCartao = data.length > 0; // true ou false automaticamente
+
+            localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
         }
-    };
+
+        setCartoes(data);
+        setErro(null);
+
+    } catch (err) {
+        setErro(err.message);
+        setCartoes([]);
+    } finally {
+        setIsLoading(false);
+    }
+};
+
+
+
 
     useEffect(() => {
         const usuarioStorage = localStorage.getItem('usuarioLogado');
@@ -352,28 +368,41 @@ const ViewPagamentos = () => {
     }, []);
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setErro(null);
-        if (formData.numero_cartao.length < 15 || formData.cvv.length < 3 || !formData.validade.match(/^(0[1-9]|1[0-2])\/\d{2}$/)) {
-            setErro("Dados do cartão inválidos. Use formato MM/AA para validade.");
-            return;
+    e.preventDefault();
+    setErro(null);
+
+    if (formData.numero_cartao.length < 15 || formData.cvv.length < 3 
+        || !formData.validade.match(/^(0[1-9]|1[0-2])\/\d{2}$/)) {
+        setErro("Dados do cartão inválidos. Use formato MM/AA para validade.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:3001/api/pagamentos`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...formData, usuario_id: usuarioId })
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.error || 'Erro ao salvar cartão.');
         }
-        try {
-            const response = await fetch(`http://localhost:3001/api/pagamentos`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...formData, usuario_id: usuarioId })
-            });
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Erro ao salvar cartão.');
-            }
-            setFormData({ nome_titular: '', numero_cartao: '', validade: '', cvv: '' });
-            await buscarCartoes(usuarioId);
-        } catch (err) {
-            setErro(err.message);
-        }
-    };
+
+        
+        const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+        usuario.possuiCartao = true;
+        localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
+       
+
+        setFormData({ nome_titular: '', numero_cartao: '', validade: '', cvv: '' });
+        await buscarCartoes(usuarioId);
+
+    } catch (err) {
+        setErro(err.message);
+    }
+};
+
 
     const handleRemoverClick = async (cartaoId) => {
         if (!window.confirm("Tem certeza que deseja remover este cartão?")) return;

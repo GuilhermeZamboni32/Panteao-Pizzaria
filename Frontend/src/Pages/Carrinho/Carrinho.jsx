@@ -4,88 +4,24 @@ import Header from '../../components/pastaheader/Header';
 import './Carrinho.css'; 
 
 // --- Componente Modal de Pagamento ---
-const ModalPagamento = ({ onSubmit, onCancel, mensagemErro }) => {
-    // (O código do ModalPagamento permanece exatamente o mesmo)
-    const [cartao, setCartao] = useState('');
-    const [validade, setValidade] = useState('');
-    const [cvv, setCvv] = useState('');
+const ModalAviso = ({ onClose }) => {
+    return (
+        <div className="modal-overlay">
+            <div className="modal-content">
+                <h2>Atenção</h2>
+                <p>Você não possui um cartão cadastrado.</p>
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!/^\d{16}$/.test(cartao)) {
-            onSubmit(null, "Número do cartão inválido (deve ter 16 dígitos).");
-            return;
-        }
-        if (!/^\d{2}\/\d{2}$/.test(validade)) {
-            onSubmit(null, "Validade inválida (use MM/AA).");
-            return;
-        }
-        if (!/^\d{3,4}$/.test(cvv)) {
-            onSubmit(null, "CVV inválido (deve ter 3 ou 4 dígitos).");
-            return;
-        }
-        onSubmit({ numero_cartao: cartao, validade_cartao: validade, cvv: cvv }, null);
-    };
-
-    return (
-        <div className="modal-overlay">
-            <div className="modal-content">
-                <h2>Informações de Pagamento</h2>
-                <p>Como é a sua primeira compra, precisamos dos dados do seu cartão.</p>
-                <form className="modal-form" onSubmit={handleSubmit}>
-                    {/* (Inputs do formulário do modal... sem alterações) */}
-                    <div className="modal-form-group">
-                        <label htmlFor="numero_cartao">Número do Cartão:</label>
-                        <input
-                            type="text"
-                            id="numero_cartao"
-                            placeholder="0000 0000 0000 0000"
-                            maxLength="16"
-                            value={cartao}
-                            onChange={(e) => setCartao(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="modal-form-group-inline">
-                        <div className="modal-form-group">
-                            <label htmlFor="validade_cartao">Validade:</label>
-                            <input
-                                type="text"
-                                id="validade_cartao"
-                                placeholder="MM/AA"
-                                maxLength="5"
-                                value={validade}
-                                onChange={(e) => setValidade(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div className="modal-form-group">
-                            <label htmlFor="cvv">CVV:</label>
-                            <input
-                                type="text"
-                                id="cvv"
-                                placeholder="CVV"
-                                maxLength="4"
-                                value={cvv}
-                                onChange={(e) => setCvv(e.target.value)}
-                                required
-                            />
-                        </div>
-                    </div>
-                    {mensagemErro && <p className="modal-mensagem-erro">{mensagemErro}</p>}
-                    <div className="modal-botoes">
-                        <button type="button" className="btn-modal-cancelar" onClick={onCancel}>
-                            Cancelar
-                        </button>
-                        <button type="submit" className="btn-modal-salvar">
-                            Salvar e Continuar
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    );
+                <button 
+                    className="btn-modal-salvar"
+                    onClick={onClose}
+                >
+                    Ir para o Perfil
+                </button>
+            </div>
+        </div>
+    );
 };
+
 // --- Fim do Componente Modal ---
 
 
@@ -96,7 +32,7 @@ function Carrinho() {
     const [itensCarrinho, setItensCarrinho] = useState(location.state?.carrinho || []);
     const [usuarioLogado, setUsuarioLogado] = useState(null);
     
-    const [showModal, setShowModal] = useState(false);
+    const [mostrarModalAviso, setMostrarModalAviso] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     
     const frete = 5;
@@ -156,40 +92,41 @@ function Carrinho() {
 
         // **A VERIFICAÇÃO**
         // (Sua lógica de verificar 'numero_cartao' está correta)
-        if (!usuarioLogado.numero_cartao) {
-            console.log("Usuário sem cartão. Abrindo modal...");
-            setModalMessage('');
-            setShowModal(true);
-            return; 
-        }
+     if (!usuarioLogado.possuiCartao) {
+    setMostrarModalAviso(true);
+    return;
+}
+
+
 
         console.log("Usuário já tem cartão. Prosseguindo...");
         proceedToCheckout(usuarioLogado);
     };
 
     // --- 2. FUNÇÃO CHAMADA PELO MODAL ---
-    const handleModalSubmit = async (paymentData, erro) => {
-        if (erro) {
-            setModalMessage(erro); 
-            return;
-        }
+   const handleModalSubmit = async (paymentData, erro) => {
+    if (erro) {
+        setModalMessage(erro); 
+        return;
+    }
 
-        if (paymentData) {
-            // (Sua lógica de salvar no localStorage está correta)
-            console.log("Salvando dados do cartão no localStorage...");
-            const updatedUser = {
-                ...usuarioLogado,
-                ...paymentData 
-            };
-            localStorage.setItem('usuarioLogado', JSON.stringify(updatedUser));
-            setUsuarioLogado(updatedUser);
-            setShowModal(false);
-            setModalMessage('');
+    if (paymentData) {
+        console.log("Salvando dados do cartão no localStorage...");
 
-            // Prossegue para o checkout com o usuário atualizado
-            proceedToCheckout(updatedUser);
-        }
-    };
+        const updatedUser = {
+            ...usuarioLogado,
+            ...paymentData,
+            possuiCartao: true   // ← ESSENCIAL!
+        };
+
+        localStorage.setItem('usuarioLogado', JSON.stringify(updatedUser));
+        setUsuarioLogado(updatedUser);
+        setModalMessage('');
+
+        proceedToCheckout(updatedUser);
+    }
+};
+
 
     // --- 3. FUNÇÃO DE CHECKOUT FINAL ---
     const proceedToCheckout = async (usuarioComCartao) => {
@@ -344,16 +281,15 @@ function Carrinho() {
                 </div>
             </main>
 
-            {showModal && (
-                <ModalPagamento
-                    mensagemErro={modalMessage}
-                    onCancel={() => {
-                        setShowModal(false);
-                        setModalMessage('');
-                    }}
-                    onSubmit={handleModalSubmit}
-                />
-            )}
+                {mostrarModalAviso && (
+                <ModalAviso
+                    onClose={() => {
+                        setMostrarModalAviso(false);
+                        navigate('/minhaconta');  // <- Direciona para tela de perfil
+                    }}
+                />
+            )}
+
         </div>
     );
 }
