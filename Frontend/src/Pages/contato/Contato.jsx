@@ -33,12 +33,12 @@ const membros = [
     },
     {
         nome: "Thiago Quadra",
-        cargo: "Pesquisador",
-        bio: "Responsável pelo suporte na concepção visual do Front-End e pela realização de pesquisas para aprimoramento do projeto.",
+        cargo: "desenvolvedor full-stack",
+        bio: "Responsável pelo suporte na concepção visual do Front-End e suporte back-End .",
         foto: "/carrossel/th.png",
         github: "https://github.com/thpixel-dev",
         linkedin: "https://www.linkedin.com/in/seu-linkedin-aqui",
-        instagram: "https://www.instagram.com/seu-instagram-aqui"
+        instagram: "https://www.instagram.com/vlg_th12"
     },
     {
         nome: "Vitor Danielli",

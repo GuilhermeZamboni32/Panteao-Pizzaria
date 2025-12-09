@@ -18,12 +18,12 @@
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "node": "^24.11.0",
     "node-fetch": "^3.3.2",
     "nodemon": "^3.1.11",
     "pg": "^8.16.3",
-    "zod": "^4.1.12"
+    "zod": "^4.1.13"
   }
 }

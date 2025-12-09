@@ -69,6 +69,10 @@
     gap: 8px; /* Espaço entre os ícones (perfil e sair) */
 }
 
+/* Correção: faz o dropdown posicionar-se relativo ao ícone do usuário */
+.header-user-actions {
+    position: relative;
+}
 
 /* Estilo para os links de ícone (Perfil, Sair) */
 .header-icon-link {
@@ -103,5 +107,67 @@
 .header-icon {
   filter: none; /* Remove o filtro padrão, esperando que os ícones sejam pretos */
   color: var(--preto); /* Tenta forçar a cor do ícone SVG para preto se for SVG */
+}
+
+/* Dropdown do perfil */
+.profile-button {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+/* Container do dropdown */
+.header-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 160px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.12);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    border-radius: 6px;
+    display: none;
+    z-index: 1000;
+    padding: 6px 0;
+}
+
+/* mostra quando aberto */
+.header-dropdown.open {
+    display: block;
+}
+
+.header-dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.dropdown-item {
+    width: 100%;
+    text-align: left;
+    padding: 10px 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #222;
+}
+
+.dropdown-item:hover {
+    background: #f5f5f5;
+}
+
+/* Ajuste do ícone do perfil (pode sobrescrever a definição anterior) */
+.header-icon {
+    width: 28px;
+    height: 28px;
+}
+
+/* Garante que o dropdown apareça acima de outros elementos */
+.header-dropdown {
+    z-index: 2000;
 }
 
