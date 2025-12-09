@@ -390,7 +390,7 @@
 }
 
 .card-confirmacao {
-    background: #fff;
+    background: var(--branco);
     width: 360px;
     padding: 25px;
     border-radius: 20px;
@@ -400,7 +400,7 @@
 }
 
 .card-confirmacao h2 {
-    color: #27ae60;
+    color: var(--verde);
     margin-bottom: 10px;
 }
 
@@ -410,8 +410,8 @@
 }
 
 .btn-card-ok {
-    background-color: #27ae60;
-    color: white;
+    background-color: var(--verde);
+    color: var(--branco);
     width: 100%;
     padding: 10px;
     font-size: 16px;
@@ -423,7 +423,7 @@
 }
 
 .btn-card-ok:hover {
-    background-color: #219150;
+    background-color: var(--verde);
 }
 
 @keyframes slideUp {

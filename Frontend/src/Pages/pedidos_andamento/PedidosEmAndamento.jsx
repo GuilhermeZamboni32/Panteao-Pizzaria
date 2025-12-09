@@ -272,8 +272,8 @@ function PedidosEmAndamento() {
                                         <li key={pedido.id} className="pedido-item">
                                             <div className="pedido-info">
                                                 <span className="pedido-texto-nome">{nomeDoPedido}</span>
-                                                {/* Mostramos o ID pequeno para debug/conferência se quiser */}
-                                                <span className="pedido-texto-id">#{pedido.id.slice(-4)}</span> 
+                                                {/* Mostramos o ID pequeno para debug/conferência se quiser 
+                                                <span className="pedido-texto-id">#{pedido.id.slice(-4)}</span> */}
                                             </div>
                                             
                                             <div className="pedido-status-container">
